@@ -1,28 +1,27 @@
 #include "GameLogic.h"
 #include "GameConfig.h"
 #include "EventAggregator.h"
-#include "IInputReader.h"
+#include "GameInputHandler.h"
+#include "Arena.h"
+#include "Player.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
 GameLogic::GameLogic( shared_ptr<GameConfig> config,
                       shared_ptr<EventAggregator> eventAggregator,
-                      shared_ptr<IInputReader> inputReader ) :
+                      shared_ptr<GameInputHandler> inputHandler,
+                      shared_ptr<Arena> arena ) :
    _config( config ),
    _eventAggregator( eventAggregator ),
-   _inputReader( inputReader )
+   _inputHandler( inputHandler ),
+   _arena( arena )
 {
 }
 
 void GameLogic::Tick()
 {
-   if ( _inputReader->WasButtonPressed( Button::Quit ) )
-   {
-      _eventAggregator->RaiseEvent( GameEvent::Quit );
-   }
-   else if ( _inputReader->WasButtonPressed( Button::Diagnostics ) )
-   {
-      _config->ShowDiagnostics = !_config->ShowDiagnostics;
-   }
+   _inputHandler->HandleInput();
+
+   _arena->Tick();
 }

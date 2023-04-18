@@ -39,6 +39,8 @@ public:
    unsigned int DiagnosticsCharSize;
    sf::Color DiagnosticsTextColor;
    sf::Color DiagnosticsBackgroundColor;
+
+   sf::Color PlayerColor;
 };
 
 NAMESPACE_END

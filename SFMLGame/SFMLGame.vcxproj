@@ -157,27 +157,40 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Arena.cpp" />
+    <ClCompile Include="ArenaInputHandler.cpp" />
+    <ClCompile Include="ArenaRenderer.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
     <ClCompile Include="EventAggregator.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameConfig.cpp" />
+    <ClCompile Include="GameData.cpp" />
+    <ClCompile Include="GameInputHandler.cpp" />
     <ClCompile Include="GameLoader.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
     <ClCompile Include="KeyboardInputReader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="RectUtilities.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Arena.h" />
+    <ClInclude Include="ArenaInputHandler.h" />
+    <ClInclude Include="ArenaRenderer.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
+    <ClInclude Include="Direction.h" />
     <ClInclude Include="EventAggregator.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameConfig.h" />
+    <ClInclude Include="GameData.h" />
     <ClInclude Include="GameEvent.h" />
+    <ClInclude Include="GameInputHandler.h" />
     <ClInclude Include="GameLoader.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameRenderer.h" />
@@ -186,6 +199,8 @@
     <ClInclude Include="KeyboardInputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="RectUtilities.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>

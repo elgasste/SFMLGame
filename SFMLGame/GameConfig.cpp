@@ -20,6 +20,12 @@ GameConfig::GameConfig()
    KeyBindingsMap =
    {
       { KeyCode::Escape, Button::Quit },
+
+      { KeyCode::Left, Button::Left },
+      { KeyCode::Up, Button::Up },
+      { KeyCode::Right, Button::Right },
+      { KeyCode::Down, Button::Down },
+
       { KeyCode::F12, Button::Diagnostics }
    };
 
@@ -32,6 +38,8 @@ GameConfig::GameConfig()
    DiagnosticsTextMargin = 20;
    DiagnosticsFont = "consolas.ttf";
    DiagnosticsCharSize = 24;
-   DiagnosticsTextColor = sf::Color::White;
-   DiagnosticsBackgroundColor = sf::Color::Blue;
+   DiagnosticsTextColor = Color::White;
+   DiagnosticsBackgroundColor = Color::Blue;
+
+   PlayerColor = Color::Red;
 }

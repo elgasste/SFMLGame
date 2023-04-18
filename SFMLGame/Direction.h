@@ -4,18 +4,12 @@
 
 NAMESPACE_BEGIN
 
-enum class Button
+enum class Direction
 {
-   Quit = 0,
-
-   Left,
+   Left = 0,
    Up,
    Right,
-   Down,
-
-   Diagnostics,
-
-   ButtonCount
+   Down
 };
 
 NAMESPACE_END
