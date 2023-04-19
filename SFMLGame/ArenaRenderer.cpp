@@ -1,32 +1,33 @@
 #include <SFML/Graphics.hpp>
 
 #include "ArenaRenderer.h"
-#include "GameConfig.h"
+#include "RenderData.h"
 #include "SFMLWindow.h"
+#include "GameClock.h"
 #include "Arena.h"
-#include "Player.h"
+#include "ActorSprite.h"
 
 using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-ArenaRenderer::ArenaRenderer( shared_ptr<GameConfig> config,
+ArenaRenderer::ArenaRenderer( shared_ptr<RenderData> renderData,
                               shared_ptr<SFMLWindow> window,
+                              shared_ptr<GameClock> clock,
                               shared_ptr<Arena> arena ) :
+   _renderData( renderData ),
    _window( window ),
+   _clock( clock ),
    _arena( arena )
 {
-   auto player = _arena->GetPlayer();
-
-   _playerRect = make_shared<sf::RectangleShape>();
-   _playerRect->setSize( Vector2f( player->GetHitBox().width, player->GetHitBox().height ) );
-   _playerRect->setFillColor( config->PlayerColor );
+   // MUFFINS: this data will be part of the EntitySprite class as well
+   _playerSpriteFrame = 0;
+   _elapsedMovementSeconds = 0;
 }
 
 void ArenaRenderer::Render()
 {
-   auto player = _arena->GetPlayer();
-   _playerRect->setPosition( player->GetPosition() );
+   _renderData->PlayerSprite->Tick();
 
-   _window->Draw( _playerRect );
+   _window->Draw( _renderData->PlayerSprite->GetSprite() );
 }

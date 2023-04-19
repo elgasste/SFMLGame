@@ -100,7 +100,8 @@
       <AdditionalLibraryDirectories>C:\SFML-2.5.1\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)SFML Debug Dlls\" $(OutDir)</Command>
+      <Command>copy "$(SolutionDir)SFML Debug Dlls\" $(OutDir)
+copy "$(SolutionDir)SFMLGame\images\*.*" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,9 +158,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="ActorSprite.cpp" />
     <ClCompile Include="Arena.cpp" />
     <ClCompile Include="ArenaInputHandler.cpp" />
     <ClCompile Include="ArenaRenderer.cpp" />
+    <ClCompile Include="CommandAggregator.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
     <ClCompile Include="EventAggregator.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -174,19 +178,24 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RectUtilities.cpp" />
+    <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="ActorSprite.h" />
     <ClInclude Include="Arena.h" />
     <ClInclude Include="ArenaInputHandler.h" />
     <ClInclude Include="ArenaRenderer.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
+    <ClInclude Include="CommandAggregator.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="EventAggregator.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
+    <ClInclude Include="GameCommand.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameEvent.h" />
@@ -194,6 +203,7 @@
     <ClInclude Include="GameLoader.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameRenderer.h" />
+    <ClInclude Include="ICommandExecutor.h" />
     <ClInclude Include="IEventListener.h" />
     <ClInclude Include="IInputReader.h" />
     <ClInclude Include="KeyboardInputReader.h" />
@@ -201,6 +211,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RectUtilities.h" />
+    <ClInclude Include="RenderData.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>

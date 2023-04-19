@@ -1,7 +1,9 @@
 #include "GameLoader.h"
 #include "GameConfig.h"
 #include "GameData.h"
+#include "RenderData.h"
 #include "EventAggregator.h"
+#include "CommandAggregator.h"
 #include "GameClock.h"
 #include "KeyboardInputReader.h"
 #include "Player.h"
@@ -23,16 +25,18 @@ shared_ptr<Game> GameLoader::Load()
    auto config = make_shared<GameConfig>();
    auto gameData = shared_ptr<GameData>( new GameData( config ) );
    auto eventAggregator = make_shared<EventAggregator>();
+   auto commandAggregator = make_shared<CommandAggregator>();
    auto clock = shared_ptr<GameClock>( new GameClock( config ) );
    auto inputReader = shared_ptr<KeyboardInputReader>( new KeyboardInputReader( config ) );
    auto player = shared_ptr<Player>( new Player( gameData ) );
    auto arena = shared_ptr<Arena>( new Arena( gameData, clock, player ) );
-   auto arenaInputHandler = shared_ptr<ArenaInputHandler>( new ArenaInputHandler( gameData, inputReader, arena ) );
+   auto arenaInputHandler = shared_ptr<ArenaInputHandler>( new ArenaInputHandler( commandAggregator, inputReader ) );
    auto inputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( config, inputReader, eventAggregator, arenaInputHandler ) );
-   auto logic = shared_ptr<GameLogic>( new GameLogic( config, eventAggregator, inputHandler, arena ) );
+   auto logic = shared_ptr<GameLogic>( new GameLogic( config, gameData, eventAggregator, commandAggregator, inputHandler, arena ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( config, eventAggregator, clock ) );
+   auto renderData = shared_ptr<RenderData>( new RenderData( clock, player ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( config, clock, window ) );
-   auto arenaRenderer = shared_ptr<ArenaRenderer>( new ArenaRenderer( config, window, arena ) );
+   auto arenaRenderer = shared_ptr<ArenaRenderer>( new ArenaRenderer( renderData, window, clock, arena ) );
    auto renderer = shared_ptr<GameRenderer>( new GameRenderer( config, window, diagnosticRenderer, arenaRenderer ) );
    auto game = shared_ptr<Game>( new Game( eventAggregator, clock, inputReader, logic, renderer ) );
 

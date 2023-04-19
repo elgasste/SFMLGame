@@ -52,6 +52,12 @@
     <Filter Include="Header Files\DataTypes">
       <UniqueIdentifier>{d6bfff45-609a-4083-9cce-286ef6808220}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Commands">
+      <UniqueIdentifier>{befd72e5-5603-4ef8-a9d8-a3377f3d16ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Commands">
+      <UniqueIdentifier>{669a74b7-7d03-476c-bbe9-3aa3442306d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -107,6 +113,18 @@
     </ClCompile>
     <ClCompile Include="GameData.cpp">
       <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderData.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorSprite.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandAggregator.cpp">
+      <Filter>Source Files\Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +205,24 @@
     </ClInclude>
     <ClInclude Include="Direction.h">
       <Filter>Header Files\DataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderData.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorSprite.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommandExecutor.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommand.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandAggregator.h">
+      <Filter>Header Files\Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

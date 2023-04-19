@@ -1,52 +1,48 @@
 #include "ArenaInputHandler.h"
 #include "GameData.h"
+#include "CommandAggregator.h"
 #include "IInputReader.h"
-#include "Arena.h"
-#include "Player.h"
+#include "GameCommand.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-ArenaInputHandler::ArenaInputHandler( shared_ptr<GameData> gameData,
-                                      shared_ptr<IInputReader> inputReader,
-                                      shared_ptr<Arena> arena ) :
-   _gameData( gameData ),
-   _inputReader( inputReader ),
-   _arena( arena )
+ArenaInputHandler::ArenaInputHandler( shared_ptr<CommandAggregator> commandAggregator,
+                                      shared_ptr<IInputReader> inputReader ) :
+   _commandAggregator( commandAggregator ),
+   _inputReader( inputReader )
 {
 }
 
 void ArenaInputHandler::HandleInput() const
 {
-   auto player = _arena->GetPlayer();
-
-   if ( _inputReader->IsButtonDown( Button::Left ) )
+   if ( _inputReader->IsButtonDown( Button::Left ) && !_inputReader->IsButtonDown( Button::Right ) )
    {
-      player->SetVelocityX( -_gameData->PlayerMoveVelocity );
-      player->SetDirection( Direction::Left );
+      auto direction = Direction::Left;
+      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&direction );
    }
-   else if ( _inputReader->IsButtonDown( Button::Right ) )
+   else if ( _inputReader->IsButtonDown( Button::Right ) && !_inputReader->IsButtonDown( Button::Left ) )
    {
-      player->SetVelocityX( _gameData->PlayerMoveVelocity );
-      player->SetDirection( Direction::Right );
+      auto direction = Direction::Right;
+      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&direction );
    }
    else
    {
-      player->SetVelocityX( 0 );
+      _commandAggregator->ExecuteCommand( GameCommand::StopPlayerX, nullptr );
    }
 
-   if ( _inputReader->IsButtonDown( Button::Up ) )
+   if ( _inputReader->IsButtonDown( Button::Up ) && !_inputReader->IsButtonDown( Button::Down ) )
    {
-      player->SetVelocityY( -_gameData->PlayerMoveVelocity );
-      player->SetDirection( Direction::Up );
+      auto direction = Direction::Up;
+      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&direction );
    }
-   else if ( _inputReader->IsButtonDown( Button::Down ) )
+   else if ( _inputReader->IsButtonDown( Button::Down ) && !_inputReader->IsButtonDown( Button::Up ) )
    {
-      player->SetVelocityY( _gameData->PlayerMoveVelocity );
-      player->SetDirection( Direction::Down );
+      auto direction = Direction::Down;
+      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&direction );
    }
    else
    {
-      player->SetVelocityY( 0 );
+      _commandAggregator->ExecuteCommand( GameCommand::StopPlayerY, nullptr );
    }
 }
