@@ -17,6 +17,6 @@ RenderData::RenderData( shared_ptr<GameClock> clock,
                                                             player,
                                                             playerTexture,
                                                             Vector2i( 50, 50 ),  // frame dimensions
-                                                            2,                   // total moving frames
-                                                            0.1f ) );            // seconds per frame
+                                                            6,                   // total moving frames
+                                                            0.05f ) );            // seconds per frame
 }

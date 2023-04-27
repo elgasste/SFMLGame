@@ -36,7 +36,7 @@ shared_ptr<Game> GameLoader::Load()
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( config, eventAggregator, clock ) );
    auto renderData = shared_ptr<RenderData>( new RenderData( clock, player ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( config, clock, window ) );
-   auto arenaRenderer = shared_ptr<ArenaRenderer>( new ArenaRenderer( renderData, window, clock, arena ) );
+   auto arenaRenderer = shared_ptr<ArenaRenderer>( new ArenaRenderer( renderData, window ) );
    auto renderer = shared_ptr<GameRenderer>( new GameRenderer( config, window, diagnosticRenderer, arenaRenderer ) );
    auto game = shared_ptr<Game>( new Game( eventAggregator, clock, inputReader, logic, renderer ) );
 

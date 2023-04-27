@@ -12,17 +12,10 @@ using namespace std;
 using namespace sf;
 
 ArenaRenderer::ArenaRenderer( shared_ptr<RenderData> renderData,
-                              shared_ptr<SFMLWindow> window,
-                              shared_ptr<GameClock> clock,
-                              shared_ptr<Arena> arena ) :
+                              shared_ptr<SFMLWindow> window ) :
    _renderData( renderData ),
-   _window( window ),
-   _clock( clock ),
-   _arena( arena )
+   _window( window )
 {
-   // MUFFINS: this data will be part of the EntitySprite class as well
-   _playerSpriteFrame = 0;
-   _elapsedMovementSeconds = 0;
 }
 
 void ArenaRenderer::Render()
