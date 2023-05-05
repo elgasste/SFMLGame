@@ -5,17 +5,17 @@
 NAMESPACE_BEGIN
 
 class GameClock;
-class Actor;
-class ActorSprite;
+class Entity;
+class EntitySprite;
 
 class RenderData
 {
 public:
    RenderData( std::shared_ptr<GameClock> clock,
-               std::shared_ptr<Actor> player );
+               std::shared_ptr<Entity> player );
 
 public:
-   std::shared_ptr<ActorSprite> PlayerSprite;
+   std::shared_ptr<EntitySprite> PlayerSprite;
 };
 
 NAMESPACE_END

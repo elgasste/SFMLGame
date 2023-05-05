@@ -40,6 +40,11 @@ public:
    sf::Color DiagnosticsTextColor;
    sf::Color DiagnosticsBackgroundColor;
 
+   float LoadingTextMargin;
+   std::string LoadingTextFont;
+   unsigned int LoadingCharSize;
+   sf::Color LoadingTextColor;
+
    sf::Color PlayerColor;
 };
 

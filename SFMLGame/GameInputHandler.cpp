@@ -2,7 +2,8 @@
 #include "GameConfig.h"
 #include "IInputReader.h"
 #include "EventAggregator.h"
-#include "ArenaInputHandler.h"
+#include "IGameStateInputHandler.h"
+#include "GameStateProvider.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -10,11 +11,13 @@ using namespace std;
 GameInputHandler::GameInputHandler( shared_ptr<GameConfig> config,
                                     shared_ptr<IInputReader> inputReader,
                                     shared_ptr<EventAggregator> eventAggregator,
-                                    shared_ptr<ArenaInputHandler> arenaInputHandler ) :
+                                    map<GameState, shared_ptr<IGameStateInputHandler>> gameStateInputHandlers,
+                                    shared_ptr<GameStateProvider> gameStateProvider ) :
    _config( config ),
    _inputReader( inputReader ),
    _eventAggregator( eventAggregator ),
-   _arenaInputHandler( arenaInputHandler )
+   _gameStateInputHandlers( gameStateInputHandlers ),
+   _gameStateProvider( gameStateProvider )
 {
 }
 
@@ -31,5 +34,5 @@ void GameInputHandler::HandleInput() const
       _config->ShowDiagnostics = !_config->ShowDiagnostics;
    }
 
-   _arenaInputHandler->HandleInput();
+   _gameStateInputHandlers.at( _gameStateProvider->GetState() )->HandleInput();
 }

@@ -1,22 +1,18 @@
 #include "Actor.h"
+#include "Behavior.h"
 
 using namespace NAMESPACE;
-using namespace sf;
+using namespace std;
 
-Actor::Actor() :
-   _position( Vector2f() ),
-   _hitBox( FloatRect() ),
-   _velocity( Vector2f() ),
-   _direction( (Direction)0 )
+Actor::Actor( shared_ptr<UniqueNumberGenerator> uniqueNumberGenerator,
+              shared_ptr<Behavior> behavior ) :
+   Entity( uniqueNumberGenerator ),
+   _behavior( behavior )
 {
+   behavior->SetEntity( this );
 }
 
-void Actor::MoveX( float distanceX )
+void Actor::Tick()
 {
-   _position.x += distanceX;
-}
-
-void Actor::MoveY( float distanceY )
-{
-   _position.y += distanceY;
+   _behavior->Tick();
 }

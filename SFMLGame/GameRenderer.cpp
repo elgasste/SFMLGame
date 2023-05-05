@@ -1,20 +1,23 @@
 #include "GameRenderer.h"
 #include "GameConfig.h"
+#include "GameStateProvider.h"
 #include "SFMLWindow.h"
 #include "DiagnosticsRenderer.h"
-#include "ArenaRenderer.h"
+#include "IGameStateRenderer.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
 GameRenderer::GameRenderer( shared_ptr<GameConfig> config,
+                            shared_ptr<GameStateProvider> gameStateProvider,
                             shared_ptr<SFMLWindow> window,
                             shared_ptr<DiagnosticsRenderer> diagnosticsRenderer,
-                            shared_ptr<ArenaRenderer> arenaRenderer ) :
+                            map<GameState, shared_ptr<IGameStateRenderer>> gameStateRenderers ) :
    _config( config ),
+   _gameStateProvider( gameStateProvider ),
    _window( window ),
    _diagnosticsRenderer( diagnosticsRenderer ),
-   _arenaRenderer( arenaRenderer )
+   _gameStateRenderers( gameStateRenderers )
 {
 }
 
@@ -29,7 +32,7 @@ void GameRenderer::Render()
    _window->HandleEvents();
    _window->Clear();
 
-   _arenaRenderer->Render();
+   _gameStateRenderers.at( _gameStateProvider->GetState() )->Render();
 
    if ( _config->ShowDiagnostics )
    {

@@ -2,6 +2,7 @@
 #include "GameData.h"
 #include "GameClock.h"
 #include "Player.h"
+#include "Actor.h"
 #include "RectUtilities.h"
 
 using namespace NAMESPACE;
@@ -17,23 +18,55 @@ Arena::Arena( shared_ptr<GameData> gameData,
    _bounds = gameData->ArenaBounds;
 }
 
+void Arena::AddActor( shared_ptr<Actor> actor )
+{
+   if ( find( _actors.begin(), _actors.end(), actor ) == _actors.end() )
+   {
+      _actors.push_back( actor );
+   }
+}
+
+void Arena::RemoveActor( unsigned int uniqueId )
+{
+   auto it = find_if( _actors.begin(), _actors.end(), [&uniqueId]( shared_ptr<Actor> actor )
+   {
+      return actor->GetUniqueId() == uniqueId;
+   } );
+
+   if ( it != _actors.end() )
+   {
+      _actors.erase( it );
+   }
+}
+
 void Arena::Tick()
 {
-   if ( _player->GetVelocity().x != 0 )
+   MoveEntity( _player );
+
+   for ( auto actor : _actors )
    {
-      auto deltaX = _player->GetVelocity().x * _clock->GetFrameSeconds();
-      _player->MoveX( deltaX );
+      actor->Tick();
+      MoveEntity( actor );
+   }
+}
+
+void Arena::MoveEntity( shared_ptr<Entity> entity ) const
+{
+   if ( entity->GetVelocity().x != 0 )
+   {
+      auto deltaX = entity->GetVelocity().x * _clock->GetFrameSeconds();
+      entity->MoveX( deltaX );
    }
 
    if ( _player->GetVelocity().y != 0 )
    {
-      auto deltaY = _player->GetVelocity().y * _clock->GetFrameSeconds();
-      _player->MoveY( deltaY );
+      auto deltaY = entity->GetVelocity().y * _clock->GetFrameSeconds();
+      entity->MoveY( deltaY );
    }
 
-   auto clampedPosition = _player->GetPosition();
-   if ( RectUtilities::ClampRectToBounds( clampedPosition, _player->GetHitBox(), _bounds ) )
+   auto clampedPosition = entity->GetPosition();
+   if ( RectUtilities::ClampRectToBounds( clampedPosition, entity->GetHitBox(), _bounds ) )
    {
-      _player->SetPosition( clampedPosition );
+      entity->SetPosition( clampedPosition );
    }
 }

@@ -1,24 +1,24 @@
 #include <SFML/Graphics.hpp>
 
-#include "ArenaRenderer.h"
+#include "PlayingStateRenderer.h"
 #include "RenderData.h"
 #include "SFMLWindow.h"
 #include "GameClock.h"
 #include "Arena.h"
-#include "ActorSprite.h"
+#include "EntitySprite.h"
 
 using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-ArenaRenderer::ArenaRenderer( shared_ptr<RenderData> renderData,
-                              shared_ptr<SFMLWindow> window ) :
+PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderData> renderData,
+                                            shared_ptr<SFMLWindow> window ) :
    _renderData( renderData ),
    _window( window )
 {
 }
 
-void ArenaRenderer::Render()
+void PlayingStateRenderer::Render()
 {
    _renderData->PlayerSprite->Tick();
 

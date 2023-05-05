@@ -1,6 +1,7 @@
 #include "GameLogic.h"
 #include "GameConfig.h"
 #include "GameData.h"
+#include "GameStateProvider.h"
 #include "EventAggregator.h"
 #include "CommandAggregator.h"
 #include "GameInputHandler.h"
@@ -12,12 +13,14 @@ using namespace std;
 
 GameLogic::GameLogic( shared_ptr<GameConfig> config,
                       shared_ptr<GameData> gameData,
+                      shared_ptr<GameStateProvider> gameStateProvider,
                       shared_ptr<EventAggregator> eventAggregator,
                       shared_ptr<CommandAggregator> commandAggregator,
                       shared_ptr<GameInputHandler> inputHandler,
                       shared_ptr<Arena> arena ) :
    _config( config ),
    _gameData( gameData ),
+   _gameStateProvider( gameStateProvider ),
    _eventAggregator( eventAggregator ),
    _inputHandler( inputHandler ),
    _arena( arena )
@@ -25,15 +28,30 @@ GameLogic::GameLogic( shared_ptr<GameConfig> config,
    commandAggregator->RegisterExecutor( this );
 }
 
+void GameLogic::Start()
+{
+   // MUFFINS: try spawning some actors in here, just for funsies
+
+   _gameStateProvider->SetState( GameState::Playing );
+}
+
 void GameLogic::Tick()
 {
    _inputHandler->HandleInput();
 
-   _arena->Tick();
+   if ( _gameStateProvider->GetState() == GameState::Playing )
+   {
+      _arena->Tick();
+   }
 }
 
 void GameLogic::ExecuteCommand( GameCommand command, void* arg )
 {
+   if ( _gameStateProvider->GetState() == GameState::Loading )
+   {
+      return;
+   }
+
    auto player = _arena->GetPlayer();
 
    if ( command == GameCommand::MovePlayer )

@@ -58,6 +58,12 @@
     <Filter Include="Source Files\Commands">
       <UniqueIdentifier>{669a74b7-7d03-476c-bbe9-3aa3442306d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\AI">
+      <UniqueIdentifier>{f8942b5e-9817-4a00-a17c-add84644bea2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AI">
+      <UniqueIdentifier>{52d520c6-abf3-4360-bb7a-95b7bb3a6859}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -99,7 +105,7 @@
     <ClCompile Include="Arena.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="ArenaRenderer.cpp">
+    <ClCompile Include="PlayingStateRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="RectUtilities.cpp">
@@ -108,7 +114,7 @@
     <ClCompile Include="GameInputHandler.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="ArenaInputHandler.cpp">
+    <ClCompile Include="PlayingStateInputHandler.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="GameData.cpp">
@@ -120,11 +126,29 @@
     <ClCompile Include="Actor.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="ActorSprite.cpp">
+    <ClCompile Include="EntitySprite.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="CommandAggregator.cpp">
       <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Behavior.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="MbcVirtualMachine.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="UniqueNumberGenerator.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingStateRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -185,7 +209,7 @@
     <ClInclude Include="Arena.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="ArenaRenderer.h">
+    <ClInclude Include="PlayingStateRenderer.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="RectUtilities.h">
@@ -194,7 +218,7 @@
     <ClInclude Include="GameInputHandler.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="ArenaInputHandler.h">
+    <ClInclude Include="PlayingStateInputHandler.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="GameData.h">
@@ -212,7 +236,7 @@
     <ClInclude Include="Actor.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="ActorSprite.h">
+    <ClInclude Include="EntitySprite.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="ICommandExecutor.h">
@@ -223,6 +247,48 @@
     </ClInclude>
     <ClInclude Include="CommandAggregator.h">
       <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Behavior.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="MbcVirtualMachine.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="MbcDefines.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="MathOp.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionOp.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="UniqueNumberGenerator.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="IGameStateRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingStateRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateProvider.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="IGameStateInputHandler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingStateInputHandler.h">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -159,12 +159,16 @@ copy "$(SolutionDir)SFMLGame\images\*.*" $(OutDir)</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="ActorSprite.cpp" />
+    <ClCompile Include="LoadingStateRenderer.cpp" />
+    <ClCompile Include="MbcVirtualMachine.cpp" />
+    <ClCompile Include="Behavior.cpp" />
+    <ClCompile Include="EntitySprite.cpp" />
     <ClCompile Include="Arena.cpp" />
-    <ClCompile Include="ArenaInputHandler.cpp" />
-    <ClCompile Include="ArenaRenderer.cpp" />
+    <ClCompile Include="PlayingStateInputHandler.cpp" />
+    <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="CommandAggregator.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EventAggregator.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
@@ -177,21 +181,35 @@ copy "$(SolutionDir)SFMLGame\images\*.*" $(OutDir)</Command>
     <ClCompile Include="KeyboardInputReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="RectUtilities.cpp" />
     <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
+    <ClCompile Include="UniqueNumberGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
-    <ClInclude Include="ActorSprite.h" />
+    <ClInclude Include="ConditionOp.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="GameStateProvider.h" />
+    <ClInclude Include="IGameStateInputHandler.h" />
+    <ClInclude Include="IGameStateRenderer.h" />
+    <ClInclude Include="LoadingStateInputHandler.h" />
+    <ClInclude Include="LoadingStateRenderer.h" />
+    <ClInclude Include="MathOp.h" />
+    <ClInclude Include="MbcDefines.h" />
+    <ClInclude Include="MbcVirtualMachine.h" />
+    <ClInclude Include="Behavior.h" />
+    <ClInclude Include="EntitySprite.h" />
     <ClInclude Include="Arena.h" />
-    <ClInclude Include="ArenaInputHandler.h" />
-    <ClInclude Include="ArenaRenderer.h" />
+    <ClInclude Include="PlayingStateInputHandler.h" />
+    <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
     <ClInclude Include="CommandAggregator.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
     <ClInclude Include="Direction.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="EventAggregator.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
@@ -210,9 +228,11 @@ copy "$(SolutionDir)SFMLGame\images\*.*" $(OutDir)</Command>
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="RectUtilities.h" />
     <ClInclude Include="RenderData.h" />
     <ClInclude Include="SFMLWindow.h" />
+    <ClInclude Include="UniqueNumberGenerator.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

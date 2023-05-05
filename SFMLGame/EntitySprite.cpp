@@ -1,23 +1,23 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "ActorSprite.h"
+#include "EntitySprite.h"
 #include "GameClock.h"
-#include "Actor.h"
+#include "Entity.h"
 #include "Direction.h"
 
 using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-ActorSprite::ActorSprite( shared_ptr<GameClock> clock,
-                          shared_ptr<Actor> actor,
-                          shared_ptr<Texture> texture,
-                          Vector2i frameDimensions,
-                          int totalMovingFrames,
-                          float secondsPerFrame ) :
+EntitySprite::EntitySprite( shared_ptr<GameClock> clock,
+                            shared_ptr<Entity> entity,
+                            shared_ptr<Texture> texture,
+                            Vector2i frameDimensions,
+                            int totalMovingFrames,
+                            float secondsPerFrame ) :
    _clock( clock ),
-   _actor( actor ),
+   _entity( entity ),
    _texture( texture ),
    _frameDimensions( frameDimensions ),
    _totalMovingFrames( totalMovingFrames ),
@@ -26,19 +26,21 @@ ActorSprite::ActorSprite( shared_ptr<GameClock> clock,
    _sprite = make_shared<Sprite>();
    _sprite->setTexture( *texture );
    _sprite->setTextureRect( IntRect( 0, 0, frameDimensions.x, frameDimensions.y ) );
+   _sprite->setScale( entity->GetHitBox().width / frameDimensions.x,
+                      entity->GetHitBox().height / frameDimensions.y );
 
    _currentMovingFrame = 1;
    _elapsedMovingSeconds = 0;
 }
 
-void ActorSprite::Tick()
+void EntitySprite::Tick()
 {
-   _sprite->setPosition( _actor->GetPosition() );
+   _sprite->setPosition( _entity->GetPosition() );
 
-   auto actorVelocity = _actor->GetVelocity();
+   auto actorVelocity = _entity->GetVelocity();
 
    // the texture should have four lanes, each directly tied to a direction
-   auto lane = (int)_actor->GetDirection();
+   auto lane = (int)_entity->GetDirection();
 
    if ( actorVelocity.x == 0 && actorVelocity.y == 0 )
    {

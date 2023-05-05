@@ -34,6 +34,7 @@ void Game::Run()
 
    _renderer->Initialize();
    _clock->Initialize();
+   _logic->Start();
 
    while ( _isRunning )
    {

@@ -41,5 +41,10 @@ GameConfig::GameConfig()
    DiagnosticsTextColor = Color::White;
    DiagnosticsBackgroundColor = Color::Blue;
 
+   LoadingTextMargin = 10;
+   LoadingTextFont = "consolas.ttf";
+   LoadingCharSize = 32;
+   LoadingTextColor = Color::White;
+
    PlayerColor = Color::Red;
 }

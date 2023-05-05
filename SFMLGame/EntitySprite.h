@@ -13,13 +13,13 @@ namespace sf
 NAMESPACE_BEGIN
 
 class GameClock;
-class Actor;
+class Entity;
 
-class ActorSprite
+class EntitySprite
 {
 public:
-   ActorSprite( std::shared_ptr<GameClock> clock,
-                std::shared_ptr<Actor> actor,
+   EntitySprite( std::shared_ptr<GameClock> clock,
+                std::shared_ptr<Entity> entity,
                 std::shared_ptr<sf::Texture> texture,
                 sf::Vector2i frameDimensions,
                 int totalMovingFrames,
@@ -31,7 +31,7 @@ public:
 
 private:
    std::shared_ptr<GameClock> _clock;
-   std::shared_ptr<Actor> _actor;
+   std::shared_ptr<Entity> _entity;
 
    std::shared_ptr<sf::Texture> _texture;
    std::shared_ptr<sf::Sprite> _sprite;

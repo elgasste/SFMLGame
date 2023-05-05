@@ -1,4 +1,4 @@
-#include "ArenaInputHandler.h"
+#include "PlayingStateInputHandler.h"
 #include "GameData.h"
 #include "CommandAggregator.h"
 #include "IInputReader.h"
@@ -7,15 +7,16 @@
 using namespace NAMESPACE;
 using namespace std;
 
-ArenaInputHandler::ArenaInputHandler( shared_ptr<CommandAggregator> commandAggregator,
-                                      shared_ptr<IInputReader> inputReader ) :
+PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<CommandAggregator> commandAggregator,
+                                                    shared_ptr<IInputReader> inputReader ) :
    _commandAggregator( commandAggregator ),
    _inputReader( inputReader )
 {
 }
 
-void ArenaInputHandler::HandleInput() const
+void PlayingStateInputHandler::HandleInput()
 {
+   // MUFFINS: this should probably detect if the player is moving diagonally, and reduce the velocity
    if ( _inputReader->IsButtonDown( Button::Left ) && !_inputReader->IsButtonDown( Button::Right ) )
    {
       auto direction = Direction::Left;
