@@ -4,15 +4,21 @@
 using namespace NAMESPACE;
 using namespace std;
 
-Actor::Actor( shared_ptr<UniqueNumberGenerator> uniqueNumberGenerator,
-              shared_ptr<Behavior> behavior ) :
+Actor::Actor( shared_ptr<UniqueNumberGenerator> uniqueNumberGenerator ) :
    Entity( uniqueNumberGenerator ),
-   _behavior( behavior )
+   _behavior( nullptr )
 {
-   behavior->SetEntity( this );
+}
+
+void Actor::SetBehavior( shared_ptr<Behavior> behavior )
+{
+   _behavior = behavior;
 }
 
 void Actor::Tick()
 {
-   _behavior->Tick();
+   if ( _behavior )
+   {
+      _behavior->Tick();
+   }
 }

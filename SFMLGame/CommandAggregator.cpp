@@ -3,7 +3,7 @@
 
 using namespace NAMESPACE;
 
-void CommandAggregator::ExecuteCommand( GameCommand command, void* arg )
+void CommandAggregator::ExecuteCommand( GameCommand command, void* args )
 {
-   _executor->ExecuteCommand( command, arg );
+   _executor->ExecuteCommand( command, args );
 }

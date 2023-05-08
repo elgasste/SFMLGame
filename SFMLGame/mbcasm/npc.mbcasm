@@ -1,0 +1,139 @@
+##########################################################################
+#
+# NPC Behavior
+#
+# Perform an action for a random number of seconds (between 1 and 3).
+# The action is either stop, or walk in a random direction at a random
+# velocity (between 100 and 400).
+#
+##########################################################################
+#
+# Float Registers:
+#
+# [0] - elapsed seconds since last action
+# [1] - last frame seconds
+# [2] - seconds to wait before action
+# [3] - minimum seconds to wait (1)
+# [4] - maximum seconds to wait (3)
+#
+# [10] - left/up velocity min (-400)
+# [11] - left/up velocity max (-100)
+# [12] - right/down velocity min (100)
+# [13] - right-down velocity max (400)
+# [14] - stop velocity (0)
+# [15] - velocity value
+#
+# Int Registers:
+#
+# [0] - first run checker (false if this is the first run)
+#
+# [1] - Direction::Left (0)
+# [2] - Direction::Up (1)
+# [3] - Direction::Right (2)
+# [4] - Direction::Down (3)
+#
+# [10] - direction determination minimum value (0)
+# [11] - direction determination maximum value (2)
+# [12] - movement option 1 (0, meaning left or up)
+# [13] - movement option 2 (1, meaning right or down)
+# [14] - movement option 3 (2, meaning stop)
+#
+# [30] - temporary variable
+#
+##########################################################################
+
+FUNC main
+
+	# init and act immediately on first run
+	if_falsei 0
+		call init
+        call action
+	endif
+
+    # increment elapsed time
+    get_frameseconds 1
+    addf 0 1 0
+
+    if_gtef 0 2
+        call action
+
+        # reset timer values
+        regf 0 0
+        get_randomfloat 3 4 2
+    endif
+
+RET
+
+FUNC init
+
+	# directions
+	regi 1 0   # left
+	regi 2 1   # up
+    regi 3 2   # right
+    regi 4 3   # down
+
+    # movement values
+    regi 10 0
+    regi 11 2
+    regi 12 1
+    regi 13 2
+
+    # seconds to wait before action
+    regf 3 1
+    regf 4 3
+    get_randomfloat 3 4 2
+
+    # velocity values
+    regf 10 -200
+    regf 11 -50
+    regf 12 50
+    regf 13 200
+
+    # init complete
+	regi 0 1
+
+RET
+
+FUNC action
+
+    # horizontal movement
+    get_randomInt 10 11 30
+
+    if_eqi 30 12
+        # move left
+        get_randomfloat 10 11 15
+        set_direction 1
+        set_velocityX 15
+    else
+    if_eqi 30 13
+        # move right
+        get_randomfloat 12 13 15
+        set_direction 3
+        set_velocityX 15
+    else
+        # stop
+        set_velocityX 14
+    endif
+    endif
+
+    # vertical movement
+    get_randomInt 10 11 30
+
+    if_eqi 30 12
+        # move up
+        get_randomfloat 10 11 15
+        set_direction 2
+        set_velocityY 15
+    else
+    if_eqi 30 13
+        # move down
+        get_randomfloat 12 13 15
+        set_direction 4
+        set_velocityY 15
+    else
+        # stop
+        set_velocityY 14
+    endif
+    endif
+
+RET

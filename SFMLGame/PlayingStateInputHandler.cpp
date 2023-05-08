@@ -3,12 +3,15 @@
 #include "CommandAggregator.h"
 #include "IInputReader.h"
 #include "GameCommand.h"
+#include "MovePlayerCommandArgs.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<CommandAggregator> commandAggregator,
+PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<GameData> gameData,
+                                                    shared_ptr<CommandAggregator> commandAggregator,
                                                     shared_ptr<IInputReader> inputReader ) :
+   _gameData( gameData ),
    _commandAggregator( commandAggregator ),
    _inputReader( inputReader )
 {
@@ -16,31 +19,39 @@ PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<CommandAggregator
 
 void PlayingStateInputHandler::HandleInput()
 {
-   // MUFFINS: this should probably detect if the player is moving diagonally, and reduce the velocity
-   if ( _inputReader->IsButtonDown( Button::Left ) && !_inputReader->IsButtonDown( Button::Right ) )
+   auto left = _inputReader->IsButtonDown( Button::Left );
+   auto up = _inputReader->IsButtonDown( Button::Up );
+   auto right = _inputReader->IsButtonDown( Button::Right );
+   auto down = _inputReader->IsButtonDown( Button::Down );
+
+   if ( left && !right )
    {
-      auto direction = Direction::Left;
-      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&direction );
+      auto velocity = ( up || down ) ? _gameData->PlayerMoveVelocity * 0.75f : _gameData->PlayerMoveVelocity;
+      auto args = MovePlayerCommandArgs{ Direction::Left, velocity };
+      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&args );
    }
-   else if ( _inputReader->IsButtonDown( Button::Right ) && !_inputReader->IsButtonDown( Button::Left ) )
+   else if ( right && !left )
    {
-      auto direction = Direction::Right;
-      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&direction );
+      auto velocity = ( up || down ) ? _gameData->PlayerMoveVelocity * 0.75f : _gameData->PlayerMoveVelocity;
+      auto args = MovePlayerCommandArgs{ Direction::Right, velocity };
+      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&args );
    }
    else
    {
       _commandAggregator->ExecuteCommand( GameCommand::StopPlayerX, nullptr );
    }
 
-   if ( _inputReader->IsButtonDown( Button::Up ) && !_inputReader->IsButtonDown( Button::Down ) )
+   if ( up && !down )
    {
-      auto direction = Direction::Up;
-      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&direction );
+      auto velocity = ( left || right ) ? _gameData->PlayerMoveVelocity * 0.75f : _gameData->PlayerMoveVelocity;
+      auto args = MovePlayerCommandArgs{ Direction::Up, velocity };
+      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&args );
    }
-   else if ( _inputReader->IsButtonDown( Button::Down ) && !_inputReader->IsButtonDown( Button::Up ) )
+   else if ( down && !up )
    {
-      auto direction = Direction::Down;
-      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&direction );
+      auto velocity = ( left || right ) ? _gameData->PlayerMoveVelocity * 0.75f : _gameData->PlayerMoveVelocity;
+      auto args = MovePlayerCommandArgs{ Direction::Down, velocity };
+      _commandAggregator->ExecuteCommand( GameCommand::MovePlayer, (void*)&args );
    }
    else
    {

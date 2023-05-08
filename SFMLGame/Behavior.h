@@ -15,7 +15,7 @@ public:
              std::shared_ptr<Random> random,
              std::shared_ptr<Entity> player );
 
-   void SetEntity( Entity* entity );
+   void SetEntity( std::shared_ptr<Entity> entity );
 
 private:
    bool HandleCommand( mbc_command command ) override;
@@ -24,14 +24,15 @@ private:
    void RegisterIntFromArg( int argNum, int val );
    void RegisterBoolFromArg( int argNum, bool val );
 
-   void GetRandom();
+   void GetRandomFloat();
+   void GetRandomInt();
 
 private:
    std::shared_ptr<GameClock> _clock;
    std::shared_ptr<Random> _random;
    std::shared_ptr<Entity> _player;
 
-   Entity* _entity;
+   std::shared_ptr<Entity> _entity;
 };
 
 NAMESPACE_END

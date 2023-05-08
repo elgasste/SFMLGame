@@ -16,7 +16,7 @@ Behavior::Behavior( shared_ptr<GameClock> clock,
 {
 }
 
-void Behavior::SetEntity( Entity* entity )
+void Behavior::SetEntity( shared_ptr<Entity> entity )
 {
    _entity = entity;
 }
@@ -160,8 +160,11 @@ bool Behavior::HandleCommand( mbc_command command )
          RegisterFloatFromArg( 1, _arenaInfoProvider->GetActiveArena()->GetEntity( MBC_PARSE_ARG0( _currentInstruction ) )->GetKnockBackVelocity() );
          return true;*/
 
-      case MBCGET_RANDOM:
-         GetRandom();
+      case MBCGET_RANDOMFLOAT:
+         GetRandomFloat();
+         return true;
+      case MBCGET_RANDOMINT:
+         GetRandomInt();
          return true;
 
       case MBCSET_VELOCITYX:
@@ -222,9 +225,16 @@ void Behavior::RegisterBoolFromArg( int argNum, bool val )
    }
 }
 
-void Behavior::GetRandom()
+void Behavior::GetRandomFloat()
 {
-   auto min = (unsigned int)_intRegisters[MBC_PARSE_ARG0( _currentInstruction )];
-   auto max = (unsigned int)_intRegisters[MBC_PARSE_ARG1( _currentInstruction )];
-   _intRegisters[MBC_PARSE_ARG2( _currentInstruction )] = _random->GetUnsignedInt( min, max );
+   auto min = _floatRegisters[MBC_PARSE_ARG0( _currentInstruction )];
+   auto max = _floatRegisters[MBC_PARSE_ARG1( _currentInstruction )];
+   _floatRegisters[MBC_PARSE_ARG2( _currentInstruction )] = _random->GetFloat( min, max );
+}
+
+void Behavior::GetRandomInt()
+{
+   auto min = _intRegisters[MBC_PARSE_ARG0( _currentInstruction )];
+   auto max = _intRegisters[MBC_PARSE_ARG1( _currentInstruction )];
+   _intRegisters[MBC_PARSE_ARG2( _currentInstruction )] = _random->GetInt( min, max );
 }

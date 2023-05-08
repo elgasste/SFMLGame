@@ -11,7 +11,7 @@ class CommandAggregator
 {
 public:
    void RegisterExecutor( ICommandExecutor* executor ) { _executor = executor; }
-   void ExecuteCommand( GameCommand command, void* arg );
+   void ExecuteCommand( GameCommand command, void* args );
 
 private:
    ICommandExecutor* _executor;

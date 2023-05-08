@@ -58,7 +58,7 @@ void Arena::MoveEntity( shared_ptr<Entity> entity ) const
       entity->MoveX( deltaX );
    }
 
-   if ( _player->GetVelocity().y != 0 )
+   if ( entity->GetVelocity().y != 0 )
    {
       auto deltaY = entity->GetVelocity().y * _clock->GetFrameSeconds();
       entity->MoveY( deltaY );

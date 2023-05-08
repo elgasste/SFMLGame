@@ -28,7 +28,7 @@ public:
    void Tick();
 
    // ICommandExecutor
-   void ExecuteCommand( GameCommand command, void* arg ) override;
+   void ExecuteCommand( GameCommand command, void* args ) override;
 
 private:
    std::shared_ptr<GameConfig> _config;

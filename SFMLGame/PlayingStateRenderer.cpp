@@ -21,6 +21,8 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderData> renderData,
 void PlayingStateRenderer::Render()
 {
    _renderData->PlayerSprite->Tick();
+   _renderData->NpcSprite->Tick();
 
+   _window->Draw( _renderData->NpcSprite->GetSprite() );
    _window->Draw( _renderData->PlayerSprite->GetSprite() );
 }

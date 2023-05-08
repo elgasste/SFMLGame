@@ -9,11 +9,14 @@
 NAMESPACE_BEGIN
 
 class GameConfig;
+class UniqueNumberGenerator;
+class Actor;
 
 class GameData
 {
 public:
-   GameData( std::shared_ptr<GameConfig> config );
+   GameData( std::shared_ptr<GameConfig> config,
+             std::shared_ptr<UniqueNumberGenerator> uniqueNumberGenerator );
 
 public:
    sf::FloatRect ArenaBounds;
@@ -22,6 +25,8 @@ public:
    sf::Vector2f PlayerDefaultPosition;
    float PlayerMoveVelocity;
    Direction PlayerDefaultDirection;
+
+   std::shared_ptr<Actor> Npc;
 };
 
 NAMESPACE_END

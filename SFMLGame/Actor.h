@@ -10,9 +10,9 @@ class Behavior;
 class Actor : public Entity
 {
 public:
-   Actor( std::shared_ptr<UniqueNumberGenerator> uniqueNumberGenerator,
-          std::shared_ptr<Behavior> behavior );
+   Actor( std::shared_ptr<UniqueNumberGenerator> uniqueNumberGenerator );
 
+   void SetBehavior( std::shared_ptr<Behavior> behavior );
    virtual void Tick();
 
 private:

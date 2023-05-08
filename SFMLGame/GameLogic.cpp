@@ -4,9 +4,11 @@
 #include "GameStateProvider.h"
 #include "EventAggregator.h"
 #include "CommandAggregator.h"
+#include "MovePlayerCommandArgs.h"
 #include "GameInputHandler.h"
 #include "Arena.h"
 #include "Player.h"
+#include "Actor.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -30,7 +32,8 @@ GameLogic::GameLogic( shared_ptr<GameConfig> config,
 
 void GameLogic::Start()
 {
-   // MUFFINS: try spawning some actors in here, just for funsies
+   // MUFFINS: spawn the NPC in a random location?
+   _arena->AddActor( _gameData->Npc );
 
    _gameStateProvider->SetState( GameState::Playing );
 }
@@ -45,7 +48,7 @@ void GameLogic::Tick()
    }
 }
 
-void GameLogic::ExecuteCommand( GameCommand command, void* arg )
+void GameLogic::ExecuteCommand( GameCommand command, void* args )
 {
    if ( _gameStateProvider->GetState() == GameState::Loading )
    {
@@ -56,22 +59,22 @@ void GameLogic::ExecuteCommand( GameCommand command, void* arg )
 
    if ( command == GameCommand::MovePlayer )
    {
-      auto direction = *(Direction*)arg;
-      player->SetDirection( direction );
+      auto moveArgs = (MovePlayerCommandArgs*)args;
+      player->SetDirection( moveArgs->direction );
 
-      switch ( direction )
+      switch ( moveArgs->direction )
       {
          case Direction::Left:
-            player->SetVelocityX( -_gameData->PlayerMoveVelocity );
+            player->SetVelocityX( -moveArgs->velocity );
             break;
          case Direction::Up:
-            player->SetVelocityY( -_gameData->PlayerMoveVelocity );
+            player->SetVelocityY( -moveArgs->velocity );
             break;
          case Direction::Right:
-            player->SetVelocityX( _gameData->PlayerMoveVelocity );
+            player->SetVelocityX( moveArgs->velocity );
             break;
          case Direction::Down:
-            player->SetVelocityY( _gameData->PlayerMoveVelocity );
+            player->SetVelocityY( moveArgs->velocity );
             break;
       }
    }

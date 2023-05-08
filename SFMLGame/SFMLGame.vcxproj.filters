@@ -64,6 +64,9 @@
     <Filter Include="Source Files\AI">
       <UniqueIdentifier>{52d520c6-abf3-4360-bb7a-95b7bb3a6859}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AI\mbcasm">
+      <UniqueIdentifier>{3aa4a942-1a0c-44c4-ad23-0aa1ae183324}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -149,6 +152,12 @@
     </ClCompile>
     <ClCompile Include="LoadingStateRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="MbcAsmCompiler.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtilities.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -290,5 +299,25 @@
     <ClInclude Include="LoadingStateInputHandler.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="MbcAsmCollections.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="MbcAsmDefines.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="MbcAsmCompiler.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtilities.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="MovePlayerCommandArgs.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mbcasm\npc.mbcasm">
+      <Filter>Source Files\AI\mbcasm</Filter>
+    </None>
   </ItemGroup>
 </Project>
