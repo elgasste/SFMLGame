@@ -64,7 +64,7 @@ shared_ptr<Game> GameLoader::Load()
    };
 
    auto inputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( config, inputReader, eventAggregator, gameStateInputHandlers, gameStateProvider ) );
-   auto logic = shared_ptr<GameLogic>( new GameLogic( config, gameData, gameStateProvider, eventAggregator, commandAggregator, inputHandler, arena ) );
+   auto logic = shared_ptr<GameLogic>( new GameLogic( config, gameData, random, gameStateProvider, eventAggregator, commandAggregator, inputHandler, arena ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( config, eventAggregator, clock ) );
    auto renderData = shared_ptr<RenderData>( new RenderData( clock, player, gameData->Npc ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( config, clock, window ) );

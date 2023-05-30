@@ -21,5 +21,4 @@ GameData::GameData( shared_ptr<GameConfig> config,
 
    Npc = shared_ptr<Actor>( new Actor( uniqueNumberGenerator ) );
    Npc->SetHitBox( FloatRect( 0, 0, 100, 100 ) );
-   Npc->SetPosition( Vector2f( 0, 0 ) );
 }

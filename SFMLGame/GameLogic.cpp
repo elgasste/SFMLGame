@@ -1,6 +1,7 @@
 #include "GameLogic.h"
 #include "GameConfig.h"
 #include "GameData.h"
+#include "Random.h"
 #include "GameStateProvider.h"
 #include "EventAggregator.h"
 #include "CommandAggregator.h"
@@ -15,6 +16,7 @@ using namespace std;
 
 GameLogic::GameLogic( shared_ptr<GameConfig> config,
                       shared_ptr<GameData> gameData,
+                      shared_ptr<Random> random,
                       shared_ptr<GameStateProvider> gameStateProvider,
                       shared_ptr<EventAggregator> eventAggregator,
                       shared_ptr<CommandAggregator> commandAggregator,
@@ -22,6 +24,7 @@ GameLogic::GameLogic( shared_ptr<GameConfig> config,
                       shared_ptr<Arena> arena ) :
    _config( config ),
    _gameData( gameData ),
+   _random( random ),
    _gameStateProvider( gameStateProvider ),
    _eventAggregator( eventAggregator ),
    _inputHandler( inputHandler ),
@@ -32,7 +35,11 @@ GameLogic::GameLogic( shared_ptr<GameConfig> config,
 
 void GameLogic::Start()
 {
-   // MUFFINS: spawn the NPC in a random location?
+   auto npcXThreshold = _arena->GetBounds().width - _gameData->Npc->GetHitBox().width;
+   auto npcYThreshold = _arena->GetBounds().height - _gameData->Npc->GetHitBox().height;
+   _gameData->Npc->SetPositionX( _random->GetFloat( 0, npcXThreshold ) );
+   _gameData->Npc->SetPositionY( _random->GetFloat( 0, npcYThreshold ) );
+
    _arena->AddActor( _gameData->Npc );
 
    _gameStateProvider->SetState( GameState::Playing );
