@@ -49,6 +49,12 @@
     <Filter Include="Source Files\Game">
       <UniqueIdentifier>{f3f538df-ceef-4189-b6de-bc36df6b74c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Bsp">
+      <UniqueIdentifier>{361768aa-792e-4c45-9f1f-d5f856c35d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bsp">
+      <UniqueIdentifier>{bc224330-b927-456d-9329-20b01b86a6c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -82,6 +88,15 @@
       <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="GameLogic.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="BspRenderer.cpp">
+      <Filter>Source Files\Bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -139,6 +154,27 @@
     </ClInclude>
     <ClInclude Include="GameLogic.h">
       <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Linedef.h">
+      <Filter>Header Files\Bsp</Filter>
+    </ClInclude>
+    <ClInclude Include="Sector.h">
+      <Filter>Header Files\Bsp</Filter>
+    </ClInclude>
+    <ClInclude Include="BspNode.h">
+      <Filter>Header Files\Bsp</Filter>
+    </ClInclude>
+    <ClInclude Include="BspRenderer.h">
+      <Filter>Header Files\Bsp</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Lineseg.h">
+      <Filter>Header Files\Bsp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
