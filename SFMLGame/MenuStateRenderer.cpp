@@ -57,8 +57,8 @@ MenuStateRenderer::MenuStateRenderer( shared_ptr<GameConfig> config,
    auto menuWidth = textWidth + caratWidth + config->MenuCaratOffset;
    auto menuHeight = menu->GetOptionCount() * _lineSpacing;
 
-   _menuX = ( config->ScreenWidth / 2 ) - ( menuWidth / 2 );
-   _menuY = ( config->ScreenHeight / 2 ) - ( menuHeight / 2 );
+   _menuX = ( (float)config->ScreenWidth / 2 ) - ( menuWidth / 2 );
+   _menuY = ( (float)config->ScreenHeight / 2 ) - ( menuHeight / 2 );
 
    _text->setPosition( _menuX + caratWidth + config->MenuCaratOffset, _menuY );
 }
