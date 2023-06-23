@@ -129,7 +129,10 @@ void BspRenderer::CheckLeaf( BspNode* leaf )
 
             // MUFFINS: calculate how long the ray is, and tell the renderer to draw
             // this specific lineseg at this specific pixel column and at this specific
-            // distance (we'll need to calculate these things)
+            // distance (we'll need to calculate these things). will there be a
+            // problem with missing columns, I wonder? we want to cover all 1920
+            // pixel columns, but what if floating point rounding causes issues?
+            // should our FOV segments be ints? how does Doom do it?
 
             rayAngle -= _rayIncrement;
 
@@ -168,5 +171,5 @@ int BspRenderer::CloseFovSegment( int index, float startAngle, float endAngle )
    }
 
    // if we've added an extra segment, try that one next, otherwise continue as normal
-   return _fovSegments.size() > initialSegmentCount ? index - 1 : index;
+   return ( _fovSegments.size() > initialSegmentCount ) ? index - 1 : index;
 }
