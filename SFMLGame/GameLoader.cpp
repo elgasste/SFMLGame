@@ -42,7 +42,7 @@ shared_ptr<Game> GameLoader::Load()
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( config, eventAggregator, clock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( config, clock, window ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer() );
-   auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer() );
+   auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( config, window, clock, menu ) );
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( config, window, diagnosticRenderer, stateController ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Menu, menuStateRenderer );

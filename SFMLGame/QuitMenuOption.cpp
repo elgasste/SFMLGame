@@ -5,7 +5,8 @@ using namespace NAMESPACE;
 using namespace std;
 
 QuitMenuOption::QuitMenuOption( shared_ptr<EventAggregator> eventAggregator ) :
-   _eventAggregator( eventAggregator )
+   _eventAggregator( eventAggregator ),
+   _text( "Quit" )
 {
 }
 

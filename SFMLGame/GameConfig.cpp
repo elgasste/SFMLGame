@@ -39,4 +39,10 @@ GameConfig::GameConfig()
    DiagnosticsCharSize = 24;
    DiagnosticsTextColor = sf::Color::White;
    DiagnosticsBackgroundColor = sf::Color::Blue;
+
+   MenuFont = "consolas.ttf";
+   MenuCharSize = 32;
+   MenuTextColor = sf::Color::White;
+   MenuCaratOffset = 20;
+   MenuCaratBlinkRate = 0.2f;
 }
