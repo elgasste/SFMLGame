@@ -10,6 +10,7 @@
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
 #include "PlayingStateRenderer.h"
+#include "MenuStateRenderer.h"
 #include "SFMLWindow.h"
 #include "GameRenderer.h"
 #include "Game.h"
@@ -33,8 +34,10 @@ shared_ptr<Game> GameLoader::Load()
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( config, eventAggregator, clock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( config, clock, window ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer() );
+   auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer() );
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( config, window, diagnosticRenderer, stateController ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
+   gameRenderer->AddStateRenderer( GameState::Menu, menuStateRenderer );
    auto game = shared_ptr<Game>( new Game( eventAggregator, clock, inputReader, logic, gameRenderer ) );
 
    return game;

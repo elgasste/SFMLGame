@@ -99,6 +99,9 @@
     <ClCompile Include="PlayingStateRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="MenuStateRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -177,6 +180,9 @@
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="PlayingStateRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuStateRenderer.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
