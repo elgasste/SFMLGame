@@ -14,7 +14,7 @@ PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<IInputReader> inp
 
 void PlayingStateInputHandler::HandleInput()
 {
-   if ( _inputReader->WasButtonPressed( Button::Quit ) )
+   if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
       _eventAggregator->RaiseEvent( GameEvent::Quit );
    }

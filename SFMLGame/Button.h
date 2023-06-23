@@ -6,7 +6,7 @@ NAMESPACE_BEGIN
 
 enum class Button
 {
-   Quit = 0,
+   Back = 0,
 
    Diagnostics,
 

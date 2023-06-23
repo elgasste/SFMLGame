@@ -19,7 +19,7 @@ GameConfig::GameConfig()
 
    KeyBindingsMap =
    {
-      { KeyCode::Escape, Button::Quit },
+      { KeyCode::Escape, Button::Back },
       { KeyCode::F12, Button::Diagnostics }
    };
 
