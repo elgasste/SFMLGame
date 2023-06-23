@@ -4,23 +4,17 @@
 
 NAMESPACE_BEGIN
 
-class GameConfig;
-class EventAggregator;
-class IInputReader;
+class GameInputHandler;
 
 class GameLogic
 {
 public:
-   GameLogic( std::shared_ptr<GameConfig> config,
-              std::shared_ptr<EventAggregator> eventAggregator,
-              std::shared_ptr<IInputReader> inputReader );
+   GameLogic( std::shared_ptr<GameInputHandler> inputHandler );
 
    void Tick();
 
 private:
-   std::shared_ptr<GameConfig> _config;
-   std::shared_ptr<EventAggregator> _eventAggregator;
-   std::shared_ptr<IInputReader> _inputReader;
+   std::shared_ptr<GameInputHandler> _inputHandler;
 };
 
 NAMESPACE_END

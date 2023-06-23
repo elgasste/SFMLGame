@@ -4,13 +4,9 @@
 
 NAMESPACE_BEGIN
 
-enum class Button
+enum class GameState
 {
-   Back = 0,
-
-   Diagnostics,
-
-   ButtonCount
+   Playing = 0
 };
 
 NAMESPACE_END

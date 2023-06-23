@@ -165,8 +165,12 @@
     <ClCompile Include="GameLoader.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
+    <ClCompile Include="GameStateController.cpp" />
+    <ClCompile Include="GameInputHandler.cpp" />
     <ClCompile Include="KeyboardInputReader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlayingStateInputHandler.cpp" />
+    <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,11 +185,18 @@
     <ClInclude Include="GameLoader.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameRenderer.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="IEventListener.h" />
+    <ClInclude Include="GameStateController.h" />
+    <ClInclude Include="IGameStateInputHandler.h" />
+    <ClInclude Include="IGameStateRenderer.h" />
     <ClInclude Include="IInputReader.h" />
+    <ClInclude Include="GameInputHandler.h" />
     <ClInclude Include="KeyboardInputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="PlayingStateInputHandler.h" />
+    <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>
