@@ -1,14 +1,14 @@
 #include "PlayingStateInputHandler.h"
 #include "IInputReader.h"
-#include "EventAggregator.h"
+#include "GameStateController.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
 PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<IInputReader> inputReader,
-                                                    shared_ptr<EventAggregator> eventAggregator ) :
+                                                    shared_ptr<GameStateController> stateController ) :
    _inputReader( inputReader ),
-   _eventAggregator( eventAggregator )
+   _stateController( stateController )
 {
 }
 
@@ -16,6 +16,6 @@ void PlayingStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
-      _eventAggregator->RaiseEvent( GameEvent::Quit );
+      _stateController->SetState( GameState::Menu );
    }
 }

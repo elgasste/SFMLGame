@@ -6,20 +6,20 @@
 NAMESPACE_BEGIN
 
 class IInputReader;
-class EventAggregator;
+class GameStateController;
 
 class PlayingStateInputHandler : public IGameStateInputHandler
 {
 public:
    PlayingStateInputHandler( std::shared_ptr<IInputReader> inputReader,
-                             std::shared_ptr<EventAggregator> eventAggregator );
+                             std::shared_ptr<GameStateController> stateController );
 
    // IGameStateInputHandler
    void HandleInput() override;
 
 private:
    std::shared_ptr<IInputReader> _inputReader;
-   std::shared_ptr<EventAggregator> _eventAggregator;
+   std::shared_ptr<GameStateController> _stateController;
 };
 
 NAMESPACE_END
