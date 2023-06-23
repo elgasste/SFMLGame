@@ -40,6 +40,10 @@ GameConfig::GameConfig()
    DiagnosticsTextColor = sf::Color::White;
    DiagnosticsBackgroundColor = sf::Color::Blue;
 
+   MessageFont = "consolas.ttf";
+   MessageCharSize = 32;
+   MessageTextColor = sf::Color::White;
+
    MenuFont = "consolas.ttf";
    MenuCharSize = 32;
    MenuTextColor = sf::Color::White;
