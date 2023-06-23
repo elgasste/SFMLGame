@@ -2,7 +2,6 @@
 
 #include "Common.h"
 #include "IEventListener.h"
-#include "IGameStateController.h"
 #include "GameEvent.h"
 
 NAMESPACE_BEGIN
@@ -13,8 +12,7 @@ class IInputReader;
 class GameLogic;
 class GameRenderer;
 
-class Game : public IEventListener,
-             public IGameStateController
+class Game : public IEventListener
 {
 public:
    Game( std::shared_ptr<EventAggregator> eventAggregator,
@@ -28,10 +26,6 @@ public:
    // IEventListener
    void HandleEvent( GameEvent event ) override;
 
-   // IGameStateController
-   GameState GetState() const { return _state; }
-   void SetState( GameState state ) { _state = state; }
-
 private:
    std::shared_ptr<EventAggregator> _eventAggregator;
    std::shared_ptr<GameClock> _clock;
@@ -39,7 +33,6 @@ private:
    std::shared_ptr<GameLogic> _logic;
    std::shared_ptr<GameRenderer> _renderer;
 
-   GameState _state;
    bool _isRunning;
 };
 
