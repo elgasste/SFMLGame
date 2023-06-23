@@ -169,6 +169,7 @@
     <ClCompile Include="GameInputHandler.cpp" />
     <ClCompile Include="KeyboardInputReader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MenuStateInputHandler.cpp" />
     <ClCompile Include="PlayingStateInputHandler.cpp" />
     <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="KeyboardInputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="MenuStateInputHandler.h" />
     <ClInclude Include="PlayingStateInputHandler.h" />
     <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="SFMLWindow.h" />

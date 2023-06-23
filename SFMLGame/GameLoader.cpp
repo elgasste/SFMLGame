@@ -5,6 +5,7 @@
 #include "KeyboardInputReader.h"
 #include "GameStateController.h"
 #include "PlayingStateInputHandler.h"
+#include "MenuStateInputHandler.h"
 #include "GameInputHandler.h"
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
@@ -24,8 +25,10 @@ shared_ptr<Game> GameLoader::Load()
    auto inputReader = shared_ptr<KeyboardInputReader>( new KeyboardInputReader( config ) );
    auto stateController = make_shared<GameStateController>();
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, eventAggregator ) );
+   auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader ) );
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( config, inputReader, stateController ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
+   gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
    auto logic = shared_ptr<GameLogic>( new GameLogic( gameInputHandler ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( config, eventAggregator, clock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( config, clock, window ) );
