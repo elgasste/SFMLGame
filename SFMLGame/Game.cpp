@@ -18,7 +18,8 @@ Game::Game( shared_ptr<EventAggregator> eventAggregator,
    _inputReader( inputReader ),
    _logic( logic ),
    _renderer( renderer ),
-   _isRunning( false )
+   _isRunning( false ),
+   _state( GameState::Playing )
 {
    _eventAggregator->AddListener( GameEvent::Quit, this );
 }
