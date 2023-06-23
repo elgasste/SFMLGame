@@ -166,7 +166,7 @@
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
     <ClCompile Include="GameStateController.cpp" />
-    <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="GameInputHandler.cpp" />
     <ClCompile Include="KeyboardInputReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayingStateInputHandler.cpp" />
@@ -191,7 +191,7 @@
     <ClInclude Include="IGameStateInputHandler.h" />
     <ClInclude Include="IGameStateRenderer.h" />
     <ClInclude Include="IInputReader.h" />
-    <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="GameInputHandler.h" />
     <ClInclude Include="KeyboardInputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />

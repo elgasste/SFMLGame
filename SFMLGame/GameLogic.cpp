@@ -1,10 +1,10 @@
 #include "GameLogic.h"
-#include "InputHandler.h"
+#include "GameInputHandler.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-GameLogic::GameLogic( std::shared_ptr<InputHandler> inputHandler ) :
+GameLogic::GameLogic( std::shared_ptr<GameInputHandler> inputHandler ) :
    _inputHandler( inputHandler )
 {
 }

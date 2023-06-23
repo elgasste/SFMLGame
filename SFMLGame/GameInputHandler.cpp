@@ -1,4 +1,4 @@
-#include "InputHandler.h"
+#include "GameInputHandler.h"
 #include "GameConfig.h"
 #include "IInputReader.h"
 #include "GameStateController.h"
@@ -7,21 +7,21 @@
 using namespace NAMESPACE;
 using namespace std;
 
-InputHandler::InputHandler( shared_ptr<GameConfig> config,
-                            shared_ptr<IInputReader> inputReader,
-                            shared_ptr<GameStateController> stateController ) :
+GameInputHandler::GameInputHandler( shared_ptr<GameConfig> config,
+                                    shared_ptr<IInputReader> inputReader,
+                                    shared_ptr<GameStateController> stateController ) :
    _config( config ),
    _inputReader( inputReader ),
    _stateController( stateController )
 {
 }
 
-void InputHandler::AddStateInputHandler( GameState state, shared_ptr<IGameStateInputHandler> handler )
+void GameInputHandler::AddStateInputHandler( GameState state, shared_ptr<IGameStateInputHandler> handler )
 {
    _stateInputHandlerMap[state] = handler;
 }
 
-void InputHandler::HandleInput()
+void GameInputHandler::HandleInput()
 {
    _stateInputHandlerMap.at( _stateController->GetState() )->HandleInput();
 
