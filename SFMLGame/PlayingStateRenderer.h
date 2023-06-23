@@ -9,7 +9,7 @@ class PlayingStateRenderer : public IGameStateRenderer
 {
 public:
    // IGameStateRenderer
-   void Render();
+   void Render() override;
 };
 
 NAMESPACE_END
