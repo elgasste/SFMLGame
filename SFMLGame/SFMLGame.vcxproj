@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BackMenuOption.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
     <ClCompile Include="EventAggregator.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -169,11 +170,16 @@
     <ClCompile Include="GameInputHandler.cpp" />
     <ClCompile Include="KeyboardInputReader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MenuStateInputHandler.cpp" />
+    <ClCompile Include="MenuStateRenderer.cpp" />
     <ClCompile Include="PlayingStateInputHandler.cpp" />
     <ClCompile Include="PlayingStateRenderer.cpp" />
+    <ClCompile Include="QuitMenuOption.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BackMenuOption.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
@@ -192,11 +198,16 @@
     <ClInclude Include="IGameStateRenderer.h" />
     <ClInclude Include="IInputReader.h" />
     <ClInclude Include="GameInputHandler.h" />
+    <ClInclude Include="IMenuOption.h" />
     <ClInclude Include="KeyboardInputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="MenuStateInputHandler.h" />
+    <ClInclude Include="MenuStateRenderer.h" />
     <ClInclude Include="PlayingStateInputHandler.h" />
     <ClInclude Include="PlayingStateRenderer.h" />
+    <ClInclude Include="QuitMenuOption.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>

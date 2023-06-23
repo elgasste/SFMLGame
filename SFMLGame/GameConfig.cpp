@@ -20,6 +20,11 @@ GameConfig::GameConfig()
    KeyBindingsMap =
    {
       { KeyCode::Escape, Button::Back },
+      { KeyCode::Return, Button::Action },
+      { KeyCode::Left, Button::Left },
+      { KeyCode::Up, Button::Up },
+      { KeyCode::Right, Button::Right },
+      { KeyCode::Down, Button::Down },
       { KeyCode::F12, Button::Diagnostics }
    };
 
@@ -34,4 +39,14 @@ GameConfig::GameConfig()
    DiagnosticsCharSize = 24;
    DiagnosticsTextColor = sf::Color::White;
    DiagnosticsBackgroundColor = sf::Color::Blue;
+
+   MessageFont = "consolas.ttf";
+   MessageCharSize = 32;
+   MessageTextColor = sf::Color::White;
+
+   MenuFont = "consolas.ttf";
+   MenuCharSize = 32;
+   MenuTextColor = sf::Color::White;
+   MenuCaratOffset = 20;
+   MenuCaratBlinkRate = 0.2f;
 }

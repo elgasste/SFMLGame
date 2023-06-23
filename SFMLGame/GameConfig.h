@@ -39,6 +39,16 @@ public:
    unsigned int DiagnosticsCharSize;
    sf::Color DiagnosticsTextColor;
    sf::Color DiagnosticsBackgroundColor;
+
+   std::string MessageFont;
+   unsigned int MessageCharSize;
+   sf::Color MessageTextColor;
+
+   std::string MenuFont;
+   unsigned int MenuCharSize;
+   sf::Color MenuTextColor;
+   float MenuCaratOffset;
+   float MenuCaratBlinkRate;
 };
 
 NAMESPACE_END
