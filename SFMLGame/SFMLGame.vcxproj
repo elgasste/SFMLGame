@@ -158,7 +158,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BackMenuOption.cpp" />
+    <ClCompile Include="BspRunner.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EventAggregator.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
@@ -168,6 +170,7 @@
     <ClCompile Include="GameRenderer.cpp" />
     <ClCompile Include="GameStateController.cpp" />
     <ClCompile Include="GameInputHandler.cpp" />
+    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="KeyboardInputReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -180,9 +183,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackMenuOption.h" />
+    <ClInclude Include="BspNode.h" />
+    <ClInclude Include="BspRunner.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="EventAggregator.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
@@ -202,13 +208,19 @@
     <ClInclude Include="KeyboardInputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Linedef.h" />
+    <ClInclude Include="Lineseg.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuStateInputHandler.h" />
     <ClInclude Include="MenuStateRenderer.h" />
     <ClInclude Include="PlayingStateInputHandler.h" />
     <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="QuitMenuOption.h" />
+    <ClInclude Include="Range.h" />
+    <ClInclude Include="Sector.h" />
     <ClInclude Include="SFMLWindow.h" />
+    <ClInclude Include="Geometry.h" />
+    <ClInclude Include="Subsector.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

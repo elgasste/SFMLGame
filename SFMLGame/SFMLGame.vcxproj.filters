@@ -55,6 +55,15 @@
     <Filter Include="Source Files\Menu">
       <UniqueIdentifier>{891632fd-cad5-4cbe-85ec-6304429bcddd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Bsp">
+      <UniqueIdentifier>{67d29c6f-42cd-47c3-8a69-40a5ff65d48c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bsp">
+      <UniqueIdentifier>{5cf8f91d-e5bb-4917-a5fd-e4e3e6430d96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DataTypes">
+      <UniqueIdentifier>{fac2720c-ec42-4857-986d-692849e6d9e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -116,6 +125,15 @@
     </ClCompile>
     <ClCompile Include="BackMenuOption.cpp">
       <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="BspRunner.cpp">
+      <Filter>Source Files\Bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +229,33 @@
     </ClInclude>
     <ClInclude Include="BackMenuOption.h">
       <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="BspRunner.h">
+      <Filter>Header Files\Bsp</Filter>
+    </ClInclude>
+    <ClInclude Include="Linedef.h">
+      <Filter>Header Files\DataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Lineseg.h">
+      <Filter>Header Files\DataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="BspNode.h">
+      <Filter>Header Files\Bsp</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Range.h">
+      <Filter>Header Files\DataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Sector.h">
+      <Filter>Header Files\DataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Subsector.h">
+      <Filter>Header Files\DataTypes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
