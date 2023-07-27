@@ -8,6 +8,7 @@
 #include "BackMenuOption.h"
 #include "QuitMenuOption.h"
 #include "Menu.h"
+#include "Entity.h"
 #include "PlayingStateInputHandler.h"
 #include "MenuStateInputHandler.h"
 #include "GameInputHandler.h"
@@ -15,20 +16,17 @@
 #include "DiagnosticsRenderer.h"
 #include "RaycastRenderer.h"
 #include "GameData.h"
+#include "Subsector.h"
+#include "BspRunner.h"
 #include "PlayingStateRenderer.h"
 #include "MenuStateRenderer.h"
 #include "SFMLWindow.h"
 #include "GameRenderer.h"
 #include "Game.h"
 
-// MUFFINS
-#include "Entity.h"
-#include "BspRunner.h"
-#include "Subsector.h"
-
 using namespace NAMESPACE;
 using namespace std;
-using namespace sf; // MUFFINS
+using namespace sf;
 
 shared_ptr<Game> GameLoader::Load() const
 {
@@ -44,9 +42,8 @@ shared_ptr<Game> GameLoader::Load() const
    menu->AddOption( backMenuOption );
    menu->AddOption( quitMenuOption );
    auto player = make_shared<Entity>();
-   // MUFFINS: this should come from GameConfig
-   player->SetPosition( Vector2f( 130, 220 ) );
-   player->SetAngle( RAD_30 );
+   player->SetPosition( gameConfig->DefaultPlayerPosition );
+   player->SetAngle( gameConfig->DefaultPlayerAngle );
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, stateController, player ) );
    auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, stateController, menu ) );
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( renderConfig, inputReader, stateController ) );

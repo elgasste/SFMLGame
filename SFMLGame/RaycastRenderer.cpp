@@ -96,7 +96,7 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
       color.g = (Uint8)max( 0, (int)( color.g - lightAdjustment ) );
       color.b = (Uint8)max( 0, (int)( color.b - lightAdjustment ) );
 
-      _renderColumns[columnIndex].color = lineseg.linedef->color;
+      _renderColumns[columnIndex].color = color;
       _renderColumns[columnIndex + 1].color = color;
       _renderColumns[columnIndex].position.x = (float)i;
       _renderColumns[columnIndex].position.y = ( _gameConfig->ScreenHeight / 2.0f ) - ( projectedWallHeight / 2.0f );

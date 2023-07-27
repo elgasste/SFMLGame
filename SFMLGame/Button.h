@@ -14,6 +14,11 @@ enum class Button
    Right,
    Down,
 
+   Forward,
+   Backward,
+   StrafeLeft,
+   StrafeRight,
+
    Diagnostics,
 
    ButtonCount

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <vector> // MUFFINS
+#include <vector>
 
 #include "Common.h"
-#include "Sector.h" // MUFFINS
-#include "BspNode.h" // MUFFINS
+#include "Sector.h"
+#include "BspNode.h"
 
 NAMESPACE_BEGIN
 
