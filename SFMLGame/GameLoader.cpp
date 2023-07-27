@@ -1,5 +1,6 @@
 #include "GameLoader.h"
 #include "GameConfig.h"
+#include "RenderConfig.h"
 #include "EventAggregator.h"
 #include "GameClock.h"
 #include "KeyboardInputReader.h"
@@ -13,6 +14,7 @@
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
 #include "RaycastRenderer.h"
+#include "GameData.h"
 #include "PlayingStateRenderer.h"
 #include "MenuStateRenderer.h"
 #include "SFMLWindow.h"
@@ -30,43 +32,49 @@ using namespace sf; // MUFFINS
 
 shared_ptr<Game> GameLoader::Load() const
 {
-   auto config = make_shared<GameConfig>();
+   auto gameConfig = make_shared<GameConfig>();
+   auto renderConfig = shared_ptr<RenderConfig>( new RenderConfig( gameConfig ) );
    auto eventAggregator = make_shared<EventAggregator>();
-   auto clock = shared_ptr<GameClock>( new GameClock( config ) );
-   auto inputReader = shared_ptr<KeyboardInputReader>( new KeyboardInputReader( config ) );
+   auto clock = shared_ptr<GameClock>( new GameClock( gameConfig ) );
+   auto inputReader = shared_ptr<KeyboardInputReader>( new KeyboardInputReader( gameConfig ) );
    auto stateController = make_shared<GameStateController>();
    auto backMenuOption = shared_ptr<BackMenuOption>( new BackMenuOption( stateController ) );
    auto quitMenuOption = shared_ptr<QuitMenuOption>( new QuitMenuOption( eventAggregator ) );
    auto menu = make_shared<Menu>();
    menu->AddOption( backMenuOption );
    menu->AddOption( quitMenuOption );
-   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, stateController ) );
-   auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, stateController, menu ) );
-   auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( config, inputReader, stateController ) );
-   gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
-   gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
    auto player = make_shared<Entity>();
-   // MUFFINS: this should come from a file, there should be a starting point for every map
+   // MUFFINS: this should come from GameConfig
    player->SetPosition( Vector2f( 130, 220 ) );
    player->SetAngle( RAD_30 );
+   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, stateController, player ) );
+   auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, stateController, menu ) );
+   auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( gameConfig, inputReader, stateController ) );
+   gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
+   gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
    auto logic = shared_ptr<GameLogic>( new GameLogic( gameInputHandler ) );
-   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( config, eventAggregator, clock ) );
-   auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( config, clock, window ) );
-   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( config, player, window ) );
-   auto sectors = LoadSectors();
-   auto bspRootNode = LoadBspTree( sectors );
-   auto bspRunner = shared_ptr<BspRunner>( new BspRunner( config, player, raycastRenderer, bspRootNode ) );
-   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( config, window, bspRunner ) );
-   auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( config, window, clock, menu ) );
-   auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( config, window, diagnosticRenderer, stateController ) );
+   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( gameConfig, eventAggregator, clock ) );
+   auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( gameConfig, clock, window ) );
+   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, player, window ) );
+   auto gameData = LoadGameData();
+   auto bspRootNode = LoadBspTree( gameData->GetSectors() );
+   auto bspRunner = shared_ptr<BspRunner>( new BspRunner( gameConfig, renderConfig, player, raycastRenderer, bspRootNode ) );
+   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( gameConfig, window, bspRunner ) );
+   auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( gameConfig, window, clock, menu ) );
+   auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( gameConfig, window, diagnosticRenderer, stateController ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Menu, menuStateRenderer );
-   auto game = shared_ptr<Game>( new Game( eventAggregator, clock, inputReader, logic, gameRenderer ) );
+   auto game = shared_ptr<Game>( new Game( gameData, eventAggregator, clock, inputReader, logic, gameRenderer ) );
 
    return game;
 }
 
-// MUFFINS: this should come from a file
+shared_ptr<GameData> GameLoader::LoadGameData() const
+{
+   auto gameData = shared_ptr<GameData>( new GameData( LoadSectors() ) );
+   return gameData;
+}
+
 vector<Sector> GameLoader::LoadSectors() const
 {
    vector<Sector> sectors;
@@ -140,7 +148,6 @@ vector<Sector> GameLoader::LoadSectors() const
    return sectors;
 }
 
-// MUFFINS: this should come from a file
 BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
 {
    // all subsectors and linesegs
@@ -269,36 +276,45 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    // build the tree (root node is C5)
    auto rootNode = new BspNode;
    rootNode->isLeaf = false;
+   rootNode->parent = nullptr;
    rootNode->linedef = &sectors[5].linedefs[2];
+   rootNode->subsector = nullptr;
 
    auto nodeG1 = new BspNode;
    nodeG1->isLeaf = false;
    nodeG1->parent = rootNode;
    rootNode->rightChild = nodeG1;
    nodeG1->linedef = &sectors[1].linedefs[6];
+   nodeG1->subsector = nullptr;
 
    auto nodeH1 = new BspNode;
    nodeH1->isLeaf = false;
    nodeH1->parent = nodeG1;
    nodeG1->rightChild = nodeH1;
    nodeH1->linedef = &sectors[1].linedefs[7];
+   nodeH1->subsector = nullptr;
 
    auto nodeL0 = new BspNode;
    nodeL0->isLeaf = false;
    nodeL0->parent = nodeH1;
    nodeH1->rightChild = nodeL0;
    nodeL0->linedef = &sectors[0].linedefs[11];
+   nodeL0->subsector = nullptr;
 
    auto nodeF1 = new BspNode;
    nodeF1->isLeaf = false;
    nodeF1->parent = nodeL0;
    nodeL0->rightChild = nodeF1;
    nodeF1->linedef = &sectors[1].linedefs[5];
+   nodeF1->subsector = nullptr;
 
    auto node1 = new BspNode;
    node1->isLeaf = true;
    node1->parent = nodeF1;
    nodeF1->rightChild = node1;
+   node1->leftChild = nullptr;
+   node1->rightChild = nullptr;
+   node1->linedef = nullptr;
    node1->subsector = subsector1;
 
    auto nodeE1 = new BspNode;
@@ -306,17 +322,24 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeE1->parent = nodeF1;
    nodeF1->leftChild = nodeE1;
    nodeE1->linedef = &sectors[1].linedefs[4];
+   nodeE1->subsector = nullptr;
 
    auto node2 = new BspNode;
    node2->isLeaf = true;
    node2->parent = nodeE1;
    nodeE1->rightChild = node2;
+   node2->leftChild = nullptr;
+   node2->rightChild = nullptr;
+   node2->linedef = nullptr;
    node2->subsector = subsector2;
 
    auto node3 = new BspNode;
    node3->isLeaf = true;
    node3->parent = nodeE1;
    nodeE1->leftChild = node3;
+   node3->leftChild = nullptr;
+   node3->rightChild = nullptr;
+   node3->linedef = nullptr;
    node3->subsector = subsector3;
 
    auto nodeK0 = new BspNode;
@@ -324,17 +347,24 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeK0->parent = nodeL0;
    nodeL0->leftChild = nodeK0;
    nodeK0->linedef = &sectors[0].linedefs[10];
+   nodeK0->subsector = nullptr;
 
    auto node4 = new BspNode;
    node4->isLeaf = true;
    node4->parent = nodeK0;
    nodeK0->rightChild = node4;
+   node4->leftChild = nullptr;
+   node4->rightChild = nullptr;
+   node4->linedef = nullptr;
    node4->subsector = subsector4;
 
    auto node5 = new BspNode;
    node5->isLeaf = true;
    node5->parent = nodeK0;
    nodeK0->leftChild = node5;
+   node5->leftChild = nullptr;
+   node5->rightChild = nullptr;
+   node5->linedef = nullptr;
    node5->subsector = subsector5;
 
    auto nodeI1 = new BspNode;
@@ -342,29 +372,40 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeI1->parent = nodeH1;
    nodeH1->leftChild = nodeI1;
    nodeI1->linedef = &sectors[1].linedefs[8];
+   nodeI1->subsector = nullptr;
 
    auto nodeJ0 = new BspNode;
    nodeJ0->isLeaf = false;
    nodeJ0->parent = nodeI1;
    nodeI1->rightChild = nodeJ0;
    nodeJ0->linedef = &sectors[0].linedefs[9];
+   nodeJ0->subsector = nullptr;
 
    auto node6 = new BspNode;
    node6->isLeaf = true;
    node6->parent = nodeJ0;
    nodeJ0->rightChild = node6;
+   node6->leftChild = nullptr;
+   node6->rightChild = nullptr;
+   node6->linedef = nullptr;
    node6->subsector = subsector6;
 
    auto node7 = new BspNode;
    node7->isLeaf = true;
    node7->parent = nodeJ0;
    nodeJ0->leftChild = node7;
+   node7->leftChild = nullptr;
+   node7->rightChild = nullptr;
+   node7->linedef = nullptr;
    node7->subsector = subsector7;
 
    auto node8 = new BspNode;
    node8->isLeaf = true;
    node8->parent = nodeI1;
    nodeI1->leftChild = node8;
+   node8->leftChild = nullptr;
+   node8->rightChild = nullptr;
+   node8->linedef = nullptr;
    node8->subsector = subsector8;
 
    auto nodeB1 = new BspNode;
@@ -372,23 +413,31 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeB1->parent = nodeG1;
    nodeG1->leftChild = nodeB1;
    nodeB1->linedef = &sectors[1].linedefs[1];
+   nodeB1->subsector = nullptr;
 
    auto nodeD1 = new BspNode;
    nodeD1->isLeaf = false;
    nodeD1->parent = nodeB1;
    nodeB1->rightChild = nodeD1;
    nodeD1->linedef = &sectors[1].linedefs[3];
+   nodeD1->subsector = nullptr;
 
    auto node9 = new BspNode;
    node9->isLeaf = true;
    node9->parent = nodeD1;
    nodeD1->rightChild = node9;
+   node9->leftChild = nullptr;
+   node9->rightChild = nullptr;
+   node9->linedef = nullptr;
    node9->subsector = subsector9;
 
    auto node10 = new BspNode;
    node10->isLeaf = true;
    node10->parent = nodeD1;
    nodeD1->leftChild = node10;
+   node10->leftChild = nullptr;
+   node10->rightChild = nullptr;
+   node10->linedef = nullptr;
    node10->subsector = subsector10;
 
    auto nodeA1 = new BspNode;
@@ -396,17 +445,24 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeA1->parent = nodeB1;
    nodeB1->leftChild = nodeA1;
    nodeA1->linedef = &sectors[1].linedefs[0];
+   nodeA1->subsector = nullptr;
 
    auto node11 = new BspNode;
    node11->isLeaf = true;
    node11->parent = nodeA1;
    nodeA1->rightChild = node11;
+   node11->leftChild = nullptr;
+   node11->rightChild = nullptr;
+   node11->linedef = nullptr;
    node11->subsector = subsector11;
 
    auto node12 = new BspNode;
    node12->isLeaf = true;
    node12->parent = nodeA1;
    nodeA1->leftChild = node12;
+   node12->leftChild = nullptr;
+   node12->rightChild = nullptr;
+   node12->linedef = nullptr;
    node12->subsector = subsector12;
 
    auto nodeC4 = new BspNode;
@@ -414,29 +470,38 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeC4->parent = rootNode;
    rootNode->leftChild = nodeC4;
    nodeC4->linedef = &sectors[4].linedefs[2];
+   nodeC4->subsector = nullptr;
 
    auto nodeG5 = new BspNode;
    nodeG5->isLeaf = false;
    nodeG5->parent = nodeC4;
    nodeC4->rightChild = nodeG5;
    nodeG5->linedef = &sectors[5].linedefs[6];
+   nodeG5->subsector = nullptr;
 
    auto nodeD0 = new BspNode;
    nodeD0->isLeaf = false;
    nodeD0->parent = nodeG5;
    nodeG5->rightChild = nodeD0;
    nodeD0->linedef = &sectors[0].linedefs[3];
+   nodeD0->subsector = nullptr;
 
    auto node13 = new BspNode;
    node13->isLeaf = true;
    node13->parent = nodeD0;
    nodeD0->rightChild = node13;
+   node13->leftChild = nullptr;
+   node13->rightChild = nullptr;
+   node13->linedef = nullptr;
    node13->subsector = subsector13;
 
    auto node14 = new BspNode;
    node14->isLeaf = true;
    node14->parent = nodeD0;
    nodeD0->leftChild = node14;
+   node14->leftChild = nullptr;
+   node14->rightChild = nullptr;
+   node14->linedef = nullptr;
    node14->subsector = subsector14;
 
    auto nodeH5 = new BspNode;
@@ -444,11 +509,15 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeH5->parent = nodeG5;
    nodeG5->leftChild = nodeH5;
    nodeH5->linedef = &sectors[5].linedefs[7];
+   nodeH5->subsector = nullptr;
 
    auto node15 = new BspNode;
    node15->isLeaf = true;
    node15->parent = nodeH5;
    nodeH5->rightChild = node15;
+   node15->leftChild = nullptr;
+   node15->rightChild = nullptr;
+   node15->linedef = nullptr;
    node15->subsector = subsector15;
 
    auto nodeA5 = new BspNode;
@@ -456,11 +525,15 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeA5->parent = nodeH5;
    nodeH5->leftChild = nodeA5;
    nodeA5->linedef = &sectors[5].linedefs[0];
+   nodeA5->subsector = nullptr;
 
    auto node16 = new BspNode;
    node16->isLeaf = true;
    node16->parent = nodeH5;
    nodeA5->rightChild = node16;
+   node16->leftChild = nullptr;
+   node16->rightChild = nullptr;
+   node16->linedef = nullptr;
    node16->subsector = subsector16;
 
    auto nodeB5 = new BspNode;
@@ -468,11 +541,15 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeB5->parent = nodeA5;
    nodeA5->leftChild = nodeB5;
    nodeB5->linedef = &sectors[5].linedefs[1];
+   nodeB5->subsector = nullptr;
 
    auto node17 = new BspNode;
    node17->isLeaf = true;
    node17->parent = nodeB5;
    nodeB5->rightChild = node17;
+   node17->leftChild = nullptr;
+   node17->rightChild = nullptr;
+   node17->linedef = nullptr;
    node17->subsector = subsector17;
 
    auto nodeD5 = new BspNode;
@@ -480,11 +557,15 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeD5->parent = nodeB5;
    nodeB5->leftChild = nodeD5;
    nodeD5->linedef = &sectors[5].linedefs[3];
+   nodeD5->subsector = nullptr;
 
    auto node18 = new BspNode;
    node18->isLeaf = true;
    node18->parent = nodeD5;
    nodeD5->rightChild = node18;
+   node18->leftChild = nullptr;
+   node18->rightChild = nullptr;
+   node18->linedef = nullptr;
    node18->subsector = subsector18;
 
    auto nodeE5 = new BspNode;
@@ -492,17 +573,24 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeE5->parent = nodeD5;
    nodeD5->leftChild = nodeE5;
    nodeE5->linedef = &sectors[5].linedefs[4];
+   nodeE5->subsector = nullptr;
 
    auto node19 = new BspNode;
    node19->isLeaf = true;
    node19->parent = nodeE5;
    nodeE5->rightChild = node19;
+   node19->leftChild = nullptr;
+   node19->rightChild = nullptr;
+   node19->linedef = nullptr;
    node19->subsector = subsector19;
 
    auto node20 = new BspNode;
    node20->isLeaf = true;
    node20->parent = nodeE5;
    nodeE5->leftChild = node20;
+   node20->leftChild = nullptr;
+   node20->rightChild = nullptr;
+   node20->linedef = nullptr;
    node20->subsector = subsector20;
 
    auto nodeD2 = new BspNode;
@@ -510,29 +598,38 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeD2->parent = nodeC4;
    nodeC4->leftChild = nodeD2;
    nodeD2->linedef = &sectors[2].linedefs[3];
+   nodeD2->subsector = nullptr;
 
    auto nodeC3 = new BspNode;
    nodeC3->isLeaf = false;
    nodeC3->parent = nodeD2;
    nodeD2->rightChild = nodeC3;
    nodeC3->linedef = &sectors[3].linedefs[2];
+   nodeC3->subsector = nullptr;
 
    auto nodeC0 = new BspNode;
    nodeC0->isLeaf = false;
    nodeC0->parent = nodeC3;
    nodeC3->rightChild = nodeC0;
    nodeC0->linedef = &sectors[0].linedefs[2];
+   nodeC0->subsector = nullptr;
 
    auto node21 = new BspNode;
    node21->isLeaf = true;
    node21->parent = nodeC0;
    nodeC0->rightChild = node21;
+   node21->leftChild = nullptr;
+   node21->rightChild = nullptr;
+   node21->linedef = nullptr;
    node21->subsector = subsector21;
 
    auto node22 = new BspNode;
    node22->isLeaf = true;
    node22->parent = nodeC0;
    nodeC0->leftChild = node22;
+   node22->leftChild = nullptr;
+   node22->rightChild = nullptr;
+   node22->linedef = nullptr;
    node22->subsector = subsector22;
 
    auto nodeB3 = new BspNode;
@@ -540,11 +637,15 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeB3->parent = nodeC3;
    nodeC3->leftChild = nodeB3;
    nodeB3->linedef = &sectors[3].linedefs[1];
+   nodeB3->subsector = nullptr;
 
    auto node23 = new BspNode;
    node23->isLeaf = true;
    node23->parent = nodeB3;
    nodeB3->rightChild = node23;
+   node23->leftChild = nullptr;
+   node23->rightChild = nullptr;
+   node23->linedef = nullptr;
    node23->subsector = subsector23;
 
    auto nodeA3 = new BspNode;
@@ -552,17 +653,24 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeA3->parent = nodeB3;
    nodeB3->leftChild = nodeA3;
    nodeA3->linedef = &sectors[3].linedefs[0];
+   nodeA3->subsector = nullptr;
 
    auto node24 = new BspNode;
    node24->isLeaf = true;
    node24->parent = nodeA3;
    nodeA3->rightChild = node24;
+   node24->leftChild = nullptr;
+   node24->rightChild = nullptr;
+   node24->linedef = nullptr;
    node24->subsector = subsector24;
 
    auto node25 = new BspNode;
    node25->isLeaf = true;
    node25->parent = nodeA3;
    nodeA3->leftChild = node25;
+   node25->leftChild = nullptr;
+   node25->rightChild = nullptr;
+   node25->linedef = nullptr;
    node25->subsector = subsector25;
 
    auto nodeC2 = new BspNode;
@@ -570,17 +678,22 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeC2->parent = nodeD2;
    nodeD2->leftChild = nodeC2;
    nodeC2->linedef = &sectors[2].linedefs[2];
+   nodeC2->subsector = nullptr;
 
    auto nodeE4 = new BspNode;
    nodeE4->isLeaf = false;
    nodeE4->parent = nodeC2;
    nodeC2->rightChild = nodeE4;
    nodeE4->linedef = &sectors[4].linedefs[4];
+   nodeE4->subsector = nullptr;
 
    auto node26 = new BspNode;
    node26->isLeaf = true;
    node26->parent = nodeE4;
    nodeE4->rightChild = node26;
+   node26->leftChild = nullptr;
+   node26->rightChild = nullptr;
+   node26->linedef = nullptr;
    node26->subsector = subsector26;
 
    auto nodeB4 = new BspNode;
@@ -588,17 +701,24 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeB4->parent = nodeE4;
    nodeE4->leftChild = nodeB4;
    nodeB4->linedef = &sectors[4].linedefs[1];
+   nodeB4->subsector = nullptr;
 
    auto node27 = new BspNode;
    node27->isLeaf = true;
    node27->parent = nodeB4;
    nodeB4->rightChild = node27;
+   node27->leftChild = nullptr;
+   node27->rightChild = nullptr;
+   node27->linedef = nullptr;
    node27->subsector = subsector27;
 
    auto node28 = new BspNode;
    node28->isLeaf = true;
    node28->parent = nodeB4;
    nodeB4->leftChild = node28;
+   node28->leftChild = nullptr;
+   node28->rightChild = nullptr;
+   node28->linedef = nullptr;
    node28->subsector = subsector28;
 
    auto nodeB2 = new BspNode;
@@ -606,17 +726,24 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeB2->parent = nodeC2;
    nodeC2->leftChild = nodeB2;
    nodeB2->linedef = &sectors[2].linedefs[1];
+   nodeB2->subsector = nullptr;
 
    auto node29 = new BspNode;
    node29->isLeaf = true;
    node29->parent = nodeB2;
    nodeB2->rightChild = node29;
+   node29->leftChild = nullptr;
+   node29->rightChild = nullptr;
+   node29->linedef = nullptr;
    node29->subsector = subsector29;
 
    auto node30 = new BspNode;
    node30->isLeaf = true;
    node30->parent = nodeB2;
    nodeB2->leftChild = node30;
+   node30->leftChild = nullptr;
+   node30->rightChild = nullptr;
+   node30->linedef = nullptr;
    node30->subsector = subsector30;
 
    return rootNode;

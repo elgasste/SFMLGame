@@ -8,13 +8,15 @@
 NAMESPACE_BEGIN
 
 class GameConfig;
+class RenderConfig;
 class Entity;
 class SFMLWindow;
 
 class RaycastRenderer
 {
 public:
-   RaycastRenderer( std::shared_ptr<GameConfig> config,
+   RaycastRenderer( std::shared_ptr<GameConfig> gameConfig,
+                    std::shared_ptr<RenderConfig> renderConfig,
                     std::shared_ptr<Entity> player,
                     std::shared_ptr<SFMLWindow> window );
 
@@ -25,7 +27,8 @@ public:
                        int endColumn );
 
 private:
-   std::shared_ptr<GameConfig> _config;
+   std::shared_ptr<GameConfig> _gameConfig;
+   std::shared_ptr<RenderConfig> _renderConfig;
    std::shared_ptr<Entity> _player;
    std::shared_ptr<SFMLWindow> _window;
 
@@ -33,9 +36,6 @@ private:
    sf::Vertex _renderColumns[1920 * 2];
    sf::Vertex _ceilingRenderRect[4];
    sf::Vertex _floorRenderRect[4];
-
-   float _wallHeight;
-   float _projectionPlaneDelta;
 };
 
 NAMESPACE_END

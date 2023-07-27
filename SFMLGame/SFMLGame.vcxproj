@@ -165,6 +165,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameConfig.cpp" />
+    <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameLoader.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
@@ -180,6 +181,7 @@
     <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="QuitMenuOption.cpp" />
     <ClCompile Include="RaycastRenderer.cpp" />
+    <ClCompile Include="RenderConfig.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +196,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameConfig.h" />
+    <ClInclude Include="GameData.h" />
     <ClInclude Include="GameEvent.h" />
     <ClInclude Include="GameLoader.h" />
     <ClInclude Include="GameLogic.h" />
@@ -219,6 +222,7 @@
     <ClInclude Include="QuitMenuOption.h" />
     <ClInclude Include="Range.h" />
     <ClInclude Include="RaycastRenderer.h" />
+    <ClInclude Include="RenderConfig.h" />
     <ClInclude Include="Sector.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="Geometry.h" />

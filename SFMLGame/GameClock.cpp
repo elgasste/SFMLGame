@@ -9,7 +9,7 @@
 using namespace NAMESPACE;
 using namespace std;
 
-GameClock::GameClock( shared_ptr<GameConfig> config ) :
+GameClock::GameClock( shared_ptr<GameConfig> gameConfig ) :
    _totalFrameCount( 0 ),
    _lagFrameCount( 0 ),
    _absoluteStartTimeNano( 0 ),
@@ -18,8 +18,8 @@ GameClock::GameClock( shared_ptr<GameConfig> config ) :
    _totalDurationNano( 0 ),
    _wasLagFrame( false )
 {
-   _minNanoSecondsPerFrame = (long long)( ( 1 / (double)config->MaximumFrameRate ) * 1'000'000'000 );
-   _maxNanoSecondsPerFrame = (long long)( ( 1 / (double)config->MinimumFrameRate ) * 1'000'000'000 );
+   _minNanoSecondsPerFrame = (long long)( ( 1 / (double)gameConfig->MaximumFrameRate ) * 1'000'000'000 );
+   _maxNanoSecondsPerFrame = (long long)( ( 1 / (double)gameConfig->MinimumFrameRate ) * 1'000'000'000 );
 
    // According to documentation, this sets the system's minimum clock resolution to
    // 1 millisecond. Without it, higher frame rates have unpredictable results in Windows.

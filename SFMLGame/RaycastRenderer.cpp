@@ -4,6 +4,7 @@
 
 #include "RaycastRenderer.h"
 #include "GameConfig.h"
+#include "RenderConfig.h"
 #include "Entity.h"
 #include "SFMLWindow.h"
 #include "Geometry.h"
@@ -12,19 +13,17 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> config,
+RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
+                                  shared_ptr<RenderConfig> renderConfig,
                                   shared_ptr<Entity> player,
                                   shared_ptr<SFMLWindow> window ) :
-   _config( config ),
+   _gameConfig( gameConfig ),
+   _renderConfig( renderConfig ),
    _player( player ),
    _window( window )
 {
-   // MUFFINS: these should go in a render config somewhere
-   _wallHeight = 100.0f;
-   _projectionPlaneDelta = config->ScreenHeight / 1.5f;
-
-   auto screenWidth = (float)config->ScreenWidth;
-   auto screenHeight = (float)config->ScreenHeight;
+   auto screenWidth = (float)gameConfig->ScreenWidth;
+   auto screenHeight = (float)gameConfig->ScreenHeight;
 
    _ceilingRenderRect[0] = Vertex( Vector2f( 0, 0 ), Color( 128, 128, 128 ) );
    _ceilingRenderRect[1] = Vertex( Vector2f( screenWidth, 0 ), Color( 128, 128, 128 ) );
@@ -50,35 +49,56 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
 {
    auto playerPosition = _player->GetPosition();
    auto playerAngle = _player->GetAngle();
+   static Vector2f pIntersect;
 
-   for ( int i = startColumn; i <= endColumn; i++ )
+   for ( int i = startColumn, j = 0; i <= endColumn; i++, j++ )
    {
-      Vector2f pIntersect;
-      auto doesIntersect = Geometry::RayIntersectsLine( playerPosition, drawStartAngle, lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y, &pIntersect );
+      auto drawAngle = drawStartAngle - ( j * _renderConfig->FovAngleIncrement );
+      NORMALIZE_ANGLE( drawAngle );
+      auto doesIntersect = Geometry::RayIntersectsLine( playerPosition, drawAngle, lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y, &pIntersect );
 
-      // MUFFINS: what should we do if this doesn't work?
-      // 
-      // apparently this returns false on the far left edge, so... what if we passed in the far left intersection point as a parameter?
-      // I don't know why this doesn't work though, that's probably a bigger question.
-      assert( doesIntersect );
+      // this often happens around the edge of a lineseg, in which case we can just draw the edge
+      if ( !doesIntersect )
+      {
+         if ( i == startColumn || i == startColumn + 1 )
+         {
+            pIntersect.x = lineseg.start.x;
+            pIntersect.y = lineseg.start.y;
+         }
+         else if ( i == endColumn || i == endColumn - 1 )
+         {
+            pIntersect.x = lineseg.end.x;
+            pIntersect.y = lineseg.end.y;
+         }
+         else
+         {
+            // if we're not at the edge of a lineseg, something's wrong
+            assert( doesIntersect );
+         }
+      }
 
       // from the Wolfenstein 3D book. it's supposed to fix fish-eye, but sometimes it seems to cause reverse-fish-eye
       //
-      // MUFFINS: move this into the Geometry utility
+      // MUFFINS: move this into the Geometry utility (as soon as you figure out what it's called)
       auto rayLength = ( ( pIntersect.x - playerPosition.x ) * cosf( playerAngle ) ) - ( ( pIntersect.y - playerPosition.y ) * sinf( playerAngle ) );
 
       // this uses the formula ProjectedWallHeight = ( ActualWallHeight / DistanceToWall ) * DistanceToProjectionPlane
-      auto projectedWallHeight = ( ( _wallHeight / rayLength ) * _projectionPlaneDelta );
+      auto projectedWallHeight = ( ( _renderConfig->WallHeight / rayLength ) * _renderConfig->ProjectionPlaneDelta );
 
       auto columnIndex = i * 2;
+
       auto color = lineseg.linedef->color;
+      auto lightAdjustment = ( rayLength == 0.0f ) ? 0.0f : min( rayLength / _renderConfig->LightingScalar, 255.0f );
+      color.r = (Uint8)max( 0, (int)( color.r - lightAdjustment ) );
+      color.g = (Uint8)max( 0, (int)( color.g - lightAdjustment ) );
+      color.b = (Uint8)max( 0, (int)( color.b - lightAdjustment ) );
 
       _renderColumns[columnIndex].color = lineseg.linedef->color;
       _renderColumns[columnIndex + 1].color = color;
       _renderColumns[columnIndex].position.x = (float)i;
-      _renderColumns[columnIndex].position.y = ( _config->ScreenHeight / 2.0f ) - ( projectedWallHeight / 2.0f );
+      _renderColumns[columnIndex].position.y = ( _gameConfig->ScreenHeight / 2.0f ) - ( projectedWallHeight / 2.0f );
       _renderColumns[columnIndex + 1].position.x = (float)i;
-      _renderColumns[columnIndex + 1].position.y = ( _config->ScreenHeight / 2.0f ) + ( projectedWallHeight / 2.0f );
+      _renderColumns[columnIndex + 1].position.y = ( _gameConfig->ScreenHeight / 2.0f ) + ( projectedWallHeight / 2.0f );
 
       _window->Draw( _renderColumns + columnIndex, 2, Lines );
    }

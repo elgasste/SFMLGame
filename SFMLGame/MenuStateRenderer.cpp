@@ -11,11 +11,11 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-MenuStateRenderer::MenuStateRenderer( shared_ptr<GameConfig> config,
+MenuStateRenderer::MenuStateRenderer( shared_ptr<GameConfig> gameConfig,
                                       shared_ptr<SFMLWindow> window,
                                       shared_ptr<GameClock> clock,
                                       shared_ptr<Menu> menu ) :
-   _config( config ),
+   _gameConfig( gameConfig ),
    _window( window ),
    _clock( clock ),
    _menu( menu ),
@@ -23,17 +23,17 @@ MenuStateRenderer::MenuStateRenderer( shared_ptr<GameConfig> config,
    _showCarat( true )
 {
    _font = make_shared<Font>();
-   _font->loadFromFile( config->MenuFont );
+   _font->loadFromFile( gameConfig->MenuFont );
 
    _text = make_shared<Text>();
    _text->setFont( *_font );
-   _text->setCharacterSize( config->MenuCharSize );
-   _text->setFillColor( config->MenuTextColor );
+   _text->setCharacterSize( gameConfig->MenuCharSize );
+   _text->setFillColor( gameConfig->MenuTextColor );
 
    _carat = make_shared<Text>();
    _carat->setFont( *_font );
-   _carat->setCharacterSize( config->MenuCharSize );
-   _carat->setFillColor( config->MenuTextColor );
+   _carat->setCharacterSize( gameConfig->MenuCharSize );
+   _carat->setFillColor( gameConfig->MenuTextColor );
    _carat->setString( ">" );
 
    _lineSpacing = _font->getLineSpacing( _text->getCharacterSize() );
@@ -54,20 +54,20 @@ MenuStateRenderer::MenuStateRenderer( shared_ptr<GameConfig> config,
 
    auto textWidth = _text->getGlobalBounds().width;
    auto caratWidth = _carat->getGlobalBounds().width;
-   auto menuWidth = textWidth + caratWidth + config->MenuCaratOffset;
+   auto menuWidth = textWidth + caratWidth + gameConfig->MenuCaratOffset;
    auto menuHeight = menu->GetOptionCount() * _lineSpacing;
 
-   _menuX = ( (float)config->ScreenWidth / 2 ) - ( menuWidth / 2 );
-   _menuY = ( (float)config->ScreenHeight / 2 ) - ( menuHeight / 2 );
+   _menuX = ( (float)gameConfig->ScreenWidth / 2 ) - ( menuWidth / 2 );
+   _menuY = ( (float)gameConfig->ScreenHeight / 2 ) - ( menuHeight / 2 );
 
-   _text->setPosition( _menuX + caratWidth + config->MenuCaratOffset, _menuY );
+   _text->setPosition( _menuX + caratWidth + gameConfig->MenuCaratOffset, _menuY );
 }
 
 void MenuStateRenderer::Render()
 {
    _elapsedSeconds += _clock->GetFrameSeconds();
 
-   if ( _elapsedSeconds >= _config->MenuCaratBlinkRate )
+   if ( _elapsedSeconds >= _gameConfig->MenuCaratBlinkRate )
    {
       _elapsedSeconds = 0;
       _showCarat = !_showCarat;

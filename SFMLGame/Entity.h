@@ -15,7 +15,7 @@ public:
    void SetPosition( sf::Vector2f position ) { _position = position; }
 
    float GetAngle() { return _angle; }
-   void SetAngle( float angle ) { _angle = angle; }
+   void SetAngle( float angle );
 
 private:
    sf::Vector2f _position;

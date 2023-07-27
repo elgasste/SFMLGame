@@ -11,34 +11,34 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-DiagnosticsRenderer::DiagnosticsRenderer( shared_ptr<GameConfig> config,
+DiagnosticsRenderer::DiagnosticsRenderer( shared_ptr<GameConfig> gameConfig,
                                           shared_ptr<GameClock> clock,
                                           shared_ptr<SFMLWindow> window ) :
-   _config( config ),
+   _gameConfig( gameConfig ),
    _clock( clock ),
    _window( window )
 {
    _font = make_shared<Font>();
-   _font->loadFromFile( config->DiagnosticsFont );
+   _font->loadFromFile( gameConfig->DiagnosticsFont );
 
    _text = make_shared<Text>();
    _text->setFont( *_font );
-   _text->setCharacterSize( config->DiagnosticsCharSize );
-   _text->setFillColor( config->DiagnosticsTextColor );
+   _text->setCharacterSize( gameConfig->DiagnosticsCharSize );
+   _text->setFillColor( gameConfig->DiagnosticsTextColor );
 
-   _text->setPosition( config->DiagnosticsXPosition + config->DiagnosticsTextMargin,
-                       config->DiagnosticsYPosition + config->DiagnosticsTextMargin );
+   _text->setPosition( gameConfig->DiagnosticsXPosition + gameConfig->DiagnosticsTextMargin,
+                       gameConfig->DiagnosticsYPosition + gameConfig->DiagnosticsTextMargin );
 
-   _background = shared_ptr<sf::RectangleShape>( new RectangleShape( { config->DiagnosticsWidth, config->DiagnosticsHeight } ) );
-   _background->setFillColor( config->DiagnosticsBackgroundColor );
-   _background->setPosition( config->DiagnosticsXPosition, config->DiagnosticsYPosition );
+   _background = shared_ptr<sf::RectangleShape>( new RectangleShape( { gameConfig->DiagnosticsWidth, gameConfig->DiagnosticsHeight } ) );
+   _background->setFillColor( gameConfig->DiagnosticsBackgroundColor );
+   _background->setPosition( gameConfig->DiagnosticsXPosition, gameConfig->DiagnosticsYPosition );
 }
 
 void DiagnosticsRenderer::Render()
 {
    string text;
 
-   text += format( "Maximum Frame Rate: {}", _config->MaximumFrameRate );
+   text += format( "Maximum Frame Rate: {}", _gameConfig->MaximumFrameRate );
    text += format( "\nCurrent Frame Rate: {}", _clock->GetCurrentFrameRate() );
    text += format( "\nAverage Frame Rate: {}", _clock->GetAverageFrameRate() );
    text += format( "\nTotal Frames:       {}", _clock->GetTotalFrameCount() );

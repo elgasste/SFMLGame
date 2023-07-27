@@ -8,11 +8,11 @@
 using namespace NAMESPACE;
 using namespace std;
 
-GameRenderer::GameRenderer( shared_ptr<GameConfig> config,
+GameRenderer::GameRenderer( shared_ptr<GameConfig> gameConfig,
                             shared_ptr<SFMLWindow> window,
                             shared_ptr<DiagnosticsRenderer> diagnosticsRenderer,
                             shared_ptr<GameStateController> stateController ) :
-   _config( config ),
+   _gameConfig( gameConfig ),
    _window( window ),
    _diagnosticsRenderer( diagnosticsRenderer ),
    _stateController( stateController )
@@ -37,7 +37,7 @@ void GameRenderer::Render()
 
    _stateRendererMap.at( _stateController->GetState() )->Render();
 
-   if ( _config->ShowDiagnostics )
+   if ( _gameConfig->ShowDiagnostics )
    {
       _diagnosticsRenderer->Render();
    }

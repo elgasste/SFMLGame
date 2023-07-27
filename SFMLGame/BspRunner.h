@@ -10,13 +10,15 @@
 NAMESPACE_BEGIN
 
 class GameConfig;
+class RenderConfig;
 class Entity;
 class RaycastRenderer;
 
 class BspRunner
 {
 public:
-   BspRunner( std::shared_ptr<GameConfig> config,
+   BspRunner( std::shared_ptr<GameConfig> gameConfig,
+              std::shared_ptr<RenderConfig> renderConfig,
               std::shared_ptr<Entity> player,
               std::shared_ptr<RaycastRenderer> renderer,
               BspNode* rootNode );
@@ -36,7 +38,8 @@ private:
    void MarkRangeAsDrawn( int start, int end );
 
 private:
-   std::shared_ptr<GameConfig> _config;
+   std::shared_ptr<GameConfig> _gameConfig;
+   std::shared_ptr<RenderConfig> _renderConfig;
    std::shared_ptr<Entity> _player;
    std::shared_ptr<RaycastRenderer> _renderer;
    BspNode* _rootNode;
@@ -45,7 +48,6 @@ private:
 
    sf::Vector2f _origin;
    float _leftFovAngle;
-   float _fovAngleIncrement;
 
    // MUFFINS: for diagnostics
    int _treeDepth;

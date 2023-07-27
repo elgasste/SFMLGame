@@ -2,6 +2,7 @@
 
 #include "BspRunner.h"
 #include "GameConfig.h"
+#include "RenderConfig.h"
 #include "Entity.h"
 #include "RaycastRenderer.h"
 #include "BspNode.h"
@@ -10,18 +11,18 @@
 using namespace NAMESPACE;
 using namespace std;
 
-BspRunner::BspRunner( shared_ptr<GameConfig> config,
+BspRunner::BspRunner( shared_ptr<GameConfig> gameConfig,
+                      shared_ptr<RenderConfig> renderConfig,
                       shared_ptr<Entity> player,
                       shared_ptr<RaycastRenderer> renderer,
                       BspNode* rootNode ) :
-   _config( config ),
+   _gameConfig( gameConfig ),
+   _renderConfig( renderConfig ),
    _player( player ),
    _renderer( renderer ),
    _rootNode( rootNode ),
    _leftFovAngle( 0 )
 {
-   _fovAngleIncrement = FovRange / config->ScreenWidth;
-
    // MUFFINS
    _treeDepth = 0;
    _maxTreeDepth = 0;
@@ -41,6 +42,7 @@ BspRunner::~BspRunner()
 
 void BspRunner::DeleteTreeRecursive( BspNode* node )
 {
+   // MUFFINS: is this deleting absolutely everything? double-check.
    if ( node->isLeaf )
    {
       delete node->subsector;
@@ -64,7 +66,7 @@ void BspRunner::Run()
    _geometryChecks = 0;
 
    _undrawnRanges.clear();
-   _undrawnRanges.push_back( { 0, _config->ScreenWidth - 1 } );
+   _undrawnRanges.push_back( { 0, _gameConfig->ScreenWidth - 1 } );
 
    _origin = _player->GetPosition();
    _leftFovAngle = _player->GetAngle() + RAD_30;
@@ -74,7 +76,6 @@ void BspRunner::Run()
 
    CheckNodeRecursive( _rootNode );
 
-   // MUFFINS: maybe log this instead, at some point? Like have an "undrawn lines" count?
    assert( _undrawnRanges.empty() );
 
    // MUFFINS
@@ -136,8 +137,8 @@ void BspRunner::CheckLeaf( BspNode* leaf )
          // MUFFINS
          _geometryChecks++;
 
-         auto undrawnLeftAngle = _leftFovAngle - ( _fovAngleIncrement * _undrawnRanges[i].start );
-         auto undrawnRightAngle = _leftFovAngle - ( _fovAngleIncrement * _undrawnRanges[i].end );
+         auto undrawnLeftAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * _undrawnRanges[i].start );
+         auto undrawnRightAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * _undrawnRanges[i].end );
 
          NORMALIZE_ANGLE( undrawnLeftAngle );
          NORMALIZE_ANGLE( undrawnRightAngle );
@@ -173,11 +174,11 @@ void BspRunner::CheckLeaf( BspNode* leaf )
 
          // reverse the calculation on the draw angles to find the pixel range that was drawn
          auto drawStartPixel = ( leftDrawAngle <= undrawnLeftAngle )
-            ? _undrawnRanges[i].start + (int)( ( undrawnLeftAngle - leftDrawAngle ) / _fovAngleIncrement )
-            : _undrawnRanges[i].start + (int)( ( undrawnLeftAngle + ( RAD_360 - leftDrawAngle ) ) / _fovAngleIncrement );
+            ? _undrawnRanges[i].start + (int)( ( undrawnLeftAngle - leftDrawAngle ) / _renderConfig->FovAngleIncrement )
+            : _undrawnRanges[i].start + (int)( ( undrawnLeftAngle + ( RAD_360 - leftDrawAngle ) ) / _renderConfig->FovAngleIncrement );
          auto drawEndPixel = ( rightDrawAngle >= undrawnRightAngle )
-            ? _undrawnRanges[i].end - (int)( ( rightDrawAngle - undrawnRightAngle ) / _fovAngleIncrement )
-            : _undrawnRanges[i].end - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _fovAngleIncrement );
+            ? _undrawnRanges[i].end - (int)( ( rightDrawAngle - undrawnRightAngle ) / _renderConfig->FovAngleIncrement )
+            : _undrawnRanges[i].end - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _renderConfig->FovAngleIncrement );
 
          // MUFFINS: test this
          _renderer->RenderLineseg( lineseg, leftDrawAngle, drawStartPixel, drawEndPixel );

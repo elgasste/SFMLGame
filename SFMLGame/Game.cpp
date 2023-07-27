@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "GameData.h"
 #include "EventAggregator.h"
 #include "GameClock.h"
 #include "IInputReader.h"
@@ -8,11 +9,13 @@
 using namespace NAMESPACE;
 using namespace std;
 
-Game::Game( shared_ptr<EventAggregator> eventAggregator,
+Game::Game( shared_ptr<GameData> gameData,
+            shared_ptr<EventAggregator> eventAggregator,
             shared_ptr<GameClock> clock,
             shared_ptr<IInputReader> inputReader,
             shared_ptr<GameLogic> logic,
             shared_ptr<GameRenderer> renderer ) :
+   _gameData( gameData ),
    _eventAggregator( eventAggregator ),
    _clock( clock ),
    _inputReader( inputReader ),

@@ -7,10 +7,10 @@
 using namespace NAMESPACE;
 using namespace std;
 
-GameInputHandler::GameInputHandler( shared_ptr<GameConfig> config,
+GameInputHandler::GameInputHandler( shared_ptr<GameConfig> gameConfig,
                                     shared_ptr<IInputReader> inputReader,
                                     shared_ptr<GameStateController> stateController ) :
-   _config( config ),
+   _gameConfig( gameConfig ),
    _inputReader( inputReader ),
    _stateController( stateController )
 {
@@ -27,6 +27,6 @@ void GameInputHandler::HandleInput()
 
    if ( _inputReader->WasButtonPressed( Button::Diagnostics ) )
    {
-      _config->ShowDiagnostics = !_config->ShowDiagnostics;
+      _gameConfig->ShowDiagnostics = !_gameConfig->ShowDiagnostics;
    }
 }

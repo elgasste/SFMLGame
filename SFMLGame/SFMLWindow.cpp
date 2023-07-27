@@ -10,10 +10,10 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-SFMLWindow::SFMLWindow( shared_ptr<GameConfig> config,
+SFMLWindow::SFMLWindow( shared_ptr<GameConfig> gameConfig,
                         shared_ptr<EventAggregator> eventAggregator,
                         shared_ptr<GameClock> clock ) :
-   _config( config ),
+   _gameConfig( gameConfig ),
    _eventAggregator( eventAggregator ),
    _clock( clock )
 {
@@ -21,8 +21,8 @@ SFMLWindow::SFMLWindow( shared_ptr<GameConfig> config,
 
 void SFMLWindow::Initialize()
 {
-   auto videoMode = VideoMode( _config->ScreenWidth, _config->ScreenHeight );
-   _window = shared_ptr<RenderWindow>( new RenderWindow( videoMode, _config->WindowTitle, _config->WindowStyle ) );
+   auto videoMode = VideoMode( _gameConfig->ScreenWidth, _gameConfig->ScreenHeight );
+   _window = shared_ptr<RenderWindow>( new RenderWindow( videoMode, _gameConfig->WindowTitle, _gameConfig->WindowStyle ) );
 }
 
 void SFMLWindow::Show() const

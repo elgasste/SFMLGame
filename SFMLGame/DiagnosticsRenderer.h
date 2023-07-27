@@ -18,14 +18,14 @@ class SFMLWindow;
 class DiagnosticsRenderer
 {
 public:
-   DiagnosticsRenderer( std::shared_ptr<GameConfig> config,
+   DiagnosticsRenderer( std::shared_ptr<GameConfig> gameConfig,
                         std::shared_ptr<GameClock> clock,
                         std::shared_ptr<SFMLWindow> window );
 
    void Render();
 
 private:
-   std::shared_ptr<GameConfig> _config;
+   std::shared_ptr<GameConfig> _gameConfig;
    std::shared_ptr<GameClock> _clock;
    std::shared_ptr<SFMLWindow> _window;
 
