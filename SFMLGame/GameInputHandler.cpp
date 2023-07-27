@@ -1,5 +1,5 @@
 #include "GameInputHandler.h"
-#include "GameConfig.h"
+#include "RenderConfig.h"
 #include "IInputReader.h"
 #include "GameStateController.h"
 #include "IGameStateInputHandler.h"
@@ -7,10 +7,10 @@
 using namespace NAMESPACE;
 using namespace std;
 
-GameInputHandler::GameInputHandler( shared_ptr<GameConfig> gameConfig,
+GameInputHandler::GameInputHandler( shared_ptr<RenderConfig> renderConfig,
                                     shared_ptr<IInputReader> inputReader,
                                     shared_ptr<GameStateController> stateController ) :
-   _gameConfig( gameConfig ),
+   _renderConfig( renderConfig ),
    _inputReader( inputReader ),
    _stateController( stateController )
 {
@@ -27,6 +27,6 @@ void GameInputHandler::HandleInput()
 
    if ( _inputReader->WasButtonPressed( Button::Diagnostics ) )
    {
-      _gameConfig->ShowDiagnostics = !_gameConfig->ShowDiagnostics;
+      _renderConfig->ShowDiagnostics = !_renderConfig->ShowDiagnostics;
    }
 }

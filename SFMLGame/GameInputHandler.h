@@ -7,7 +7,7 @@
 
 NAMESPACE_BEGIN
 
-class GameConfig;
+class RenderConfig;
 class IInputReader;
 class GameStateController;
 class IGameStateInputHandler;
@@ -15,7 +15,7 @@ class IGameStateInputHandler;
 class GameInputHandler
 {
 public:
-   GameInputHandler( std::shared_ptr<GameConfig> gameConfig,
+   GameInputHandler( std::shared_ptr<RenderConfig> renderConfig,
                      std::shared_ptr<IInputReader> inputReader,
                      std::shared_ptr<GameStateController> stateController );
 
@@ -23,7 +23,7 @@ public:
    void HandleInput();
 
 private:
-   std::shared_ptr<GameConfig> _gameConfig;
+   std::shared_ptr<RenderConfig> _renderConfig;
    std::shared_ptr<IInputReader> _inputReader;
    std::shared_ptr<GameStateController> _stateController;
 

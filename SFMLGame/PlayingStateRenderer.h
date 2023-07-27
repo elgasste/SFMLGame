@@ -13,6 +13,7 @@ namespace sf
 NAMESPACE_BEGIN
 
 class GameConfig;
+class RenderConfig;
 class SFMLWindow;
 class BspRunner;
 
@@ -20,6 +21,7 @@ class PlayingStateRenderer : public IGameStateRenderer
 {
 public:
    PlayingStateRenderer( std::shared_ptr<GameConfig> gameConfig,
+                         std::shared_ptr<RenderConfig> renderConfig,
                          std::shared_ptr<SFMLWindow> window,
                          std::shared_ptr<BspRunner> bspRunner );
 

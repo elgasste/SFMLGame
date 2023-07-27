@@ -1,5 +1,5 @@
 #include "GameRenderer.h"
-#include "GameConfig.h"
+#include "RenderConfig.h"
 #include "SFMLWindow.h"
 #include "DiagnosticsRenderer.h"
 #include "GameStateController.h"
@@ -8,11 +8,11 @@
 using namespace NAMESPACE;
 using namespace std;
 
-GameRenderer::GameRenderer( shared_ptr<GameConfig> gameConfig,
+GameRenderer::GameRenderer( shared_ptr<RenderConfig> renderConfig,
                             shared_ptr<SFMLWindow> window,
                             shared_ptr<DiagnosticsRenderer> diagnosticsRenderer,
                             shared_ptr<GameStateController> stateController ) :
-   _gameConfig( gameConfig ),
+   _renderConfig( renderConfig ),
    _window( window ),
    _diagnosticsRenderer( diagnosticsRenderer ),
    _stateController( stateController )
@@ -37,7 +37,7 @@ void GameRenderer::Render()
 
    _stateRendererMap.at( _stateController->GetState() )->Render();
 
-   if ( _gameConfig->ShowDiagnostics )
+   if ( _renderConfig->ShowDiagnostics )
    {
       _diagnosticsRenderer->Render();
    }

@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "DiagnosticsRenderer.h"
-#include "GameConfig.h"
+#include "RenderConfig.h"
 #include "GameClock.h"
 #include "SFMLWindow.h"
 
@@ -11,34 +11,34 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-DiagnosticsRenderer::DiagnosticsRenderer( shared_ptr<GameConfig> gameConfig,
+DiagnosticsRenderer::DiagnosticsRenderer( shared_ptr<RenderConfig> renderConfig,
                                           shared_ptr<GameClock> clock,
                                           shared_ptr<SFMLWindow> window ) :
-   _gameConfig( gameConfig ),
+   _renderConfig( renderConfig ),
    _clock( clock ),
    _window( window )
 {
    _font = make_shared<Font>();
-   _font->loadFromFile( gameConfig->DiagnosticsFont );
+   _font->loadFromFile( renderConfig->DiagnosticsFont );
 
    _text = make_shared<Text>();
    _text->setFont( *_font );
-   _text->setCharacterSize( gameConfig->DiagnosticsCharSize );
-   _text->setFillColor( gameConfig->DiagnosticsTextColor );
+   _text->setCharacterSize( renderConfig->DiagnosticsCharSize );
+   _text->setFillColor( renderConfig->DiagnosticsTextColor );
 
-   _text->setPosition( gameConfig->DiagnosticsXPosition + gameConfig->DiagnosticsTextMargin,
-                       gameConfig->DiagnosticsYPosition + gameConfig->DiagnosticsTextMargin );
+   _text->setPosition( renderConfig->DiagnosticsXPosition + renderConfig->DiagnosticsTextMargin,
+                       renderConfig->DiagnosticsYPosition + renderConfig->DiagnosticsTextMargin );
 
-   _background = shared_ptr<sf::RectangleShape>( new RectangleShape( { gameConfig->DiagnosticsWidth, gameConfig->DiagnosticsHeight } ) );
-   _background->setFillColor( gameConfig->DiagnosticsBackgroundColor );
-   _background->setPosition( gameConfig->DiagnosticsXPosition, gameConfig->DiagnosticsYPosition );
+   _background = shared_ptr<sf::RectangleShape>( new RectangleShape( { renderConfig->DiagnosticsWidth, renderConfig->DiagnosticsHeight } ) );
+   _background->setFillColor( renderConfig->DiagnosticsBackgroundColor );
+   _background->setPosition( renderConfig->DiagnosticsXPosition, renderConfig->DiagnosticsYPosition );
 }
 
 void DiagnosticsRenderer::Render()
 {
    string text;
 
-   text += format( "Maximum Frame Rate: {}", _gameConfig->MaximumFrameRate );
+   text += format( "Maximum Frame Rate: {}", _renderConfig->MaximumFrameRate );
    text += format( "\nCurrent Frame Rate: {}", _clock->GetCurrentFrameRate() );
    text += format( "\nAverage Frame Rate: {}", _clock->GetAverageFrameRate() );
    text += format( "\nTotal Frames:       {}", _clock->GetTotalFrameCount() );
