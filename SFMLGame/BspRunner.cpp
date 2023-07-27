@@ -140,7 +140,12 @@ void BspRunner::CheckLeaf( BspNode* leaf )
             ? _undrawnRanges[i].end - (int)( ( rightDrawAngle - undrawnRightAngle ) / _renderConfig->FovAngleIncrement )
             : _undrawnRanges[i].end - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _renderConfig->FovAngleIncrement );
 
-         _renderer->RenderLineseg( lineseg, leftDrawAngle, drawStartPixel, drawEndPixel );
+         _renderer->RenderLineseg( lineseg,
+                                   lineseg.start == lineseg.linedef->start,
+                                   lineseg.end == lineseg.linedef->end,
+                                   leftDrawAngle,
+                                   drawStartPixel,
+                                   drawEndPixel );
 
          auto prevRangeCount = _undrawnRanges.size();
          MarkRangeAsDrawn( drawStartPixel, drawEndPixel );

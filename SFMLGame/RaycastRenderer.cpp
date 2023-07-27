@@ -43,6 +43,8 @@ void RaycastRenderer::RenderCeilingAndFloor()
 }
 
 void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
+                                     bool isLinedefLeftEdge,
+                                     bool isLinedefRightEdge,
                                      float drawStartAngle,
                                      int startColumn,
                                      int endColumn )
@@ -87,7 +89,8 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
 
       auto columnIndex = i * 2;
 
-      auto color = lineseg.linedef->color;
+      auto color = ( ( i == startColumn && isLinedefLeftEdge ) || ( i == endColumn && isLinedefRightEdge ) )
+                   ? Color::Black : lineseg.linedef->color;
       auto lightAdjustment = ( rayLength == 0.0f ) ? 0.0f : min( rayLength / _renderConfig->LightingScalar, 255.0f );
       color.r = (Uint8)max( 0, (int)( color.r - lightAdjustment ) );
       color.g = (Uint8)max( 0, (int)( color.g - lightAdjustment ) );

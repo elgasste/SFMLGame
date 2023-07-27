@@ -22,6 +22,8 @@ public:
 
    void RenderCeilingAndFloor();
    void RenderLineseg( const Lineseg& lineseg,
+                       bool isLinedefLeftEdge,
+                       bool isLinedefRightEdge,
                        float drawStartAngle,
                        int startColumn,
                        int endColumn );
