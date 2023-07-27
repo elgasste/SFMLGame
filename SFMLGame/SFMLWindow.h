@@ -1,11 +1,15 @@
 #pragma once
 
+#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
+
 #include "Common.h"
 
 namespace sf
 {
    class RenderWindow;
    class Drawable;
+   class Vertex;
 }
 
 NAMESPACE_BEGIN
@@ -26,6 +30,7 @@ public:
    void HandleEvents() const;
    void Clear() const;
    void Draw( std::shared_ptr<sf::Drawable> drawable ) const;
+   void Draw( const sf::Vertex* vertices, size_t vertexCount, sf::PrimitiveType type );
    void Render() const;
 
 private:

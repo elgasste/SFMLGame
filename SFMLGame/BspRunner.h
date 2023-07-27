@@ -11,12 +11,14 @@ NAMESPACE_BEGIN
 
 class GameConfig;
 class Entity;
+class RaycastRenderer;
 
 class BspRunner
 {
 public:
    BspRunner( std::shared_ptr<GameConfig> config,
               std::shared_ptr<Entity> player,
+              std::shared_ptr<RaycastRenderer> renderer,
               BspNode* rootNode );
    ~BspRunner();
 
@@ -36,6 +38,7 @@ private:
 private:
    std::shared_ptr<GameConfig> _config;
    std::shared_ptr<Entity> _player;
+   std::shared_ptr<RaycastRenderer> _renderer;
    BspNode* _rootNode;
 
    std::vector<Range<int>> _undrawnRanges;

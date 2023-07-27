@@ -135,6 +135,9 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="RaycastRenderer.cpp">
+      <Filter>Source Files\Bsp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -256,6 +259,9 @@
     </ClInclude>
     <ClInclude Include="Subsector.h">
       <Filter>Header Files\DataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="RaycastRenderer.h">
+      <Filter>Header Files\Bsp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

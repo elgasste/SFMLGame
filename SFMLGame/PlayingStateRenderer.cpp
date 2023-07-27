@@ -3,14 +3,17 @@
 #include "PlayingStateRenderer.h"
 #include "GameConfig.h"
 #include "SFMLWindow.h"
+#include "BspRunner.h"
 
 using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
 PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> config,
-                                            shared_ptr<SFMLWindow> window ) :
-   _window( window )
+                                            shared_ptr<SFMLWindow> window,
+                                            shared_ptr<BspRunner> bspRunner ) :
+   _window( window ),
+   _bspRunner( bspRunner )
 {
    _font = make_shared<Font>();
    _font->loadFromFile( config->MessageFont );
@@ -27,5 +30,6 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> config,
 
 void PlayingStateRenderer::Render()
 {
+   _bspRunner->Run();
    _window->Draw( _text );
 }

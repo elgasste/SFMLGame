@@ -179,6 +179,7 @@
     <ClCompile Include="PlayingStateInputHandler.cpp" />
     <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="QuitMenuOption.cpp" />
+    <ClCompile Include="RaycastRenderer.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +218,7 @@
     <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="QuitMenuOption.h" />
     <ClInclude Include="Range.h" />
+    <ClInclude Include="RaycastRenderer.h" />
     <ClInclude Include="Sector.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="Geometry.h" />

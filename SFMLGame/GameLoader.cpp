@@ -12,6 +12,7 @@
 #include "GameInputHandler.h"
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
+#include "RaycastRenderer.h"
 #include "PlayingStateRenderer.h"
 #include "MenuStateRenderer.h"
 #include "SFMLWindow.h"
@@ -44,50 +45,28 @@ shared_ptr<Game> GameLoader::Load() const
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( config, inputReader, stateController ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
+   auto player = make_shared<Entity>();
+   // MUFFINS: this should come from a file, there should be a starting point for every map
+   player->SetPosition( Vector2f( 130, 220 ) );
+   player->SetAngle( RAD_30 );
    auto logic = shared_ptr<GameLogic>( new GameLogic( gameInputHandler ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( config, eventAggregator, clock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( config, clock, window ) );
-   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( config, window ) );
+   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( config, player, window ) );
+   auto sectors = LoadSectors();
+   auto bspRootNode = LoadBspTree( sectors );
+   auto bspRunner = shared_ptr<BspRunner>( new BspRunner( config, player, raycastRenderer, bspRootNode ) );
+   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( config, window, bspRunner ) );
    auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( config, window, clock, menu ) );
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( config, window, diagnosticRenderer, stateController ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Menu, menuStateRenderer );
    auto game = shared_ptr<Game>( new Game( eventAggregator, clock, inputReader, logic, gameRenderer ) );
 
-   // MUFFINS
-   auto player = make_shared<Entity>();
-
-   // MUFFINS
-   auto sectors = LoadSectors();
-   auto bspRootNode = LoadBspTree( sectors );
-   auto bspRunner = shared_ptr<BspRunner>( new BspRunner( config, player, bspRootNode ) );
-
-   // MUFFINS: check diagnostics for this
-   player->SetPosition( Vector2f( 130, 220 ) );
-   //player->SetAngle( 0.802851f ); // 46 degrees
-   //bspRunner->Run();
-   auto rotationIncrement = RAD_360 / 360.0f;
-   for ( int i = 0; i < 360; i++ )
-   {
-      auto angle = i * rotationIncrement;
-      player->SetAngle( angle );
-      bspRunner->Run();
-   }
-
-   auto list = bspRunner->GetGeometryCheckList();
-   int total = 0;
-   for ( int i = 0; i < (int)list.size(); i++ )
-   {
-      total += list[i];
-   }
-
-   auto average = total / (int)list.size();
-   average = 0;
-
    return game;
 }
 
-// MUFFINS
+// MUFFINS: this should come from a file
 vector<Sector> GameLoader::LoadSectors() const
 {
    vector<Sector> sectors;
@@ -161,7 +140,7 @@ vector<Sector> GameLoader::LoadSectors() const
    return sectors;
 }
 
-// MUFFINS
+// MUFFINS: this should come from a file
 BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
 {
    // all subsectors and linesegs

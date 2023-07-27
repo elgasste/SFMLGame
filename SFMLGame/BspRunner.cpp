@@ -3,6 +3,7 @@
 #include "BspRunner.h"
 #include "GameConfig.h"
 #include "Entity.h"
+#include "RaycastRenderer.h"
 #include "BspNode.h"
 #include "Geometry.h"
 
@@ -11,9 +12,11 @@ using namespace std;
 
 BspRunner::BspRunner( shared_ptr<GameConfig> config,
                       shared_ptr<Entity> player,
+                      shared_ptr<RaycastRenderer> renderer,
                       BspNode* rootNode ) :
    _config( config ),
    _player( player ),
+   _renderer( renderer ),
    _rootNode( rootNode ),
    _leftFovAngle( 0 )
 {
@@ -66,6 +69,8 @@ void BspRunner::Run()
    _origin = _player->GetPosition();
    _leftFovAngle = _player->GetAngle() + RAD_30;
    NORMALIZE_ANGLE( _leftFovAngle );
+
+   _renderer->RenderCeilingAndFloor();
 
    CheckNodeRecursive( _rootNode );
 
@@ -166,9 +171,6 @@ void BspRunner::CheckLeaf( BspNode* leaf )
             NORMALIZE_ANGLE( rightDrawAngle );
          }
 
-         // MUFFINS: raycast from left to right over the range to draw
-         _linesegsDrawn++;
-
          // reverse the calculation on the draw angles to find the pixel range that was drawn
          auto drawStartPixel = ( leftDrawAngle <= undrawnLeftAngle )
             ? _undrawnRanges[i].start + (int)( ( undrawnLeftAngle - leftDrawAngle ) / _fovAngleIncrement )
@@ -176,6 +178,12 @@ void BspRunner::CheckLeaf( BspNode* leaf )
          auto drawEndPixel = ( rightDrawAngle >= undrawnRightAngle )
             ? _undrawnRanges[i].end - (int)( ( rightDrawAngle - undrawnRightAngle ) / _fovAngleIncrement )
             : _undrawnRanges[i].end - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _fovAngleIncrement );
+
+         // MUFFINS: test this
+         _renderer->RenderLineseg( lineseg, leftDrawAngle, drawStartPixel, drawEndPixel );
+
+         // MUFFINS
+         _linesegsDrawn++;
 
          auto prevRangeCount = _undrawnRanges.size();
          MarkRangeAsDrawn( drawStartPixel, drawEndPixel );
