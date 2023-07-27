@@ -23,16 +23,6 @@ BspRunner::BspRunner( shared_ptr<GameConfig> gameConfig,
    _rootNode( rootNode ),
    _leftFovAngle( 0 )
 {
-   // MUFFINS
-   _treeDepth = 0;
-   _maxTreeDepth = 0;
-   _angleOfMaxTreeDepth = 0;
-   _linesegsDrawn = 0;
-   _maxLinesegsDrawn = 0;
-   _angleOfMaxLinesegsDrawn = 0;
-   _geometryChecks = 0;
-   _maxGeometryChecks = 0;
-   _angleOfMaxGeometryChecks = 0;
 }
 
 BspRunner::~BspRunner()
@@ -42,7 +32,6 @@ BspRunner::~BspRunner()
 
 void BspRunner::DeleteTreeRecursive( BspNode* node )
 {
-   // MUFFINS: is this deleting absolutely everything? double-check.
    if ( node->isLeaf )
    {
       delete node->subsector;
@@ -60,11 +49,6 @@ void BspRunner::DeleteTreeRecursive( BspNode* node )
 
 void BspRunner::Run()
 {
-   // MUFFINS
-   _treeDepth = 0;
-   _linesegsDrawn = 0;
-   _geometryChecks = 0;
-
    _undrawnRanges.clear();
    _undrawnRanges.push_back( { 0, _gameConfig->ScreenWidth - 1 } );
 
@@ -77,31 +61,10 @@ void BspRunner::Run()
    CheckNodeRecursive( _rootNode );
 
    assert( _undrawnRanges.empty() );
-
-   // MUFFINS
-   if ( _treeDepth > _maxTreeDepth )
-   {
-      _maxTreeDepth = _treeDepth;
-      _angleOfMaxTreeDepth = _player->GetAngle();
-   }
-   if ( _linesegsDrawn > _maxLinesegsDrawn )
-   {
-      _maxLinesegsDrawn = _linesegsDrawn;
-      _angleOfMaxLinesegsDrawn = _player->GetAngle();
-   }
-   if ( _geometryChecks > _maxGeometryChecks )
-   {
-      _maxGeometryChecks = _geometryChecks;
-      _angleOfMaxGeometryChecks = _player->GetAngle();
-   }
-   _geometryCheckList.push_back( _geometryChecks );
 }
 
 void BspRunner::CheckNodeRecursive( BspNode* node )
 {
-   // MUFFINS
-   _treeDepth++;
-
    if ( node->isLeaf )
    {
       CheckLeaf( node );
@@ -134,9 +97,6 @@ void BspRunner::CheckLeaf( BspNode* leaf )
    {
       for ( int i = 0; i < (int)_undrawnRanges.size(); i++ )
       {
-         // MUFFINS
-         _geometryChecks++;
-
          auto undrawnLeftAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * _undrawnRanges[i].start );
          auto undrawnRightAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * _undrawnRanges[i].end );
 
@@ -180,11 +140,7 @@ void BspRunner::CheckLeaf( BspNode* leaf )
             ? _undrawnRanges[i].end - (int)( ( rightDrawAngle - undrawnRightAngle ) / _renderConfig->FovAngleIncrement )
             : _undrawnRanges[i].end - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _renderConfig->FovAngleIncrement );
 
-         // MUFFINS: test this
          _renderer->RenderLineseg( lineseg, leftDrawAngle, drawStartPixel, drawEndPixel );
-
-         // MUFFINS
-         _linesegsDrawn++;
 
          auto prevRangeCount = _undrawnRanges.size();
          MarkRangeAsDrawn( drawStartPixel, drawEndPixel );

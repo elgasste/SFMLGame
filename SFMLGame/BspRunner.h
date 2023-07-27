@@ -27,9 +27,6 @@ public:
    void DeleteTreeRecursive( BspNode* node );
    void Run();
 
-   // MUFFINS
-   const std::vector<int>& GetGeometryCheckList() { return _geometryCheckList; }
-
 private:
    const float FovRange = RAD_30 * 2.0f;
 
@@ -48,18 +45,6 @@ private:
 
    sf::Vector2f _origin;
    float _leftFovAngle;
-
-   // MUFFINS: for diagnostics
-   int _treeDepth;
-   int _maxTreeDepth;
-   float _angleOfMaxTreeDepth;
-   int _linesegsDrawn;
-   int _maxLinesegsDrawn;
-   float _angleOfMaxLinesegsDrawn;
-   int _geometryChecks;
-   int _maxGeometryChecks;
-   float _angleOfMaxGeometryChecks;
-   std::vector<int> _geometryCheckList;
 };
 
 NAMESPACE_END
