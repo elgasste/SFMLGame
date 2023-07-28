@@ -22,6 +22,8 @@ RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
    _player( player ),
    _window( window )
 {
+   _renderColumns = (sf::Vertex*)malloc( sizeof( sf::Vertex ) * gameConfig->ScreenWidth * 2 );
+
    auto screenWidth = (float)gameConfig->ScreenWidth;
    auto screenHeight = (float)gameConfig->ScreenHeight;
 
@@ -34,6 +36,12 @@ RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
    _floorRenderRect[1] = Vertex( Vector2f( screenWidth, screenHeight / 2.0f ), Color::Black );
    _floorRenderRect[2] = Vertex( Vector2f( screenWidth, screenHeight ), Color( 128, 128, 128 ) );
    _floorRenderRect[3] = Vertex( Vector2f( 0, screenHeight ), Color( 128, 128, 128 ) );
+}
+
+RaycastRenderer::~RaycastRenderer()
+{
+   delete _renderColumns;
+   _renderColumns = nullptr;
 }
 
 void RaycastRenderer::RenderCeilingAndFloor()
@@ -79,10 +87,7 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
          }
       }
 
-      // from the Wolfenstein 3D book. it's supposed to fix fish-eye, but sometimes it seems to cause reverse-fish-eye
-      //
-      // MUFFINS: move this into the Geometry utility (as soon as you figure out what it's called)
-      auto rayLength = ( ( pIntersect.x - playerPosition.x ) * cosf( playerAngle ) ) - ( ( pIntersect.y - playerPosition.y ) * sinf( playerAngle ) );
+      auto rayLength = Geometry::Raycast( playerPosition, pIntersect, playerAngle );
 
       // this uses the formula ProjectedWallHeight = ( ActualWallHeight / DistanceToWall ) * DistanceToProjectionPlane
       auto projectedWallHeight = ( ( _renderConfig->WallHeight / rayLength ) * _renderConfig->ProjectionPlaneDelta );

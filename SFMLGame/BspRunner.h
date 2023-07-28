@@ -19,31 +19,28 @@ class BspRunner
 public:
    BspRunner( std::shared_ptr<GameConfig> gameConfig,
               std::shared_ptr<RenderConfig> renderConfig,
-              std::shared_ptr<Entity> player,
-              std::shared_ptr<RaycastRenderer> renderer,
+              std::shared_ptr<RaycastRenderer> raycastRenderer,
               BspNode* rootNode );
    ~BspRunner();
 
-   void DeleteTreeRecursive( BspNode* node );
-   void Run();
+   const Subsector& GetOccupyingSubsector( std::shared_ptr<Entity> entity );
+   void RenderWorld( std::shared_ptr<Entity> viewingEntity );
 
 private:
-   const float FovRange = RAD_30 * 2.0f;
-
-   void CheckNodeRecursive( BspNode* node );
-   void CheckLeaf( BspNode* leaf );
+   void DeleteTreeRecursive( BspNode* node );
+   void RenderNodeRecursive( BspNode* node );
+   void RenderLeaf( BspNode* leaf );
    void MarkRangeAsDrawn( int start, int end );
 
 private:
    std::shared_ptr<GameConfig> _gameConfig;
    std::shared_ptr<RenderConfig> _renderConfig;
-   std::shared_ptr<Entity> _player;
-   std::shared_ptr<RaycastRenderer> _renderer;
+   std::shared_ptr<RaycastRenderer> _raycastRenderer;
    BspNode* _rootNode;
 
    std::vector<Range<int>> _undrawnRanges;
 
-   sf::Vector2f _origin;
+   sf::Vector2f _viewOrigin;
    float _leftFovAngle;
 };
 

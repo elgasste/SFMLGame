@@ -6,7 +6,7 @@
 #include "IInputReader.h"
 #include "GameStateController.h"
 #include "Entity.h"
-#include "Geometry.h"
+#include "BspRunner.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -14,10 +14,12 @@ using namespace sf;
 
 PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<IInputReader> inputReader,
                                                     shared_ptr<GameStateController> stateController,
-                                                    shared_ptr<Entity> player ) :
+                                                    shared_ptr<Entity> player,
+                                                    shared_ptr<BspRunner> bspRunner ) :
    _inputReader( inputReader ),
    _stateController( stateController ),
-   _player( player )
+   _player( player ),
+   _bspRunner( bspRunner )
 {
 }
 
@@ -30,6 +32,7 @@ void PlayingStateInputHandler::HandleInput()
    }
 
    // MUFFINS: all of this should be handled in some kind of movement controller
+
    auto playerAngle = _player->GetAngle();
    auto playerPosition = _player->GetPosition();
 
@@ -47,37 +50,65 @@ void PlayingStateInputHandler::HandleInput()
 
    auto isMovingForward = _inputReader->IsButtonDown( Button::Forward );
    auto isMovingBackward = _inputReader->IsButtonDown( Button::Backward );
+   auto isStrafingLeft = _inputReader->IsButtonDown( Button::StrafeLeft );
+   auto isStrafingRight = _inputReader->IsButtonDown( Button::StrafeRight );
+
+   if ( !isMovingForward && !isMovingBackward && !isStrafingLeft && !isStrafingRight )
+   {
+      return;
+   }
+
+   auto dxMove = 0.0f;
+   auto dyMove = 0.0f;
+   auto dxStrafe = 0.0f;
+   auto dyStrafe = 0.0f;
 
    if ( isMovingForward && !isMovingBackward )
    {
-      auto dx = cosf( playerAngle ) * 1.2f;
-      auto dy = tanf( playerAngle ) * dx;
-      _player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y - dy ) );
+      dxMove = cosf( playerAngle ) * 1.2f;
+      dyMove = -( tanf( playerAngle ) * dxMove );
+      //_player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
    }
    else if ( isMovingBackward && !isMovingForward )
    {
-      auto dx = cosf( playerAngle ) * 1.2f;
-      auto dy = tanf( playerAngle ) * dx;
-      _player->SetPosition( Vector2f( playerPosition.x - dx, playerPosition.y + dy ) );
+      dxMove = -( cosf( playerAngle ) * 1.2f );
+      dyMove = tanf( playerAngle ) * dxMove;
+      //_player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
    }
-
-   auto isStrafingLeft = _inputReader->IsButtonDown( Button::StrafeLeft );
-   auto isStrafingRight = _inputReader->IsButtonDown( Button::StrafeRight );
 
    if ( isStrafingLeft && !isStrafingRight )
    {
       auto strafeAngle = playerAngle + RAD_90;
       NORMALIZE_ANGLE( strafeAngle );
-      auto dx = cosf( strafeAngle ) * 1.2f;
-      auto dy = -( tanf( strafeAngle ) * dx );
-      _player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
+      dxStrafe = cosf( strafeAngle ) * 1.2f;
+      dyStrafe = -( tanf( strafeAngle ) * dxStrafe );
+      //_player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
    }
    else if ( isStrafingRight && !isStrafingLeft )
    {
       auto strafeAngle = playerAngle - RAD_90;
       NORMALIZE_ANGLE( strafeAngle );
-      auto dx = cosf( strafeAngle ) * 1.2f;
-      auto dy = -( tanf( strafeAngle ) * dx );
-      _player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
+      dxStrafe = cosf( strafeAngle ) * 1.2f;
+      dyStrafe = -( tanf( strafeAngle ) * dxStrafe );
+      //_player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
    }
+
+   auto newPlayerPositionX = playerPosition.x + dxMove + dxStrafe;
+   auto newPlayerPositionY = playerPosition.y + dyMove + dyStrafe;
+
+   // check for wall collisions
+   //
+   // MUFFINS: this isn't really working, and I don't know why...
+   auto subsector = _bspRunner->GetOccupyingSubsector( _player );
+
+   for ( const auto& lineseg : subsector.linesegs )
+   {
+      if ( Geometry::LinesIntersect( playerPosition.x, playerPosition.y, newPlayerPositionX, newPlayerPositionY,
+                                     lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y, nullptr ) )
+      {
+         return;
+      }
+   }
+
+   _player->SetPosition( Vector2f( newPlayerPositionX, newPlayerPositionY ) );
 }

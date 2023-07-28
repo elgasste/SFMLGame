@@ -11,15 +11,15 @@
 using namespace NAMESPACE;
 using namespace std;
 
+// MUFFINS: refactor this so it doesn't take in a player. we should pass an entity for
+// the renderer's perspective
 BspRunner::BspRunner( shared_ptr<GameConfig> gameConfig,
                       shared_ptr<RenderConfig> renderConfig,
-                      shared_ptr<Entity> player,
-                      shared_ptr<RaycastRenderer> renderer,
+                      shared_ptr<RaycastRenderer> raycastRenderer,
                       BspNode* rootNode ) :
    _gameConfig( gameConfig ),
    _renderConfig( renderConfig ),
-   _player( player ),
-   _renderer( renderer ),
+   _raycastRenderer( raycastRenderer ),
    _rootNode( rootNode ),
    _leftFovAngle( 0 )
 {
@@ -47,52 +47,74 @@ void BspRunner::DeleteTreeRecursive( BspNode* node )
    }
 }
 
-void BspRunner::Run()
+const Subsector& BspRunner::GetOccupyingSubsector( shared_ptr<Entity> entity )
+{
+   BspNode* node = _rootNode;
+   auto origin = entity->GetPosition();
+
+   while ( !node->isLeaf )
+   {
+      node = Geometry::IsPointOnRightSide( origin.x, origin.y, node->linedef->start.x, node->linedef->start.y, node->linedef->end.x, node->linedef->end.y )
+         ? node->rightChild : node->leftChild;
+   }
+
+   return *( node->subsector );
+}
+
+void BspRunner::RenderWorld( shared_ptr<Entity> viewingEntity )
 {
    _undrawnRanges.clear();
    _undrawnRanges.push_back( { 0, _gameConfig->ScreenWidth - 1 } );
 
-   _origin = _player->GetPosition();
-   _leftFovAngle = _player->GetAngle() + RAD_30;
+   _viewOrigin = viewingEntity->GetPosition();
+   _leftFovAngle = viewingEntity->GetAngle() + ( _renderConfig->FovAngle / 2.0f );
    NORMALIZE_ANGLE( _leftFovAngle );
 
-   _renderer->RenderCeilingAndFloor();
+   _raycastRenderer->RenderCeilingAndFloor();
 
-   CheckNodeRecursive( _rootNode );
+   RenderNodeRecursive( _rootNode );
 
+   // MUFFINS: maybe we don't want this? just log it or something?
    assert( _undrawnRanges.empty() );
 }
 
-void BspRunner::CheckNodeRecursive( BspNode* node )
+void BspRunner::RenderNodeRecursive( BspNode* node )
 {
    if ( node->isLeaf )
    {
-      CheckLeaf( node );
+      RenderLeaf( node );
       return;
    }
 
-   if ( Geometry::IsPointOnRightSide( _origin.x, _origin.y, node->linedef->start.x, node->linedef->start.y, node->linedef->end.x, node->linedef->end.y ) )
+   if ( Geometry::IsPointOnRightSide( _viewOrigin.x,
+                                      _viewOrigin.y,
+                                      node->linedef->start.x,
+                                      node->linedef->start.y,
+                                      node->linedef->end.x,
+                                      node->linedef->end.y ) )
    {
-      CheckNodeRecursive( node->rightChild );
+      RenderNodeRecursive( node->rightChild );
 
       if ( !_undrawnRanges.empty() )
       {
-         CheckNodeRecursive( node->leftChild );
+         RenderNodeRecursive( node->leftChild );
       }
    }
    else
    {
-      CheckNodeRecursive( node->leftChild );
+      RenderNodeRecursive( node->leftChild );
 
       if ( !_undrawnRanges.empty() )
       {
-         CheckNodeRecursive( node->rightChild );
+         RenderNodeRecursive( node->rightChild );
       }
    }
 }
 
-void BspRunner::CheckLeaf( BspNode* leaf )
+void BspRunner::RenderLeaf( BspNode* leaf )
 {
+   // MUFFINS: this shouldn't crash when the player goes out-of-bounds, yet it does.
+   // it's probably a divide-by-zero thing, look into it
    for ( const auto& lineseg : leaf->subsector->linesegs )
    {
       for ( int i = 0; i < (int)_undrawnRanges.size(); i++ )
@@ -106,7 +128,7 @@ void BspRunner::CheckLeaf( BspNode* leaf )
          auto isLinesegStartInView = false;
          auto isLinesegEndInView = false;
 
-         if ( !Geometry::IsLineInView( _origin,
+         if ( !Geometry::IsLineInView( _viewOrigin,
                                        undrawnLeftAngle, undrawnRightAngle,
                                        lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y,
                                        isLinesegStartInView,
@@ -122,13 +144,13 @@ void BspRunner::CheckLeaf( BspNode* leaf )
 
          if ( isLinesegStartInView )
          {
-            leftDrawAngle = Geometry::AngleToPoint( _origin, lineseg.start );
+            leftDrawAngle = Geometry::AngleToPoint( _viewOrigin, lineseg.start );
             NORMALIZE_ANGLE( leftDrawAngle );
          }
 
          if ( isLinesegEndInView )
          {
-            rightDrawAngle = Geometry::AngleToPoint( _origin, lineseg.end );
+            rightDrawAngle = Geometry::AngleToPoint( _viewOrigin, lineseg.end );
             NORMALIZE_ANGLE( rightDrawAngle );
          }
 
@@ -140,12 +162,12 @@ void BspRunner::CheckLeaf( BspNode* leaf )
             ? _undrawnRanges[i].end - (int)( ( rightDrawAngle - undrawnRightAngle ) / _renderConfig->FovAngleIncrement )
             : _undrawnRanges[i].end - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _renderConfig->FovAngleIncrement );
 
-         _renderer->RenderLineseg( lineseg,
-                                   lineseg.start == lineseg.linedef->start,
-                                   lineseg.end == lineseg.linedef->end,
-                                   leftDrawAngle,
-                                   drawStartPixel,
-                                   drawEndPixel );
+         _raycastRenderer->RenderLineseg( lineseg,
+                                          lineseg.start == lineseg.linedef->start,
+                                          lineseg.end == lineseg.linedef->end,
+                                          leftDrawAngle,
+                                          drawStartPixel,
+                                          drawEndPixel );
 
          auto prevRangeCount = _undrawnRanges.size();
          MarkRangeAsDrawn( drawStartPixel, drawEndPixel );
@@ -168,6 +190,7 @@ void BspRunner::CheckLeaf( BspNode* leaf )
    }
 }
 
+// MUFFINS: maybe break this out into a separate class?
 void BspRunner::MarkRangeAsDrawn( int start, int end )
 {
    for ( int i = 0; i < (int)_undrawnRanges.size(); i++ )

@@ -144,3 +144,9 @@ bool Geometry::IsLineInView( const Vector2f& origin,
       return isLineStartInView && isLineEndInView;
    }
 }
+
+float Geometry::Raycast( const sf::Vector2f& origin, const sf::Vector2f& point, float angle )
+{
+   // from the Wolfenstein 3D book. it's supposed to fix fish-eye, but sometimes it seems to cause reverse-fish-eye?
+   return ( ( point.x - origin.x ) * cosf( angle ) ) - ( ( point.y - origin.y ) * sinf( angle ) );
+}

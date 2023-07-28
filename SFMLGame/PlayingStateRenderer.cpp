@@ -13,9 +13,11 @@ using namespace sf;
 PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> gameConfig,
                                             shared_ptr<RenderConfig> renderConfig,
                                             shared_ptr<SFMLWindow> window,
-                                            shared_ptr<BspRunner> bspRunner ) :
+                                            shared_ptr<BspRunner> bspRunner,
+                                            shared_ptr<Entity> player ) :
    _window( window ),
-   _bspRunner( bspRunner )
+   _bspRunner( bspRunner ),
+   _player( player )
 {
    _font = make_shared<Font>();
    _font->loadFromFile( renderConfig->MessageFont );
@@ -32,6 +34,6 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> gameConfig,
 
 void PlayingStateRenderer::Render()
 {
-   _bspRunner->Run();
+   _bspRunner->RenderWorld( _player );
    _window->Draw( _text );
 }

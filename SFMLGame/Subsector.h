@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Common.h"
+#include "Sector.h"
 #include "Lineseg.h"
 
 NAMESPACE_BEGIN

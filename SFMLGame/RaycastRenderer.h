@@ -19,6 +19,7 @@ public:
                     std::shared_ptr<RenderConfig> renderConfig,
                     std::shared_ptr<Entity> player,
                     std::shared_ptr<SFMLWindow> window );
+   ~RaycastRenderer();
 
    void RenderCeilingAndFloor();
    void RenderLineseg( const Lineseg& lineseg,
@@ -34,8 +35,7 @@ private:
    std::shared_ptr<Entity> _player;
    std::shared_ptr<SFMLWindow> _window;
 
-   // MUFFINS: this should change with config->ScreenWidth, figure that one out
-   sf::Vertex _renderColumns[1920 * 2];
+   sf::Vertex* _renderColumns;
    sf::Vertex _ceilingRenderRect[4];
    sf::Vertex _floorRenderRect[4];
 };
