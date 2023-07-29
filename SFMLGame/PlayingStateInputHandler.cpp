@@ -67,13 +67,11 @@ void PlayingStateInputHandler::HandleInput()
    {
       dxMove = cosf( playerAngle ) * 1.2f;
       dyMove = -( tanf( playerAngle ) * dxMove );
-      //_player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
    }
    else if ( isMovingBackward && !isMovingForward )
    {
       dxMove = -( cosf( playerAngle ) * 1.2f );
-      dyMove = tanf( playerAngle ) * dxMove;
-      //_player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
+      dyMove = tanf( playerAngle ) * -dxMove;
    }
 
    if ( isStrafingLeft && !isStrafingRight )
@@ -82,7 +80,6 @@ void PlayingStateInputHandler::HandleInput()
       NORMALIZE_ANGLE( strafeAngle );
       dxStrafe = cosf( strafeAngle ) * 1.2f;
       dyStrafe = -( tanf( strafeAngle ) * dxStrafe );
-      //_player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
    }
    else if ( isStrafingRight && !isStrafingLeft )
    {
@@ -90,15 +87,12 @@ void PlayingStateInputHandler::HandleInput()
       NORMALIZE_ANGLE( strafeAngle );
       dxStrafe = cosf( strafeAngle ) * 1.2f;
       dyStrafe = -( tanf( strafeAngle ) * dxStrafe );
-      //_player->SetPosition( Vector2f( playerPosition.x + dx, playerPosition.y + dy ) );
    }
 
    auto newPlayerPositionX = playerPosition.x + dxMove + dxStrafe;
    auto newPlayerPositionY = playerPosition.y + dyMove + dyStrafe;
 
    // check for wall collisions
-   //
-   // MUFFINS: this isn't really working, and I don't know why...
    auto subsector = _bspRunner->GetOccupyingSubsector( _player );
 
    for ( const auto& lineseg : subsector.linesegs )

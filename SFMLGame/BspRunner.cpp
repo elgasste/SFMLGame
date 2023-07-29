@@ -11,8 +11,6 @@
 using namespace NAMESPACE;
 using namespace std;
 
-// MUFFINS: refactor this so it doesn't take in a player. we should pass an entity for
-// the renderer's perspective
 BspRunner::BspRunner( shared_ptr<GameConfig> gameConfig,
                       shared_ptr<RenderConfig> renderConfig,
                       shared_ptr<RaycastRenderer> raycastRenderer,
@@ -73,9 +71,6 @@ void BspRunner::RenderWorld( shared_ptr<Entity> viewingEntity )
    _raycastRenderer->RenderCeilingAndFloor();
 
    RenderNodeRecursive( _rootNode );
-
-   // MUFFINS: maybe we don't want this? just log it or something?
-   assert( _undrawnRanges.empty() );
 }
 
 void BspRunner::RenderNodeRecursive( BspNode* node )
@@ -113,8 +108,6 @@ void BspRunner::RenderNodeRecursive( BspNode* node )
 
 void BspRunner::RenderLeaf( BspNode* leaf )
 {
-   // MUFFINS: this shouldn't crash when the player goes out-of-bounds, yet it does.
-   // it's probably a divide-by-zero thing, look into it
    for ( const auto& lineseg : leaf->subsector->linesegs )
    {
       for ( int i = 0; i < (int)_undrawnRanges.size(); i++ )
@@ -190,7 +183,6 @@ void BspRunner::RenderLeaf( BspNode* leaf )
    }
 }
 
-// MUFFINS: maybe break this out into a separate class?
 void BspRunner::MarkRangeAsDrawn( int start, int end )
 {
    for ( int i = 0; i < (int)_undrawnRanges.size(); i++ )

@@ -30,11 +30,10 @@ using namespace sf;
 
 shared_ptr<Game> GameLoader::Load() const
 {
-   // MUFFINS: rearrange includes to go in this order
-   auto gameData = LoadGameData();
-   auto bspRootNode = LoadBspTree( gameData->GetSectors() );
    auto gameConfig = make_shared<GameConfig>();
    auto renderConfig = shared_ptr<RenderConfig>( new RenderConfig( gameConfig ) );
+   auto gameData = LoadGameData( gameConfig );
+   auto bspRootNode = LoadBspTree( gameData->GetSectors() );
    auto eventAggregator = make_shared<EventAggregator>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<KeyboardInputReader>( new KeyboardInputReader( gameConfig ) );
@@ -44,20 +43,17 @@ shared_ptr<Game> GameLoader::Load() const
    auto menu = make_shared<Menu>();
    menu->AddOption( backMenuOption );
    menu->AddOption( quitMenuOption );
-   auto player = make_shared<Entity>();
-   player->SetPosition( gameConfig->DefaultPlayerPosition );
-   player->SetAngle( gameConfig->DefaultPlayerAngle );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( gameConfig, eventAggregator, clock ) );
-   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, player, window ) );
+   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, gameData->GetPlayer(), window));
    auto bspRunner = shared_ptr<BspRunner>( new BspRunner( gameConfig, renderConfig, raycastRenderer, bspRootNode ) );
-   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, stateController, player, bspRunner ) );
+   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, stateController, gameData->GetPlayer(), bspRunner));
    auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, stateController, menu ) );
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( renderConfig, inputReader, stateController ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
-   auto logic = shared_ptr<GameLogic>( new GameLogic( gameInputHandler, player ) );
+   auto logic = shared_ptr<GameLogic>( new GameLogic( gameInputHandler ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, clock, window ) );
-   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( gameConfig, renderConfig, window, bspRunner, player ) );
+   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( gameConfig, renderConfig, window, bspRunner, gameData->GetPlayer() ) );
    auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( gameConfig, renderConfig, window, clock, menu ) );
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderConfig, window, diagnosticRenderer, stateController ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
@@ -67,9 +63,12 @@ shared_ptr<Game> GameLoader::Load() const
    return game;
 }
 
-shared_ptr<GameData> GameLoader::LoadGameData() const
+shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig ) const
 {
-   auto gameData = shared_ptr<GameData>( new GameData( LoadSectors() ) );
+   auto player = make_shared<Entity>();
+   player->SetPosition( gameConfig->DefaultPlayerPosition );
+   player->SetAngle( gameConfig->DefaultPlayerAngle );
+   auto gameData = shared_ptr<GameData>( new GameData( LoadSectors(), player ) );
    return gameData;
 }
 
