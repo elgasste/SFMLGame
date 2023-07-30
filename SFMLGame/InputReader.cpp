@@ -1,12 +1,15 @@
+#include "SFML/Window/Mouse.hpp"
+
 #include "WindowsLibs.h"
 
-#include "KeyboardInputReader.h"
+#include "InputReader.h"
 #include "GameConfig.h"
 
 using namespace NAMESPACE;
 using namespace std;
+using namespace sf;
 
-KeyboardInputReader::KeyboardInputReader( shared_ptr<GameConfig> gameConfig )
+InputReader::InputReader( shared_ptr<GameConfig> gameConfig )
 {
    for ( int i = 0; i < (int)Button::ButtonCount; i++ )
    {
@@ -27,9 +30,48 @@ KeyboardInputReader::KeyboardInputReader( shared_ptr<GameConfig> gameConfig )
          }
       }
    }
+
+   _mouseCenterPoint = Vector2i( gameConfig->ScreenWidth / 2, gameConfig->ScreenHeight / 2 );
 }
 
-void KeyboardInputReader::ReadInput()
+void InputReader::ReadInput()
+{
+   ReadKeyboardInput();
+   ReadMouseInput();
+}
+
+bool InputReader::WasButtonPressed( Button button ) const
+{
+   return _buttonStates.at( button ).WasPressed;
+}
+
+bool InputReader::IsButtonDown( Button button ) const
+{
+   return _buttonStates.at( button ).IsDown;
+}
+
+bool InputReader::WasAnyButtonPressed() const
+{
+   for ( int i = 0; i < (int)Button::ButtonCount; i++ )
+   {
+      auto button = (Button)i;
+
+      if ( button != Button::Diagnostics && WasButtonPressed( button ) )
+      {
+         return true;
+      }
+   }
+
+   return false;
+}
+
+bool InputReader::IsKeyDown( KeyCode keyCode ) const
+{
+   // if the high-order bit is 1, the key is down
+   return GetKeyState( (int)keyCode ) & 0x800;
+}
+
+void InputReader::ReadKeyboardInput()
 {
    for ( auto const& [button, keyCodes] : _buttonKeyBindings )
    {
@@ -57,33 +99,11 @@ void KeyboardInputReader::ReadInput()
    }
 }
 
-bool KeyboardInputReader::WasButtonPressed( Button button ) const
+static bool g_started = false;
+
+void InputReader::ReadMouseInput()
 {
-   return _buttonStates.at( button ).WasPressed;
-}
-
-bool KeyboardInputReader::IsButtonDown( Button button ) const
-{
-   return _buttonStates.at( button ).IsDown;
-}
-
-bool KeyboardInputReader::WasAnyButtonPressed() const
-{
-   for ( int i = 0; i < (int)Button::ButtonCount; i++ )
-   {
-      auto button = (Button)i;
-
-      if ( button != Button::Diagnostics && WasButtonPressed( button ) )
-      {
-         return true;
-      }
-   }
-
-   return false;
-}
-
-bool KeyboardInputReader::IsKeyDown( KeyCode keyCode ) const
-{
-   // if the high-order bit is 1, the key is down
-   return GetKeyState( (int)keyCode ) & 0x800;
+   auto position = Mouse::getPosition();
+   _mouseDelta = position - _mouseCenterPoint;
+   Mouse::setPosition( _mouseCenterPoint );
 }

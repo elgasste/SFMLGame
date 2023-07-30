@@ -3,7 +3,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include "PlayingStateInputHandler.h"
-#include "IInputReader.h"
+#include "InputReader.h"
 #include "GameStateController.h"
 #include "Entity.h"
 #include "BspRunner.h"
@@ -12,7 +12,7 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<IInputReader> inputReader,
+PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputReader> inputReader,
                                                     shared_ptr<GameStateController> stateController,
                                                     shared_ptr<Entity> player,
                                                     shared_ptr<BspRunner> bspRunner ) :
@@ -31,7 +31,8 @@ void PlayingStateInputHandler::HandleInput()
       return;
    }
 
-   // MUFFINS: all of this should be handled in some kind of movement controller
+   // MUFFINS: all of this should be handled in some kind of movement controller.
+   // also, all the movement values should be stored in a config.
 
    auto playerAngle = _player->GetAngle();
    auto playerPosition = _player->GetPosition();
@@ -46,6 +47,15 @@ void PlayingStateInputHandler::HandleInput()
    else if ( isTurningRight && !isTurningLeft )
    {
       _player->SetAngle( playerAngle - 0.02f );
+   }
+
+   auto mouseDeltaX = _inputReader->GetMouseDelta().x;
+
+   if ( mouseDeltaX != 0 )
+   {
+      auto newAngle = playerAngle - ( mouseDeltaX * 0.0006f );
+      NORMALIZE_ANGLE( newAngle );
+      _player->SetAngle( newAngle );
    }
 
    auto isMovingForward = _inputReader->IsButtonDown( Button::Forward );
@@ -65,12 +75,12 @@ void PlayingStateInputHandler::HandleInput()
 
    if ( isMovingForward && !isMovingBackward )
    {
-      dxMove = cosf( playerAngle ) * 1.2f;
+      dxMove = cosf( playerAngle ) * 0.8f;
       dyMove = -( tanf( playerAngle ) * dxMove );
    }
    else if ( isMovingBackward && !isMovingForward )
    {
-      dxMove = -( cosf( playerAngle ) * 1.2f );
+      dxMove = -( cosf( playerAngle ) * 0.8f );
       dyMove = tanf( playerAngle ) * -dxMove;
    }
 
@@ -78,14 +88,14 @@ void PlayingStateInputHandler::HandleInput()
    {
       auto strafeAngle = playerAngle + RAD_90;
       NORMALIZE_ANGLE( strafeAngle );
-      dxStrafe = cosf( strafeAngle ) * 1.2f;
+      dxStrafe = cosf( strafeAngle ) * 0.8f;
       dyStrafe = -( tanf( strafeAngle ) * dxStrafe );
    }
    else if ( isStrafingRight && !isStrafingLeft )
    {
       auto strafeAngle = playerAngle - RAD_90;
       NORMALIZE_ANGLE( strafeAngle );
-      dxStrafe = cosf( strafeAngle ) * 1.2f;
+      dxStrafe = cosf( strafeAngle ) * 0.8f;
       dyStrafe = -( tanf( strafeAngle ) * dxStrafe );
    }
 
@@ -97,6 +107,7 @@ void PlayingStateInputHandler::HandleInput()
 
    for ( const auto& lineseg : subsector.linesegs )
    {
+      // MUFFINS: if the lines do intersect, we should try to "hug" the wall instead of just stopping dead.
       if ( Geometry::LinesIntersect( playerPosition.x, playerPosition.y, newPlayerPositionX, newPlayerPositionY,
                                      lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y, nullptr ) )
       {

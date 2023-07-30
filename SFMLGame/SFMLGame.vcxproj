@@ -172,7 +172,7 @@
     <ClCompile Include="GameStateController.cpp" />
     <ClCompile Include="GameInputHandler.cpp" />
     <ClCompile Include="Geometry.cpp" />
-    <ClCompile Include="KeyboardInputReader.cpp" />
+    <ClCompile Include="InputReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MenuStateInputHandler.cpp" />
@@ -206,10 +206,9 @@
     <ClInclude Include="GameStateController.h" />
     <ClInclude Include="IGameStateInputHandler.h" />
     <ClInclude Include="IGameStateRenderer.h" />
-    <ClInclude Include="IInputReader.h" />
     <ClInclude Include="GameInputHandler.h" />
     <ClInclude Include="IMenuOption.h" />
-    <ClInclude Include="KeyboardInputReader.h" />
+    <ClInclude Include="InputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Linedef.h" />

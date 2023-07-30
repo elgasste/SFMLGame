@@ -69,7 +69,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="KeyboardInputReader.cpp">
+    <ClCompile Include="InputReader.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="GameRenderer.cpp">
@@ -152,10 +152,7 @@
     <ClInclude Include="ButtonState.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="IInputReader.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyboardInputReader.h">
+    <ClInclude Include="InputReader.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="KeyCode.h">

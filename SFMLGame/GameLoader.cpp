@@ -3,7 +3,7 @@
 #include "RenderConfig.h"
 #include "EventAggregator.h"
 #include "GameClock.h"
-#include "KeyboardInputReader.h"
+#include "InputReader.h"
 #include "GameStateController.h"
 #include "BackMenuOption.h"
 #include "QuitMenuOption.h"
@@ -36,7 +36,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto bspRootNode = LoadBspTree( gameData->GetSectors() );
    auto eventAggregator = make_shared<EventAggregator>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
-   auto inputReader = shared_ptr<KeyboardInputReader>( new KeyboardInputReader( gameConfig ) );
+   auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
    auto stateController = make_shared<GameStateController>();
    auto backMenuOption = shared_ptr<BackMenuOption>( new BackMenuOption( stateController ) );
    auto quitMenuOption = shared_ptr<QuitMenuOption>( new QuitMenuOption( eventAggregator ) );

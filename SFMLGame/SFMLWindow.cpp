@@ -23,6 +23,7 @@ void SFMLWindow::Initialize()
 {
    auto videoMode = VideoMode( _gameConfig->ScreenWidth, _gameConfig->ScreenHeight );
    _window = shared_ptr<RenderWindow>( new RenderWindow( videoMode, _gameConfig->WindowTitle, _gameConfig->WindowStyle ) );
+   _window->setMouseCursorVisible( false );
 }
 
 void SFMLWindow::Show() const
