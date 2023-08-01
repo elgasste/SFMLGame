@@ -2,6 +2,7 @@
 
 #include "PlayingStateInputHandler.h"
 #include "GameConfig.h"
+#include "GameData.h"
 #include "InputReader.h"
 #include "GameStateController.h"
 #include "Entity.h"
@@ -11,13 +12,13 @@ using namespace std;
 using namespace sf;
 
 PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<GameConfig> gameConfig,
+                                                    shared_ptr<GameData> gameData,
                                                     shared_ptr<InputReader> inputReader,
-                                                    shared_ptr<GameStateController> stateController,
-                                                    shared_ptr<Entity> player ) :
+                                                    shared_ptr<GameStateController> stateController ) :
    _gameConfig( gameConfig ),
+   _gameData( gameData ),
    _inputReader( inputReader ),
-   _stateController( stateController ),
-   _player( player )
+   _stateController( stateController )
 {
 }
 
@@ -35,29 +36,31 @@ void PlayingStateInputHandler::HandleInput()
 
 void PlayingStateInputHandler::HandlePlayerTurning() const
 {
-   auto angle = _player->GetAngle();
+   auto player = _gameData->GetPlayer();
+   auto angle = player->GetAngle();
    auto isTurningLeft = _inputReader->IsButtonDown( Button::Left );
    auto isTurningRight = _inputReader->IsButtonDown( Button::Right );
 
    if ( isTurningLeft && !isTurningRight )
    {
-      _player->SetAngle( angle += _gameConfig->KeyboardTurnAngleIncrement );
+      player->SetAngle( angle += _gameConfig->KeyboardTurnAngleIncrement );
    }
    else if ( isTurningRight && !isTurningLeft )
    {
-      _player->SetAngle( angle -= _gameConfig->KeyboardTurnAngleIncrement );
+      player->SetAngle( angle -= _gameConfig->KeyboardTurnAngleIncrement );
    }
 
    auto mouseDeltaX = _inputReader->GetMouseDelta().x;
 
    if ( mouseDeltaX != 0 )
    {
-      _player->SetAngle( angle - ( mouseDeltaX * _gameConfig->MouseMoveAngleIncrement ) );
+      player->SetAngle( angle - ( mouseDeltaX * _gameConfig->MouseMoveAngleIncrement ) );
    }
 }
 
 void PlayingStateInputHandler::HandlePlayerMovement() const
 {
+   auto player = _gameData->GetPlayer();
    auto isMovingForward = _inputReader->IsButtonDown( Button::Forward );
    auto isMovingBackward = _inputReader->IsButtonDown( Button::Backward );
    auto isStrafingLeft = _inputReader->IsButtonDown( Button::StrafeLeft );
@@ -68,25 +71,25 @@ void PlayingStateInputHandler::HandlePlayerMovement() const
       return;
    }
 
-   auto forwardVelocity = _player->GetForwardVelocity();
+   auto forwardVelocity = player->GetForwardVelocity();
 
    if ( isMovingForward && !isMovingBackward )
    {
-      _player->SetForwardVelocity( min( forwardVelocity + _gameConfig->PlayerVelocityAcceleration, _gameConfig->MaxPlayerVelocity ) );
+      player->SetForwardVelocity( min( forwardVelocity + _gameConfig->PlayerVelocityAcceleration, _gameConfig->MaxPlayerVelocity ) );
    }
    else if ( isMovingBackward && !isMovingForward )
    {
-      _player->SetForwardVelocity( max( forwardVelocity - _gameConfig->PlayerVelocityAcceleration, -( _gameConfig->MaxPlayerVelocity ) ) );
+      player->SetForwardVelocity( max( forwardVelocity - _gameConfig->PlayerVelocityAcceleration, -( _gameConfig->MaxPlayerVelocity ) ) );
    }
 
-   auto sidewaysVelocity = _player->GetSidewaysVelocity();
+   auto sidewaysVelocity = player->GetSidewaysVelocity();
 
    if ( isStrafingLeft && !isStrafingRight )
    {
-      _player->SetSidewaysVelocity( max( sidewaysVelocity - _gameConfig->PlayerVelocityAcceleration, -( _gameConfig->MaxPlayerVelocity ) ) );
+      player->SetSidewaysVelocity( max( sidewaysVelocity - _gameConfig->PlayerVelocityAcceleration, -( _gameConfig->MaxPlayerVelocity ) ) );
    }
    else if ( isStrafingRight && !isStrafingLeft )
    {
-      _player->SetSidewaysVelocity( min( sidewaysVelocity + _gameConfig->PlayerVelocityAcceleration, _gameConfig->MaxPlayerVelocity ) );
+      player->SetSidewaysVelocity( min( sidewaysVelocity + _gameConfig->PlayerVelocityAcceleration, _gameConfig->MaxPlayerVelocity ) );
    }
 }

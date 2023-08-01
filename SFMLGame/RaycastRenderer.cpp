@@ -5,8 +5,9 @@
 #include "RaycastRenderer.h"
 #include "GameConfig.h"
 #include "RenderConfig.h"
-#include "Entity.h"
+#include "GameData.h"
 #include "SFMLWindow.h"
+#include "Entity.h"
 #include "Geometry.h"
 
 using namespace NAMESPACE;
@@ -15,11 +16,11 @@ using namespace sf;
 
 RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
                                   shared_ptr<RenderConfig> renderConfig,
-                                  shared_ptr<Entity> player,
+                                  shared_ptr<GameData> gameData,
                                   shared_ptr<SFMLWindow> window ) :
    _gameConfig( gameConfig ),
    _renderConfig( renderConfig ),
-   _player( player ),
+   _gameData( gameData ),
    _window( window )
 {
    _renderColumns = (sf::Vertex*)malloc( sizeof( sf::Vertex ) * gameConfig->ScreenWidth * 2 );
@@ -57,8 +58,9 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
                                      int startColumn,
                                      int endColumn )
 {
-   auto playerPosition = _player->GetPosition();
-   auto playerAngle = _player->GetAngle();
+   auto player = _gameData->GetPlayer();
+   auto playerPosition = player->GetPosition();
+   auto playerAngle = player->GetAngle();
    static Vector2f pIntersect;
 
    for ( int i = startColumn, j = 0; i <= endColumn; i++, j++ )

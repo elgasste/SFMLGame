@@ -9,7 +9,7 @@ NAMESPACE_BEGIN
 
 class GameConfig;
 class RenderConfig;
-class Entity;
+class GameData;
 class SFMLWindow;
 
 class RaycastRenderer
@@ -17,7 +17,7 @@ class RaycastRenderer
 public:
    RaycastRenderer( std::shared_ptr<GameConfig> gameConfig,
                     std::shared_ptr<RenderConfig> renderConfig,
-                    std::shared_ptr<Entity> player,
+                    std::shared_ptr<GameData> gameData,
                     std::shared_ptr<SFMLWindow> window );
    ~RaycastRenderer();
 
@@ -32,7 +32,7 @@ public:
 private:
    std::shared_ptr<GameConfig> _gameConfig;
    std::shared_ptr<RenderConfig> _renderConfig;
-   std::shared_ptr<Entity> _player;
+   std::shared_ptr<GameData> _gameData;
    std::shared_ptr<SFMLWindow> _window;
 
    sf::Vertex* _renderColumns;

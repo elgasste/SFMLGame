@@ -30,7 +30,6 @@ using namespace sf;
 
 shared_ptr<Game> GameLoader::Load() const
 {
-   // MUFFINS: anything in here using "GetPlayer()" should take in a GameData instead
    auto gameConfig = make_shared<GameConfig>();
    auto renderConfig = shared_ptr<RenderConfig>( new RenderConfig( gameConfig ) );
    auto gameData = LoadGameData( gameConfig );
@@ -45,16 +44,16 @@ shared_ptr<Game> GameLoader::Load() const
    menu->AddOption( backMenuOption );
    menu->AddOption( quitMenuOption );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( gameConfig, eventAggregator, clock ) );
-   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, gameData->GetPlayer(), window));
+   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, gameData, window));
    auto bspOperator = shared_ptr<BspOperator>( new BspOperator( gameConfig, renderConfig, raycastRenderer, bspRootNode ) );
-   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( gameConfig, inputReader, stateController, gameData->GetPlayer() ) );
+   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( gameConfig, gameData, inputReader, stateController ) );
    auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, stateController, menu ) );
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( renderConfig, inputReader, stateController ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
    auto logic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, gameInputHandler, bspOperator ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, clock, window ) );
-   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( gameConfig, renderConfig, window, bspOperator, gameData->GetPlayer() ) );
+   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( gameConfig, renderConfig, gameData, window, bspOperator ) );
    auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( gameConfig, renderConfig, window, clock, menu ) );
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderConfig, window, diagnosticRenderer, stateController ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );

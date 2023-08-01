@@ -3,6 +3,7 @@
 #include "PlayingStateRenderer.h"
 #include "GameConfig.h"
 #include "RenderConfig.h"
+#include "GameData.h"
 #include "SFMLWindow.h"
 #include "BspOperator.h"
 
@@ -12,12 +13,12 @@ using namespace sf;
 
 PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> gameConfig,
                                             shared_ptr<RenderConfig> renderConfig,
+                                            shared_ptr<GameData> gameData,
                                             shared_ptr<SFMLWindow> window,
-                                            shared_ptr<BspOperator> bspOperator,
-                                            shared_ptr<Entity> player ) :
+                                            shared_ptr<BspOperator> bspOperator ) :
+   _gameData( gameData ),
    _window( window ),
-   _bspOperator( bspOperator ),
-   _player( player )
+   _bspOperator( bspOperator )
 {
    _font = make_shared<Font>();
    _font->loadFromFile( renderConfig->MessageFont );
@@ -33,6 +34,6 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> gameConfig,
 
 void PlayingStateRenderer::Render()
 {
-   _bspOperator->RenderWorld( _player );
+   _bspOperator->RenderWorld( _gameData->GetPlayer() );
    _window->Draw( _text );
 }
