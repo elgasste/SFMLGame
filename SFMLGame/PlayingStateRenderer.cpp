@@ -28,8 +28,7 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> gameConfig,
    _text->setFillColor( renderConfig->MessageTextColor );
    _text->setString( "Press ESC for menu, or F12 to toggle diagnostics" );
 
-   _text->setPosition( ( (float)gameConfig->ScreenWidth / 2 ) - ( _text->getGlobalBounds().width / 2 ),
-                       ( (float)gameConfig->ScreenHeight / 2 ) - ( _text->getGlobalBounds().height / 2 ) );
+   _text->setPosition( 12, 0 );
 }
 
 void PlayingStateRenderer::Render()

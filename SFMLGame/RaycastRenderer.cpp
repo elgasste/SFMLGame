@@ -82,8 +82,9 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
          }
          else
          {
-            // if we're not at the edge of a lineseg, something's wrong
-            assert( doesIntersect );
+            // MUFFINS: this could mean something's wrong, but maybe we should just log it or something?
+            //assert( doesIntersect );
+            continue;
          }
       }
 

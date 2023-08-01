@@ -27,7 +27,12 @@ public:
    sf::Vector2f DefaultPlayerPosition;
    float DefaultPlayerAngle;
 
+   float MaxPlayerVelocity;
+   float PlayerVelocityAcceleration;
+   float PlayerVelocityDeceleration;
+
    float MouseMoveAngleIncrement;
+   float KeyboardTurnAngleIncrement;
    float KeyboardMoveIncrement;
 };
 
