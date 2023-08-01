@@ -4,7 +4,7 @@
 #include "GameConfig.h"
 #include "RenderConfig.h"
 #include "SFMLWindow.h"
-#include "BspRunner.h"
+#include "BspOperator.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -13,10 +13,10 @@ using namespace sf;
 PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> gameConfig,
                                             shared_ptr<RenderConfig> renderConfig,
                                             shared_ptr<SFMLWindow> window,
-                                            shared_ptr<BspRunner> bspRunner,
+                                            shared_ptr<BspOperator> bspOperator,
                                             shared_ptr<Entity> player ) :
    _window( window ),
-   _bspRunner( bspRunner ),
+   _bspOperator( bspOperator ),
    _player( player )
 {
    _font = make_shared<Font>();
@@ -34,6 +34,6 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> gameConfig,
 
 void PlayingStateRenderer::Render()
 {
-   _bspRunner->RenderWorld( _player );
+   _bspOperator->RenderWorld( _player );
    _window->Draw( _text );
 }

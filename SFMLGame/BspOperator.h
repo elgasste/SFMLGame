@@ -14,14 +14,14 @@ class RenderConfig;
 class Entity;
 class RaycastRenderer;
 
-class BspRunner
+class BspOperator
 {
 public:
-   BspRunner( std::shared_ptr<GameConfig> gameConfig,
-              std::shared_ptr<RenderConfig> renderConfig,
-              std::shared_ptr<RaycastRenderer> raycastRenderer,
-              BspNode* rootNode );
-   ~BspRunner();
+   BspOperator( std::shared_ptr<GameConfig> gameConfig,
+                std::shared_ptr<RenderConfig> renderConfig,
+                std::shared_ptr<RaycastRenderer> raycastRenderer,
+                BspNode* rootNode );
+   ~BspOperator();
 
    const Subsector& GetOccupyingSubsector( std::shared_ptr<Entity> entity );
    void RenderWorld( std::shared_ptr<Entity> viewingEntity );

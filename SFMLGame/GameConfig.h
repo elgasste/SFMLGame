@@ -26,6 +26,9 @@ public:
 
    sf::Vector2f DefaultPlayerPosition;
    float DefaultPlayerAngle;
+
+   float MouseMoveAngleIncrement;
+   float KeyboardMoveIncrement;
 };
 
 NAMESPACE_END

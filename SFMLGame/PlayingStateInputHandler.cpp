@@ -1,25 +1,27 @@
-// MUFFINS: can remove a lot of these when movement goes into a different class
 #include <math.h>
 #include <SFML/System/Vector2.hpp>
 
 #include "PlayingStateInputHandler.h"
+#include "GameConfig.h"
 #include "InputReader.h"
 #include "GameStateController.h"
 #include "Entity.h"
-#include "BspRunner.h"
+#include "BspOperator.h"
 
 using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputReader> inputReader,
+PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<GameConfig> gameConfig,
+                                                    shared_ptr<InputReader> inputReader,
                                                     shared_ptr<GameStateController> stateController,
                                                     shared_ptr<Entity> player,
-                                                    shared_ptr<BspRunner> bspRunner ) :
+                                                    shared_ptr<BspOperator> bspOperator ) :
+   _gameConfig( gameConfig ),
    _inputReader( inputReader ),
    _stateController( stateController ),
    _player( player ),
-   _bspRunner( bspRunner )
+   _bspOperator( bspOperator )
 {
 }
 
@@ -30,9 +32,6 @@ void PlayingStateInputHandler::HandleInput()
       _stateController->SetState( GameState::Menu );
       return;
    }
-
-   // MUFFINS: all of this should be handled in some kind of movement controller.
-   // also, all the movement values should be stored in a config.
 
    auto playerAngle = _player->GetAngle();
    auto playerPosition = _player->GetPosition();
@@ -53,7 +52,7 @@ void PlayingStateInputHandler::HandleInput()
 
    if ( mouseDeltaX != 0 )
    {
-      auto newAngle = playerAngle - ( mouseDeltaX * 0.0006f );
+      auto newAngle = playerAngle - ( mouseDeltaX * _gameConfig->MouseMoveAngleIncrement );
       NORMALIZE_ANGLE( newAngle );
       _player->SetAngle( newAngle );
    }
@@ -75,12 +74,12 @@ void PlayingStateInputHandler::HandleInput()
 
    if ( isMovingForward && !isMovingBackward )
    {
-      dxMove = cosf( playerAngle ) * 0.8f;
+      dxMove = cosf( playerAngle ) * _gameConfig->KeyboardMoveIncrement;
       dyMove = -( tanf( playerAngle ) * dxMove );
    }
    else if ( isMovingBackward && !isMovingForward )
    {
-      dxMove = -( cosf( playerAngle ) * 0.8f );
+      dxMove = -( cosf( playerAngle ) * _gameConfig->KeyboardMoveIncrement );
       dyMove = tanf( playerAngle ) * -dxMove;
    }
 
@@ -88,14 +87,14 @@ void PlayingStateInputHandler::HandleInput()
    {
       auto strafeAngle = playerAngle + RAD_90;
       NORMALIZE_ANGLE( strafeAngle );
-      dxStrafe = cosf( strafeAngle ) * 0.8f;
+      dxStrafe = cosf( strafeAngle ) * _gameConfig->KeyboardMoveIncrement;
       dyStrafe = -( tanf( strafeAngle ) * dxStrafe );
    }
    else if ( isStrafingRight && !isStrafingLeft )
    {
       auto strafeAngle = playerAngle - RAD_90;
       NORMALIZE_ANGLE( strafeAngle );
-      dxStrafe = cosf( strafeAngle ) * 0.8f;
+      dxStrafe = cosf( strafeAngle ) * _gameConfig->KeyboardMoveIncrement;
       dyStrafe = -( tanf( strafeAngle ) * dxStrafe );
    }
 
@@ -103,11 +102,12 @@ void PlayingStateInputHandler::HandleInput()
    auto newPlayerPositionY = playerPosition.y + dyMove + dyStrafe;
 
    // check for wall collisions
-   auto subsector = _bspRunner->GetOccupyingSubsector( _player );
+   auto subsector = _bspOperator->GetOccupyingSubsector( _player );
 
    for ( const auto& lineseg : subsector.linesegs )
    {
       // MUFFINS: if the lines do intersect, we should try to "hug" the wall instead of just stopping dead.
+      // not quite sure how to do that yet.
       if ( Geometry::LinesIntersect( playerPosition.x, playerPosition.y, newPlayerPositionX, newPlayerPositionY,
                                      lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y, nullptr ) )
       {

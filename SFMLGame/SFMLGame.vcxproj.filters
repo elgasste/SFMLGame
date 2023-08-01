@@ -126,7 +126,7 @@
     <ClCompile Include="BackMenuOption.cpp">
       <Filter>Source Files\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="BspRunner.cpp">
+    <ClCompile Include="BspOperator.cpp">
       <Filter>Source Files\Bsp</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
@@ -236,7 +236,7 @@
     <ClInclude Include="BackMenuOption.h">
       <Filter>Header Files\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="BspRunner.h">
+    <ClInclude Include="BspOperator.h">
       <Filter>Header Files\Bsp</Filter>
     </ClInclude>
     <ClInclude Include="Linedef.h">

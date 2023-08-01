@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "BspRunner.h"
+#include "BspOperator.h"
 #include "GameConfig.h"
 #include "RenderConfig.h"
 #include "Entity.h"
@@ -11,10 +11,10 @@
 using namespace NAMESPACE;
 using namespace std;
 
-BspRunner::BspRunner( shared_ptr<GameConfig> gameConfig,
-                      shared_ptr<RenderConfig> renderConfig,
-                      shared_ptr<RaycastRenderer> raycastRenderer,
-                      BspNode* rootNode ) :
+BspOperator::BspOperator( shared_ptr<GameConfig> gameConfig,
+                          shared_ptr<RenderConfig> renderConfig,
+                          shared_ptr<RaycastRenderer> raycastRenderer,
+                          BspNode* rootNode ) :
    _gameConfig( gameConfig ),
    _renderConfig( renderConfig ),
    _raycastRenderer( raycastRenderer ),
@@ -23,14 +23,14 @@ BspRunner::BspRunner( shared_ptr<GameConfig> gameConfig,
 {
 }
 
-BspRunner::~BspRunner()
+BspOperator::~BspOperator()
 {
    DeleteTreeRecursive( _rootNode );
 }
 
-void BspRunner::DeleteTreeRecursive( BspNode* node )
+void BspOperator::DeleteTreeRecursive( BspNode* node )
 {
-   if ( node->isLeaf )
+   if ( node != nullptr && node->isLeaf )
    {
       delete node->subsector;
       node->subsector = nullptr;
@@ -45,7 +45,7 @@ void BspRunner::DeleteTreeRecursive( BspNode* node )
    }
 }
 
-const Subsector& BspRunner::GetOccupyingSubsector( shared_ptr<Entity> entity )
+const Subsector& BspOperator::GetOccupyingSubsector( shared_ptr<Entity> entity )
 {
    BspNode* node = _rootNode;
    auto origin = entity->GetPosition();
@@ -59,7 +59,7 @@ const Subsector& BspRunner::GetOccupyingSubsector( shared_ptr<Entity> entity )
    return *( node->subsector );
 }
 
-void BspRunner::RenderWorld( shared_ptr<Entity> viewingEntity )
+void BspOperator::RenderWorld( shared_ptr<Entity> viewingEntity )
 {
    _undrawnRanges.clear();
    _undrawnRanges.push_back( { 0, _gameConfig->ScreenWidth - 1 } );
@@ -73,8 +73,13 @@ void BspRunner::RenderWorld( shared_ptr<Entity> viewingEntity )
    RenderNodeRecursive( _rootNode );
 }
 
-void BspRunner::RenderNodeRecursive( BspNode* node )
+void BspOperator::RenderNodeRecursive( BspNode* node )
 {
+   if ( node == nullptr )
+   {
+      return;
+   }
+
    if ( node->isLeaf )
    {
       RenderLeaf( node );
@@ -106,7 +111,7 @@ void BspRunner::RenderNodeRecursive( BspNode* node )
    }
 }
 
-void BspRunner::RenderLeaf( BspNode* leaf )
+void BspOperator::RenderLeaf( BspNode* leaf )
 {
    for ( const auto& lineseg : leaf->subsector->linesegs )
    {
@@ -183,7 +188,7 @@ void BspRunner::RenderLeaf( BspNode* leaf )
    }
 }
 
-void BspRunner::MarkRangeAsDrawn( int start, int end )
+void BspOperator::MarkRangeAsDrawn( int start, int end )
 {
    for ( int i = 0; i < (int)_undrawnRanges.size(); i++ )
    {

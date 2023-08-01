@@ -32,4 +32,7 @@ GameConfig::GameConfig()
 
    DefaultPlayerPosition = Vector2f( 130, 220 );
    DefaultPlayerAngle = RAD_30;
+
+   MouseMoveAngleIncrement = 0.0006f;
+   KeyboardMoveIncrement = 0.8f;
 }
