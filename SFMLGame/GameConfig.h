@@ -25,6 +25,7 @@ public:
    std::map<KeyCode, Button> KeyBindingsMap;
 
    sf::Vector2f DefaultPlayerPosition;
+   float DefaultPlayerRadius;
    float DefaultPlayerAngle;
 
    float MaxPlayerVelocity;

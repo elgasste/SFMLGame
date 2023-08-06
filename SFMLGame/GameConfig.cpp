@@ -30,8 +30,9 @@ GameConfig::GameConfig()
       { KeyCode::F12, Button::Diagnostics }
    };
 
-   DefaultPlayerPosition = Vector2f( 130, 220 );
-   DefaultPlayerAngle = RAD_30;
+   DefaultPlayerPosition = Vector2f( 320, 250 );
+   DefaultPlayerRadius = 10.0f;
+   DefaultPlayerAngle = RAD_90;
 
    MaxPlayerVelocity = 1.5f;
    PlayerVelocityAcceleration = 0.1f;

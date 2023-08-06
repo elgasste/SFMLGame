@@ -58,6 +58,8 @@ void GameLogic::MovePlayer()
    newPositionX -= dx;
    newPositionY += dy;
 
+   // MUFFINS: factor in the player's radius somewhere in here
+
    // check for wall collisions
    auto subsector = _bspOperator->GetOccupyingSubsector( player );
    bool collisionDetected = false;
