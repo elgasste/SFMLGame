@@ -30,7 +30,12 @@ BspOperator::~BspOperator()
 
 void BspOperator::DeleteTreeRecursive( BspNode* node )
 {
-   if ( node != nullptr && node->isLeaf )
+   if ( node == nullptr )
+   {
+      return;
+   }
+
+   if ( node->isLeaf )
    {
       delete node->subsector;
       node->subsector = nullptr;
@@ -160,12 +165,7 @@ void BspOperator::RenderLeaf( BspNode* leaf )
             ? _undrawnRanges[i].end - (int)( ( rightDrawAngle - undrawnRightAngle ) / _renderConfig->FovAngleIncrement )
             : _undrawnRanges[i].end - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _renderConfig->FovAngleIncrement );
 
-         _raycastRenderer->RenderLineseg( lineseg,
-                                          lineseg.start == lineseg.linedef->start,
-                                          lineseg.end == lineseg.linedef->end,
-                                          leftDrawAngle,
-                                          drawStartPixel,
-                                          drawEndPixel );
+         _raycastRenderer->RenderLineseg( lineseg, leftDrawAngle, drawStartPixel, drawEndPixel );
 
          auto prevRangeCount = _undrawnRanges.size();
          MarkRangeAsDrawn( drawStartPixel, drawEndPixel );

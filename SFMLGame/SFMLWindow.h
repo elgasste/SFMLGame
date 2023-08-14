@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 #include "Common.h"
 
@@ -30,7 +31,8 @@ public:
    void HandleEvents() const;
    void Clear() const;
    void Draw( std::shared_ptr<sf::Drawable> drawable ) const;
-   void Draw( const sf::Vertex* vertices, size_t vertexCount, sf::PrimitiveType type );
+   void Draw( const sf::Drawable& drawable ) const;
+   void Draw( const sf::Vertex* vertices, size_t vertexCount, sf::PrimitiveType type ) const;
    void Render() const;
 
 private:

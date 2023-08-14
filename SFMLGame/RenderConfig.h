@@ -24,6 +24,8 @@ public:
    float WallHeight;
    float ProjectionPlaneDelta;
    float LightingScalar;
+   int LightingMinimum;
+   float SpriteOffsetScalar;
 
    bool ShowDiagnostics;
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 #include "Common.h"
 
@@ -11,25 +12,32 @@ class Entity
 public:
    Entity();
 
-   sf::Vector2f GetPosition() { return _position; }
-   void SetPosition( sf::Vector2f position ) { _position = position; }
-
-   float GetRadius() { return _radius; }
+   const sf::Vector2f& GetPosition() const { return _position; }
+   const sf::FloatRect& GetHitBox() const { return _hitBox; }
    float GetAngle() { return _angle; }
    float GetForwardVelocity() { return _forwardVelocity; }
    float GetSidewaysVelocity() { return _sidewaysVelocity; }
 
-   void SetRadius( float radius ) { _radius = radius; }
+   void SetPosition( float x, float y );
+   void SetHitBox( float x, float y, float width, float height );
    void SetAngle( float angle );
    void SetForwardVelocity( float velocity ) { _forwardVelocity = velocity; }
    void SetSidewaysVelocity( float velocity ) { _sidewaysVelocity = velocity; }
 
+   float GetHitBoxCornerRayLength() { return _hitBoxCornerRayLength; }
+   float GetHitBoxFrontCornerAngle() { return _hitBoxFrontCornerAngle; }
+   float GetHitBoxRearCornerAngle() { return _hitBoxRearCornerAngle; }
+
 private:
    sf::Vector2f _position;
-   float _radius;
+   sf::FloatRect _hitBox;
    float _angle;
    float _forwardVelocity;
    float _sidewaysVelocity;
+
+   float _hitBoxCornerRayLength;
+   float _hitBoxFrontCornerAngle;
+   float _hitBoxRearCornerAngle;
 };
 
 NAMESPACE_END

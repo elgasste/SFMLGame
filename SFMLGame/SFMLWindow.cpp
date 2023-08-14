@@ -58,7 +58,12 @@ void SFMLWindow::Draw( shared_ptr<sf::Drawable> drawable ) const
    _window->draw( *drawable );
 }
 
-void SFMLWindow::Draw( const Vertex* vertices, size_t vertexCount, PrimitiveType type )
+void SFMLWindow::Draw( const sf::Drawable& drawable ) const
+{
+   _window->draw( drawable );
+}
+
+void SFMLWindow::Draw( const Vertex* vertices, size_t vertexCount, PrimitiveType type ) const
 {
    _window->draw( vertices, vertexCount, type );
 }

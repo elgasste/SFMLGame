@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 #include "Common.h"
 #include "KeyCode.h"
@@ -25,7 +26,7 @@ public:
    std::map<KeyCode, Button> KeyBindingsMap;
 
    sf::Vector2f DefaultPlayerPosition;
-   float DefaultPlayerRadius;
+   sf::FloatRect DefaultPlayerHitBox;
    float DefaultPlayerAngle;
 
    float MaxPlayerVelocity;

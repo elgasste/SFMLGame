@@ -1,11 +1,12 @@
 #include <math.h>
 #include <cassert>
-#include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics.hpp>
 
 #include "RaycastRenderer.h"
 #include "GameConfig.h"
 #include "RenderConfig.h"
 #include "GameData.h"
+#include "RenderData.h"
 #include "SFMLWindow.h"
 #include "Entity.h"
 #include "Geometry.h"
@@ -17,10 +18,12 @@ using namespace sf;
 RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
                                   shared_ptr<RenderConfig> renderConfig,
                                   shared_ptr<GameData> gameData,
+                                  shared_ptr<RenderData> renderData,
                                   shared_ptr<SFMLWindow> window ) :
    _gameConfig( gameConfig ),
    _renderConfig( renderConfig ),
    _gameData( gameData ),
+   _renderData( renderData ),
    _window( window )
 {
    _renderColumns = (sf::Vertex*)malloc( sizeof( sf::Vertex ) * gameConfig->ScreenWidth * 2 );
@@ -37,6 +40,12 @@ RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
    _floorRenderRect[1] = Vertex( Vector2f( screenWidth, screenHeight / 2.0f ), Color::Black );
    _floorRenderRect[2] = Vertex( Vector2f( screenWidth, screenHeight ), Color( 128, 128, 128 ) );
    _floorRenderRect[3] = Vertex( Vector2f( 0, screenHeight ), Color( 128, 128, 128 ) );
+
+   _spriteTextureRect.top = 0;
+   _spriteTextureRect.width = 1;
+   _spriteTextureRect.height = 1080;
+
+   _spriteVerticalScale.x = 1;
 }
 
 RaycastRenderer::~RaycastRenderer()
@@ -52,8 +61,6 @@ void RaycastRenderer::RenderCeilingAndFloor()
 }
 
 void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
-                                     bool isLinedefLeftEdge,
-                                     bool isLinedefRightEdge,
                                      float drawStartAngle,
                                      int startColumn,
                                      int endColumn )
@@ -84,33 +91,35 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
          }
          else
          {
-            // MUFFINS: this could mean something's wrong, but maybe we should just log it or something?
+            // TODO: this could mean something's wrong, but maybe we should just log it or something?
             //assert( doesIntersect );
             continue;
          }
       }
 
-      auto rayLength = Geometry::Raycast( playerPosition, pIntersect, playerAngle );
+      auto sprite = _renderData->GetSpriteById( lineseg.linedef->textureId );
 
       // this uses the formula ProjectedWallHeight = ( ActualWallHeight / DistanceToWall ) * DistanceToProjectionPlane
+      auto rayLength = Geometry::Raycast( playerPosition, pIntersect, playerAngle );
       auto projectedWallHeight = ( ( _renderConfig->WallHeight / rayLength ) * _renderConfig->ProjectionPlaneDelta );
 
-      auto columnIndex = i * 2;
+      _spritePosition.x = (float)i;
+      _spritePosition.y = ( (float)_gameConfig->ScreenHeight - projectedWallHeight ) / 2.0f;
+      sprite.setPosition( _spritePosition );
 
-      auto color = ( ( i == startColumn && isLinedefLeftEdge ) || ( i == endColumn && isLinedefRightEdge ) )
-                   ? Color::Black : lineseg.linedef->color;
+      _spriteTextureRect.left = (int)( sqrtf(
+         powf( pIntersect.x - lineseg.linedef->start.x, 2 ) +
+         powf( pIntersect.y - lineseg.linedef->start.y, 2 ) ) *
+         _renderConfig->SpriteOffsetScalar );
+      sprite.setTextureRect( _spriteTextureRect );
+
+      _spriteVerticalScale.y = projectedWallHeight / (float)_gameConfig->ScreenHeight;
+      sprite.setScale( _spriteVerticalScale );
+
       auto lightAdjustment = ( rayLength == 0.0f ) ? 0.0f : min( rayLength / _renderConfig->LightingScalar, 255.0f );
-      color.r = (Uint8)max( 0, (int)( color.r - lightAdjustment ) );
-      color.g = (Uint8)max( 0, (int)( color.g - lightAdjustment ) );
-      color.b = (Uint8)max( 0, (int)( color.b - lightAdjustment ) );
+      auto lightValue = (Uint8)max( _renderConfig->LightingMinimum, (int)( 255.0f - lightAdjustment ) );
+      sprite.setColor( Color( lightValue, lightValue, lightValue ) );
 
-      _renderColumns[columnIndex].color = color;
-      _renderColumns[columnIndex + 1].color = color;
-      _renderColumns[columnIndex].position.x = (float)i;
-      _renderColumns[columnIndex].position.y = ( _gameConfig->ScreenHeight / 2.0f ) - ( projectedWallHeight / 2.0f );
-      _renderColumns[columnIndex + 1].position.x = (float)i;
-      _renderColumns[columnIndex + 1].position.y = ( _gameConfig->ScreenHeight / 2.0f ) + ( projectedWallHeight / 2.0f );
-
-      _window->Draw( _renderColumns + columnIndex, 2, Lines );
+      _window->Draw( sprite );
    }
 }

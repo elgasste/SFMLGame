@@ -100,7 +100,9 @@
       <AdditionalLibraryDirectories>C:\SFML-2.5.1\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)SFML Debug Dlls\" $(OutDir)</Command>
+      <Command>copy "$(SolutionDir)SFML Debug Dlls\" "$(OutDir)" /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)Resources\Textures\" /Y
+copy "$(SolutionDir)SFMLGame\Consolas.ttf" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +127,9 @@
       <AdditionalLibraryDirectories>C:\SFML-2.5.1\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)SFML Release Dlls\" $(OutDir)</Command>
+      <Command>xcopy "$(SolutionDir)SFML Release Dlls\" "$(OutDir)" /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)Resources\Textures\" /Y
+xcopy "$(SolutionDir)SFMLGame\Consolas.ttf" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -182,6 +186,7 @@
     <ClCompile Include="QuitMenuOption.cpp" />
     <ClCompile Include="RaycastRenderer.cpp" />
     <ClCompile Include="RenderConfig.cpp" />
+    <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +227,7 @@
     <ClInclude Include="Range.h" />
     <ClInclude Include="RaycastRenderer.h" />
     <ClInclude Include="RenderConfig.h" />
+    <ClInclude Include="RenderData.h" />
     <ClInclude Include="Sector.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="Geometry.h" />

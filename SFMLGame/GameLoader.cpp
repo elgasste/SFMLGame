@@ -18,6 +18,7 @@
 #include "GameData.h"
 #include "Subsector.h"
 #include "BspOperator.h"
+#include "RenderData.h"
 #include "PlayingStateRenderer.h"
 #include "MenuStateRenderer.h"
 #include "SFMLWindow.h"
@@ -34,6 +35,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto renderConfig = shared_ptr<RenderConfig>( new RenderConfig( gameConfig ) );
    auto gameData = LoadGameData( gameConfig );
    auto bspRootNode = LoadBspTree( gameData->GetSectors() );
+   auto renderData = LoadRenderData();
    auto eventAggregator = make_shared<EventAggregator>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
@@ -44,7 +46,7 @@ shared_ptr<Game> GameLoader::Load() const
    menu->AddOption( backMenuOption );
    menu->AddOption( quitMenuOption );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( gameConfig, eventAggregator, clock ) );
-   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, gameData, window));
+   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, gameData, renderData, window));
    auto bspOperator = shared_ptr<BspOperator>( new BspOperator( gameConfig, renderConfig, raycastRenderer, bspRootNode ) );
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( gameConfig, gameData, inputReader, stateController ) );
    auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, stateController, menu ) );
@@ -69,8 +71,11 @@ shared_ptr<Game> GameLoader::Load() const
 shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig ) const
 {
    auto player = make_shared<Entity>();
-   player->SetPosition( gameConfig->DefaultPlayerPosition );
-   player->SetAngle( gameConfig->DefaultPlayerRadius );
+   auto position = gameConfig->DefaultPlayerPosition;
+   auto hitBox = gameConfig->DefaultPlayerHitBox;
+
+   player->SetPosition( position.x, position.y );
+   player->SetHitBox( hitBox.left, hitBox.top, hitBox.width, hitBox.height );
    player->SetAngle( gameConfig->DefaultPlayerAngle );
    auto gameData = shared_ptr<GameData>( new GameData( LoadSectors(), player ) );
    return gameData;
@@ -80,95 +85,95 @@ vector<Sector> GameLoader::LoadSectors() const
 {
    vector<Sector> sectors;
 
-   // outer walls (magenta)
+   // outer walls (texture 1)
    sectors.push_back( Sector() );
-   sectors[0].linedefs.push_back( { Vector2f( 70, 30 ), Vector2f( 110, 30 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 110, 30 ), Vector2f( 110, 50 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 110, 50 ), Vector2f( 95, 50 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 95, 50 ), Vector2f( 95, 90 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 95, 90 ), Vector2f( 110, 90 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 110, 90 ), Vector2f( 130, 110 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 130, 110 ), Vector2f( 130, 155 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 130, 155 ), Vector2f( 190, 155 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 190, 155 ), Vector2f( 190, 230 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 190, 230 ), Vector2f( 250, 230 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 250, 230 ), Vector2f( 250, 150 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 250, 150 ), Vector2f( 300, 10 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 300, 100 ), Vector2f( 310, 100 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 310, 100 ), Vector2f( 310, 80 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 310, 80 ), Vector2f( 260, 80 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 260, 80 ), Vector2f( 260, 30 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 260, 30 ), Vector2f( 400, 30 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 400, 30 ), Vector2f( 400, 80 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 400, 80 ), Vector2f( 320, 80 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 320, 80 ), Vector2f( 320, 100 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 320, 100 ), Vector2f( 350, 100 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 350, 100 ), Vector2f( 390, 140 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 390, 140 ), Vector2f( 390, 240 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 390, 240 ), Vector2f( 350, 280 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 350, 280 ), Vector2f( 280, 280 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 280, 280 ), Vector2f( 250, 250 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 250, 250 ), Vector2f( 170, 250 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 170, 250 ), Vector2f( 170, 175 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 170, 175 ), Vector2f( 130, 175 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 130, 175 ), Vector2f( 130, 210 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 130, 210 ), Vector2f( 90, 210 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 90, 210 ), Vector2f( 75, 195 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 75, 195 ), Vector2f( 40, 230 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 40, 230 ), Vector2f( 60, 230 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 60, 230 ), Vector2f( 60, 290 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 60, 290 ), Vector2f( 10, 290 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 10, 290 ), Vector2f( 10, 220 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 10, 220 ), Vector2f( 30, 220 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 30, 220 ), Vector2f( 65, 185 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 65, 185 ), Vector2f( 50, 170 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 50, 170 ), Vector2f( 50, 110 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 50, 110 ), Vector2f( 70, 90 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 70, 90 ), Vector2f( 85, 90 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 85, 90 ), Vector2f( 85, 50 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 85, 50 ), Vector2f( 70, 50 ), Color::Magenta } );
-   sectors[0].linedefs.push_back( { Vector2f( 70, 50 ), Vector2f( 70, 30 ), Color::Magenta } );
+   sectors[0].linedefs.push_back( { Vector2f( 70, 30 ), Vector2f( 110, 30 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 110, 30 ), Vector2f( 110, 50 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 110, 50 ), Vector2f( 95, 50 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 95, 50 ), Vector2f( 95, 90 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 95, 90 ), Vector2f( 110, 90 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 110, 90 ), Vector2f( 130, 110 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 130, 110 ), Vector2f( 130, 155 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 130, 155 ), Vector2f( 190, 155 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 190, 155 ), Vector2f( 190, 230 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 190, 230 ), Vector2f( 250, 230 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 250, 230 ), Vector2f( 250, 150 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 250, 150 ), Vector2f( 300, 10 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 300, 100 ), Vector2f( 310, 100 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 310, 100 ), Vector2f( 310, 80 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 310, 80 ), Vector2f( 260, 80 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 260, 80 ), Vector2f( 260, 30 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 260, 30 ), Vector2f( 400, 30 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 400, 30 ), Vector2f( 400, 80 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 400, 80 ), Vector2f( 320, 80 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 320, 80 ), Vector2f( 320, 100 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 320, 100 ), Vector2f( 350, 100 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 350, 100 ), Vector2f( 390, 140 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 390, 140 ), Vector2f( 390, 240 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 390, 240 ), Vector2f( 350, 280 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 350, 280 ), Vector2f( 280, 280 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 280, 280 ), Vector2f( 250, 250 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 250, 250 ), Vector2f( 170, 250 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 170, 250 ), Vector2f( 170, 175 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 170, 175 ), Vector2f( 130, 175 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 130, 175 ), Vector2f( 130, 210 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 130, 210 ), Vector2f( 90, 210 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 90, 210 ), Vector2f( 75, 195 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 75, 195 ), Vector2f( 40, 230 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 40, 230 ), Vector2f( 60, 230 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 60, 230 ), Vector2f( 60, 290 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 60, 290 ), Vector2f( 10, 290 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 10, 290 ), Vector2f( 10, 220 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 10, 220 ), Vector2f( 30, 220 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 30, 220 ), Vector2f( 65, 185 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 65, 185 ), Vector2f( 50, 170 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 50, 170 ), Vector2f( 50, 110 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 50, 110 ), Vector2f( 70, 90 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 70, 90 ), Vector2f( 85, 90 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 85, 90 ), Vector2f( 85, 50 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 85, 50 ), Vector2f( 70, 50 ), 1 } );
+   sectors[0].linedefs.push_back( { Vector2f( 70, 50 ), Vector2f( 70, 30 ), 1 } );
 
-   // southwest column (green)
+   // southwest column (texture 0)
    sectors.push_back( Sector() );
-   sectors[1].linedefs.push_back( { Vector2f( 30, 260 ), Vector2f( 30, 270 ), Color::Green } );
-   sectors[1].linedefs.push_back( { Vector2f( 30, 270 ), Vector2f( 40, 270 ), Color::Green } );
-   sectors[1].linedefs.push_back( { Vector2f( 40, 270 ), Vector2f( 40, 260 ), Color::Green } );
-   sectors[1].linedefs.push_back( { Vector2f( 40, 260 ), Vector2f( 30, 260 ), Color::Green } );
+   sectors[1].linedefs.push_back( { Vector2f( 30, 260 ), Vector2f( 30, 270 ), 0 } );
+   sectors[1].linedefs.push_back( { Vector2f( 30, 270 ), Vector2f( 40, 270 ), 0 } );
+   sectors[1].linedefs.push_back( { Vector2f( 40, 270 ), Vector2f( 40, 260 ), 0 } );
+   sectors[1].linedefs.push_back( { Vector2f( 40, 260 ), Vector2f( 30, 260 ), 0 } );
 
-   // west column (yellow)
+   // west column (texture 0)
    sectors.push_back( Sector() );
-   sectors[2].linedefs.push_back( { Vector2f( 90, 120 ), Vector2f( 80, 130 ), Color::Yellow } );
-   sectors[2].linedefs.push_back( { Vector2f( 80, 130 ), Vector2f( 90, 140 ), Color::Yellow } );
-   sectors[2].linedefs.push_back( { Vector2f( 90, 140 ), Vector2f( 100, 130 ), Color::Yellow } );
-   sectors[2].linedefs.push_back( { Vector2f( 100, 130 ), Vector2f( 90, 120 ), Color::Yellow } );
+   sectors[2].linedefs.push_back( { Vector2f( 90, 120 ), Vector2f( 80, 130 ), 0 } );
+   sectors[2].linedefs.push_back( { Vector2f( 80, 130 ), Vector2f( 90, 140 ), 0 } );
+   sectors[2].linedefs.push_back( { Vector2f( 90, 140 ), Vector2f( 100, 130 ), 0 } );
+   sectors[2].linedefs.push_back( { Vector2f( 100, 130 ), Vector2f( 90, 120 ), 0 } );
 
-   // east column (blue)
+   // east column (texture 0)
    sectors.push_back( Sector() );
-   sectors[3].linedefs.push_back( { Vector2f( 335, 170 ), Vector2f( 305, 170 ), Color::Blue } );
-   sectors[3].linedefs.push_back( { Vector2f( 305, 170 ), Vector2f( 305, 200 ), Color::Blue } );
-   sectors[3].linedefs.push_back( { Vector2f( 305, 200 ), Vector2f( 335, 200 ), Color::Blue } );
-   sectors[3].linedefs.push_back( { Vector2f( 335, 200 ), Vector2f( 335, 170 ), Color::Blue } );
+   sectors[3].linedefs.push_back( { Vector2f( 335, 170 ), Vector2f( 305, 170 ), 0 } );
+   sectors[3].linedefs.push_back( { Vector2f( 305, 170 ), Vector2f( 305, 200 ), 0 } );
+   sectors[3].linedefs.push_back( { Vector2f( 305, 200 ), Vector2f( 335, 200 ), 0 } );
+   sectors[3].linedefs.push_back( { Vector2f( 335, 200 ), Vector2f( 335, 170 ), 0 } );
 
    // below is data for a different map
 
    //// outer sector (blue)
    //sectors.push_back( Sector() );
-   //sectors[0].linedefs.push_back( { Vector2f( 40, 0 ), Vector2f( 300, 0 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 300, 0 ), Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), Vector2f( 260, 180 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 260, 180 ), Vector2f( 300, 200 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 300, 200 ), Vector2f( 300, 250 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 300, 250 ), Vector2f( 260, 290 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 260, 290 ), Vector2f( 90, 290 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 90, 290 ), Vector2f( 90, 230 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 90, 230 ), Vector2f( 70, 210 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 70, 210 ), Vector2f( 60, 210 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 60, 210 ), Vector2f( 60, 290 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 60, 290 ), Vector2f( 0, 290 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 0, 290 ), Vector2f( 0, 40 ), Color::Blue } );
-   //sectors[0].linedefs.push_back( { Vector2f( 0, 40 ), Vector2f( 40, 0 ), Color::Blue } );
+   //sectors[0].linedefs.push_back( { Vector2f( 40, 0 ), Vector2f( 300, 0 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 300, 0 ), Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), Vector2f( 260, 180 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 260, 180 ), Vector2f( 300, 200 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 300, 200 ), Vector2f( 300, 250 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 300, 250 ), Vector2f( 260, 290 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 260, 290 ), Vector2f( 90, 290 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 90, 290 ), Vector2f( 90, 230 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 90, 230 ), Vector2f( 70, 210 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 70, 210 ), Vector2f( 60, 210 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 60, 210 ), Vector2f( 60, 290 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 60, 290 ), Vector2f( 0, 290 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 0, 290 ), Vector2f( 0, 40 ), 1 } );
+   //sectors[0].linedefs.push_back( { Vector2f( 0, 40 ), Vector2f( 40, 0 ), 1 } );
 
    //// inner sector 1 (red)
    //sectors.push_back( Sector() );
@@ -187,25 +192,25 @@ vector<Sector> GameLoader::LoadSectors() const
 
    //// inner sector 2 (green)
    //sectors.push_back( Sector() );
-   //sectors[2].linedefs.push_back( { Vector2f( 230, 60 ), Vector2f( 170, 60 ), Color::Green } );
-   //sectors[2].linedefs.push_back( { Vector2f( 170, 60 ), Vector2f( 170, 70 ), Color::Green } );
-   //sectors[2].linedefs.push_back( { Vector2f( 170, 70 ), Vector2f( 230, 70 ), Color::Green } );
-   //sectors[2].linedefs.push_back( { Vector2f( 230, 70 ), Vector2f( 230, 60 ), Color::Green } );
+   //sectors[2].linedefs.push_back( { Vector2f( 230, 60 ), Vector2f( 170, 60 ), 1 } );
+   //sectors[2].linedefs.push_back( { Vector2f( 170, 60 ), Vector2f( 170, 70 ), 1 } );
+   //sectors[2].linedefs.push_back( { Vector2f( 170, 70 ), Vector2f( 230, 70 ), 1 } );
+   //sectors[2].linedefs.push_back( { Vector2f( 230, 70 ), Vector2f( 230, 60 ), 1 } );
 
    //// inner sector 3 (magenta)
    //sectors.push_back( Sector() );
-   //sectors[3].linedefs.push_back( { Vector2f( 260, 20 ), Vector2f( 250, 30 ), Color::Magenta } );
-   //sectors[3].linedefs.push_back( { Vector2f( 250, 30 ), Vector2f( 260, 40 ), Color::Magenta } );
-   //sectors[3].linedefs.push_back( { Vector2f( 260, 40 ), Vector2f( 270, 30 ), Color::Magenta } );
-   //sectors[3].linedefs.push_back( { Vector2f( 270, 30 ), Vector2f( 260, 20 ), Color::Magenta } );
+   //sectors[3].linedefs.push_back( { Vector2f( 260, 20 ), Vector2f( 250, 30 ), 1 } );
+   //sectors[3].linedefs.push_back( { Vector2f( 250, 30 ), Vector2f( 260, 40 ), 1 } );
+   //sectors[3].linedefs.push_back( { Vector2f( 260, 40 ), Vector2f( 270, 30 ), 1 } );
+   //sectors[3].linedefs.push_back( { Vector2f( 270, 30 ), Vector2f( 260, 20 ), 1 } );
 
    //// inner sector 4 (yellow)
    //sectors.push_back( Sector() );
-   //sectors[4].linedefs.push_back( { Vector2f( 220, 120 ), Vector2f( 190, 130 ), Color::Yellow } );
-   //sectors[4].linedefs.push_back( { Vector2f( 190, 130 ), Vector2f( 190, 140 ), Color::Yellow } );
-   //sectors[4].linedefs.push_back( { Vector2f( 190, 140 ), Vector2f( 250, 160 ), Color::Yellow } );
-   //sectors[4].linedefs.push_back( { Vector2f( 250, 160 ), Vector2f( 250, 130 ), Color::Yellow } );
-   //sectors[4].linedefs.push_back( { Vector2f( 250, 130 ), Vector2f( 220, 120 ), Color::Yellow } );
+   //sectors[4].linedefs.push_back( { Vector2f( 220, 120 ), Vector2f( 190, 130 ), 1 } );
+   //sectors[4].linedefs.push_back( { Vector2f( 190, 130 ), Vector2f( 190, 140 ), 1 } );
+   //sectors[4].linedefs.push_back( { Vector2f( 190, 140 ), Vector2f( 250, 160 ), 1 } );
+   //sectors[4].linedefs.push_back( { Vector2f( 250, 160 ), Vector2f( 250, 130 ), 1 } );
+   //sectors[4].linedefs.push_back( { Vector2f( 250, 130 ), Vector2f( 220, 120 ), 1 } );
 
    //// inner sector 5 (cyan)
    //sectors.push_back( Sector() );
@@ -1302,7 +1307,7 @@ void GameLoader::ScaleUnits( vector<Sector>& sectors, BspNode* bspTree, shared_p
    ScaleTreeRecursive( bspTree, scalar );
    
    auto playerPosition = player->GetPosition();
-   player->SetPosition( Vector2f( playerPosition.x * scalar, playerPosition.y * scalar ) );
+   player->SetPosition( playerPosition.x * scalar, playerPosition.y * scalar );
 }
 
 void GameLoader::ScaleTreeRecursive( BspNode* node, float scalar ) const
@@ -1327,4 +1332,22 @@ void GameLoader::ScaleTreeRecursive( BspNode* node, float scalar ) const
       ScaleTreeRecursive( node->rightChild, scalar );
       ScaleTreeRecursive( node->leftChild, scalar );
    }
+}
+
+shared_ptr<RenderData> GameLoader::LoadRenderData() const
+{
+   auto textureMap = make_shared<std::map<int, Texture>>();
+   auto spriteMap = make_shared<std::map<int, Sprite>>();
+
+   (*textureMap)[0] = Texture();
+   textureMap->at( 0 ).loadFromFile( "Resources/Textures/skinface.png" );
+   textureMap->at( 0 ).setRepeated( true );
+   (*spriteMap)[0] = Sprite( textureMap->at( 0 ) );
+
+   (*textureMap)[1] = Texture();
+   textureMap->at( 1 ).loadFromFile( "Resources/Textures/bricks.png" );
+   textureMap->at( 1 ).setRepeated( true );
+   (*spriteMap)[1] = Sprite( textureMap->at( 1 ) );
+
+   return shared_ptr<RenderData>( new RenderData( textureMap, spriteMap ) );
 }

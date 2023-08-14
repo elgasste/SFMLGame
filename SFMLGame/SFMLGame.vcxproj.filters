@@ -144,6 +144,9 @@
     <ClCompile Include="RenderConfig.cpp">
       <Filter>Source Files\Config</Filter>
     </ClCompile>
+    <ClCompile Include="RenderData.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -271,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="RenderConfig.h">
       <Filter>Header Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderData.h">
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

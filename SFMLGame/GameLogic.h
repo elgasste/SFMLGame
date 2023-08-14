@@ -8,6 +8,7 @@ class GameConfig;
 class GameData;
 class GameInputHandler;
 class BspOperator;
+class Entity;
 
 class GameLogic
 {
@@ -20,7 +21,9 @@ public:
    void Tick();
 
 private:
-   void MovePlayer();
+   void MovePlayer() const;
+   bool EntityCollidedWithWall( std::shared_ptr<Entity> entity, float xDest, float yDest ) const;
+   void DeceleratePlayer( std::shared_ptr<Entity> player, bool collidedWithWall ) const;
 
 private:
    std::shared_ptr<GameConfig> _gameConfig;

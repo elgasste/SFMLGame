@@ -16,6 +16,8 @@ RenderConfig::RenderConfig( shared_ptr<GameConfig> gameConfig )
    WallHeight = 100.0f;
    ProjectionPlaneDelta = gameConfig->ScreenHeight / 1.5f;
    LightingScalar = 1.3f;
+   LightingMinimum = 25;
+   SpriteOffsetScalar = 25.0f;
 
    ShowDiagnostics = false;
 

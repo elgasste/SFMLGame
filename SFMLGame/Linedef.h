@@ -11,7 +11,7 @@ struct Linedef
 {
    sf::Vector2f start;
    sf::Vector2f end;
-   sf::Color color;
+   int textureId;
 };
 
 NAMESPACE_END
