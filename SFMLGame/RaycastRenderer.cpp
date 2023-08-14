@@ -31,15 +31,13 @@ RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
    auto screenWidth = (float)gameConfig->ScreenWidth;
    auto screenHeight = (float)gameConfig->ScreenHeight;
 
-   _ceilingRenderRect[0] = Vertex( Vector2f( 0, 0 ), Color( 128, 128, 128 ) );
-   _ceilingRenderRect[1] = Vertex( Vector2f( screenWidth, 0 ), Color( 128, 128, 128 ) );
-   _ceilingRenderRect[2] = Vertex( Vector2f( screenWidth, screenHeight / 2.0f ), Color::Black );
-   _ceilingRenderRect[3] = Vertex( Vector2f( 0, screenHeight / 2.0f ), Color::Black );
-
    _floorRenderRect[0] = Vertex( Vector2f( 0, screenHeight / 2.0f ), Color::Black );
    _floorRenderRect[1] = Vertex( Vector2f( screenWidth, screenHeight / 2.0f ), Color::Black );
-   _floorRenderRect[2] = Vertex( Vector2f( screenWidth, screenHeight ), Color( 128, 128, 128 ) );
-   _floorRenderRect[3] = Vertex( Vector2f( 0, screenHeight ), Color( 128, 128, 128 ) );
+   _floorRenderRect[2] = Vertex( Vector2f( screenWidth, screenHeight ), Color( 22, 59, 8 ) );
+   _floorRenderRect[3] = Vertex( Vector2f( 0, screenHeight ), Color( 22, 59, 8 ) );
+
+   _skyPosition = Vector2f( 0, 0 );
+   _skyTextureRect = IntRect( 0, 0, gameConfig->ScreenWidth, gameConfig->ScreenHeight );
 
    _spriteTextureRect.top = 0;
    _spriteTextureRect.width = 1;
@@ -56,7 +54,12 @@ RaycastRenderer::~RaycastRenderer()
 
 void RaycastRenderer::RenderCeilingAndFloor()
 {
-   _window->Draw( _ceilingRenderRect, 4, Quads );
+   // MUFFINS: the sky should rotate with the player, figure that one out
+   auto skySprite = _renderData->GetSpriteById( _renderConfig->SkySpriteId );
+   skySprite.setPosition( _skyPosition );
+   skySprite.setTextureRect( _skyTextureRect );
+   _window->Draw( skySprite );
+
    _window->Draw( _floorRenderRect, 4, Quads );
 }
 

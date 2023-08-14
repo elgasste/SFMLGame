@@ -37,8 +37,10 @@ private:
    std::shared_ptr<SFMLWindow> _window;
 
    sf::Vertex* _renderColumns;
-   sf::Vertex _ceilingRenderRect[4];
    sf::Vertex _floorRenderRect[4];
+
+   sf::Vector2f _skyPosition;
+   sf::IntRect _skyTextureRect;
 
    sf::Vector2f _spritePosition;
    sf::IntRect _spriteTextureRect;

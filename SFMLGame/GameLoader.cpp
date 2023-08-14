@@ -85,7 +85,7 @@ vector<Sector> GameLoader::LoadSectors() const
 {
    vector<Sector> sectors;
 
-   // outer walls (texture 1)
+   // outer walls (marble)
    sectors.push_back( Sector() );
    sectors[0].linedefs.push_back( { Vector2f( 70, 30 ), Vector2f( 110, 30 ), 1 } );
    sectors[0].linedefs.push_back( { Vector2f( 110, 30 ), Vector2f( 110, 50 ), 1 } );
@@ -134,26 +134,26 @@ vector<Sector> GameLoader::LoadSectors() const
    sectors[0].linedefs.push_back( { Vector2f( 85, 50 ), Vector2f( 70, 50 ), 1 } );
    sectors[0].linedefs.push_back( { Vector2f( 70, 50 ), Vector2f( 70, 30 ), 1 } );
 
-   // southwest column (texture 0)
+   // southwest column (skinface)
    sectors.push_back( Sector() );
    sectors[1].linedefs.push_back( { Vector2f( 30, 260 ), Vector2f( 30, 270 ), 0 } );
    sectors[1].linedefs.push_back( { Vector2f( 30, 270 ), Vector2f( 40, 270 ), 0 } );
    sectors[1].linedefs.push_back( { Vector2f( 40, 270 ), Vector2f( 40, 260 ), 0 } );
    sectors[1].linedefs.push_back( { Vector2f( 40, 260 ), Vector2f( 30, 260 ), 0 } );
 
-   // west column (texture 0)
+   // west column (bricks)
    sectors.push_back( Sector() );
-   sectors[2].linedefs.push_back( { Vector2f( 90, 120 ), Vector2f( 80, 130 ), 0 } );
-   sectors[2].linedefs.push_back( { Vector2f( 80, 130 ), Vector2f( 90, 140 ), 0 } );
-   sectors[2].linedefs.push_back( { Vector2f( 90, 140 ), Vector2f( 100, 130 ), 0 } );
-   sectors[2].linedefs.push_back( { Vector2f( 100, 130 ), Vector2f( 90, 120 ), 0 } );
+   sectors[2].linedefs.push_back( { Vector2f( 90, 120 ), Vector2f( 80, 130 ), 2 } );
+   sectors[2].linedefs.push_back( { Vector2f( 80, 130 ), Vector2f( 90, 140 ), 2 } );
+   sectors[2].linedefs.push_back( { Vector2f( 90, 140 ), Vector2f( 100, 130 ), 2 } );
+   sectors[2].linedefs.push_back( { Vector2f( 100, 130 ), Vector2f( 90, 120 ), 2 } );
 
-   // east column (texture 0)
+   // east column (texture skincut)
    sectors.push_back( Sector() );
-   sectors[3].linedefs.push_back( { Vector2f( 335, 170 ), Vector2f( 305, 170 ), 0 } );
-   sectors[3].linedefs.push_back( { Vector2f( 305, 170 ), Vector2f( 305, 200 ), 0 } );
-   sectors[3].linedefs.push_back( { Vector2f( 305, 200 ), Vector2f( 335, 200 ), 0 } );
-   sectors[3].linedefs.push_back( { Vector2f( 335, 200 ), Vector2f( 335, 170 ), 0 } );
+   sectors[3].linedefs.push_back( { Vector2f( 335, 170 ), Vector2f( 305, 170 ), 3 } );
+   sectors[3].linedefs.push_back( { Vector2f( 305, 170 ), Vector2f( 305, 200 ), 3 } );
+   sectors[3].linedefs.push_back( { Vector2f( 305, 200 ), Vector2f( 335, 200 ), 3 } );
+   sectors[3].linedefs.push_back( { Vector2f( 335, 200 ), Vector2f( 335, 170 ), 3 } );
 
    // below is data for a different map
 
@@ -1345,9 +1345,24 @@ shared_ptr<RenderData> GameLoader::LoadRenderData() const
    (*spriteMap)[0] = Sprite( textureMap->at( 0 ) );
 
    (*textureMap)[1] = Texture();
-   textureMap->at( 1 ).loadFromFile( "Resources/Textures/bricks.png" );
+   textureMap->at( 1 ).loadFromFile( "Resources/Textures/marble.png" );
    textureMap->at( 1 ).setRepeated( true );
    (*spriteMap)[1] = Sprite( textureMap->at( 1 ) );
+
+   (*textureMap)[2] = Texture();
+   textureMap->at( 2 ).loadFromFile( "Resources/Textures/bricks.png" );
+   textureMap->at( 2 ).setRepeated( true );
+   (*spriteMap)[2] = Sprite( textureMap->at( 2 ) );
+
+   (*textureMap)[3] = Texture();
+   textureMap->at( 3 ).loadFromFile( "Resources/Textures/skincut.png" );
+   textureMap->at( 3 ).setRepeated( true );
+   (*spriteMap)[3] = Sprite( textureMap->at( 3 ) );
+
+   (*textureMap)[4] = Texture();
+   textureMap->at( 4 ).loadFromFile( "Resources/Textures/mountain_sky.png" );
+   textureMap->at( 4 ).setRepeated( true );
+   (*spriteMap)[4] = Sprite( textureMap->at( 4 ) );
 
    return shared_ptr<RenderData>( new RenderData( textureMap, spriteMap ) );
 }

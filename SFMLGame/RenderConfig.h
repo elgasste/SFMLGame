@@ -26,6 +26,7 @@ public:
    float LightingScalar;
    int LightingMinimum;
    float SpriteOffsetScalar;
+   int SkySpriteId;
 
    bool ShowDiagnostics;
 

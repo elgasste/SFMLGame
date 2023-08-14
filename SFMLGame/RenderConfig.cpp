@@ -18,6 +18,7 @@ RenderConfig::RenderConfig( shared_ptr<GameConfig> gameConfig )
    LightingScalar = 1.3f;
    LightingMinimum = 25;
    SpriteOffsetScalar = 25.0f;
+   SkySpriteId = 4;
 
    ShowDiagnostics = false;
 
