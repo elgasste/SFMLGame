@@ -38,6 +38,7 @@ RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
 
    _skyPosition = Vector2f( 0, 0 );
    _skyTextureRect = IntRect( 0, 0, gameConfig->ScreenWidth, gameConfig->ScreenHeight );
+   _skyTextureScalar = (float)_renderData->GetTextureById( _renderConfig->SkySpriteId ).getSize().x / RAD_360;
 
    _spriteTextureRect.top = 0;
    _spriteTextureRect.width = 1;
@@ -54,7 +55,9 @@ RaycastRenderer::~RaycastRenderer()
 
 void RaycastRenderer::RenderCeilingAndFloor()
 {
-   // MUFFINS: the sky should rotate with the player, figure that one out
+   auto playerAngle = _gameData->GetPlayer()->GetAngle();
+   _skyTextureRect.left = -(int)( playerAngle * _skyTextureScalar );
+
    auto skySprite = _renderData->GetSpriteById( _renderConfig->SkySpriteId );
    skySprite.setPosition( _skyPosition );
    skySprite.setTextureRect( _skyTextureRect );

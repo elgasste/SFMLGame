@@ -41,6 +41,7 @@ private:
 
    sf::Vector2f _skyPosition;
    sf::IntRect _skyTextureRect;
+   float _skyTextureScalar;
 
    sf::Vector2f _spritePosition;
    sf::IntRect _spriteTextureRect;
