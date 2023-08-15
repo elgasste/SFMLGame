@@ -15,7 +15,7 @@ class GameConfig;
 class KeyboardInputReader : public IInputReader
 {
 public:
-   KeyboardInputReader( std::shared_ptr<GameConfig> config );
+   KeyboardInputReader( std::shared_ptr<GameConfig> gameConfig );
 
    // IInputReader
    void ReadInput() override;

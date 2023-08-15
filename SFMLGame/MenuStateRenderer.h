@@ -20,7 +20,7 @@ class Menu;
 class MenuStateRenderer : public IGameStateRenderer
 {
 public:
-   MenuStateRenderer( std::shared_ptr<GameConfig> config,
+   MenuStateRenderer( std::shared_ptr<GameConfig> gameConfig,
                       std::shared_ptr<SFMLWindow> window,
                       std::shared_ptr<GameClock> clock,
                       std::shared_ptr<Menu> menu );
@@ -29,7 +29,7 @@ public:
    void Render() override;
 
 private:
-   std::shared_ptr<GameConfig> _config;
+   std::shared_ptr<GameConfig> _gameConfig;
    std::shared_ptr<SFMLWindow> _window;
    std::shared_ptr<GameClock> _clock;
    std::shared_ptr<Menu> _menu;

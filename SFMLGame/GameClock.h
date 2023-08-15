@@ -9,7 +9,7 @@ class GameConfig;
 class GameClock
 {
 public:
-   GameClock( std::shared_ptr<GameConfig> config );
+   GameClock( std::shared_ptr<GameConfig> gameConfig );
    ~GameClock();
 
    void Initialize();

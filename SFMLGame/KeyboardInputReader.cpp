@@ -6,7 +6,7 @@
 using namespace NAMESPACE;
 using namespace std;
 
-KeyboardInputReader::KeyboardInputReader( shared_ptr<GameConfig> config )
+KeyboardInputReader::KeyboardInputReader( shared_ptr<GameConfig> gameConfig )
 {
    for ( int i = 0; i < (int)Button::ButtonCount; i++ )
    {
@@ -19,7 +19,7 @@ KeyboardInputReader::KeyboardInputReader( shared_ptr<GameConfig> config )
    {
       auto button = (Button)i;
 
-      for ( auto const& [keyCode, mappedButton] : config->KeyBindingsMap )
+      for ( auto const& [keyCode, mappedButton] : gameConfig->KeyBindingsMap )
       {
          if ( mappedButton == button )
          {

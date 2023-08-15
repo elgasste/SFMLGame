@@ -18,7 +18,7 @@ class SFMLWindow;
 class PlayingStateRenderer : public IGameStateRenderer
 {
 public:
-   PlayingStateRenderer( std::shared_ptr<GameConfig> config,
+   PlayingStateRenderer( std::shared_ptr<GameConfig> gameConfig,
                          std::shared_ptr<SFMLWindow> window );
 
    // IGameStateRenderer

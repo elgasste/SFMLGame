@@ -16,7 +16,7 @@ class IGameStateRenderer;
 class GameRenderer
 {
 public:
-   GameRenderer( std::shared_ptr<GameConfig> config,
+   GameRenderer( std::shared_ptr<GameConfig> gameConfig,
                  std::shared_ptr<SFMLWindow> window,
                  std::shared_ptr<DiagnosticsRenderer> diagnosticsRenderer,
                  std::shared_ptr<GameStateController> stateController );
@@ -26,7 +26,7 @@ public:
    void Render();
 
 private:
-   std::shared_ptr<GameConfig> _config;
+   std::shared_ptr<GameConfig> _gameConfig;
    std::shared_ptr<SFMLWindow> _window;
    std::shared_ptr<DiagnosticsRenderer> _diagnosticsRenderer;
    std::shared_ptr<GameStateController> _stateController;
