@@ -22,7 +22,7 @@ public:
    bool WasButtonPressed( Button button ) const;
    bool IsButtonDown( Button button ) const;
    bool WasAnyButtonPressed() const;
-   sf::Vector2i GetMouseDelta() const { return _mouseDelta; }
+   const sf::Vector2i& GetMouseDelta() const { return _mouseDelta; }
 
 private:
    bool IsKeyDown( KeyCode keyCode ) const;

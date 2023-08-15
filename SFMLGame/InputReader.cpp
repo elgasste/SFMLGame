@@ -103,7 +103,8 @@ static bool g_started = false;
 
 void InputReader::ReadMouseInput()
 {
-   auto position = Mouse::getPosition();
-   _mouseDelta = position - _mouseCenterPoint;
+   _mouseDelta.x = Mouse::getPosition().x - _mouseCenterPoint.x;
+   _mouseDelta.y = Mouse::getPosition().y - _mouseCenterPoint.y;
+
    Mouse::setPosition( _mouseCenterPoint );
 }
