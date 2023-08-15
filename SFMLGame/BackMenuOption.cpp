@@ -6,7 +6,7 @@ using namespace std;
 
 BackMenuOption::BackMenuOption( shared_ptr<GameData> gameData ) :
    _gameData( gameData ),
-   _text( "Back" )
+   _text( IDS_MenuOptionBack )
 {
 }
 
