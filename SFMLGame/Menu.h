@@ -9,6 +9,8 @@ class IMenuOption;
 class Menu
 {
 public:
+   Menu();
+
    void AddOption( std::shared_ptr<IMenuOption> option );
    int GetOptionCount() const { return (int)_options.size(); }
    std::shared_ptr<IMenuOption> GetOptionByIndex( int index ) const { return _options[index]; }
