@@ -20,16 +20,16 @@ RenderConfig::RenderConfig()
    DiagnosticsXPosition = ScreenWidth - DiagnosticsWidth;
    DiagnosticsYPosition = 0;
    DiagnosticsTextMargin = 20;
-   DiagnosticsFont = "consolas.ttf";
+   DiagnosticsFont = "Resources/Fonts/Consolas.ttf";
    DiagnosticsCharSize = 24;
    DiagnosticsTextColor = Color::White;
    DiagnosticsBackgroundColor = Color::Blue;
 
-   MessageFont = "consolas.ttf";
+   MessageFont = "Resources/Fonts/Consolas.ttf";
    MessageCharSize = 32;
    MessageTextColor = Color::White;
 
-   MenuFont = "consolas.ttf";
+   MenuFont = "Resources/Fonts/Consolas.ttf";
    MenuCharSize = 32;
    MenuTextColor = Color::White;
    MenuCaratOffset = 20;

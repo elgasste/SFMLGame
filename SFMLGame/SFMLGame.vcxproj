@@ -100,7 +100,8 @@
       <AdditionalLibraryDirectories>C:\SFML-2.5.1\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)SFML Debug Dlls\" $(OutDir)</Command>
+      <Command>xcopy "$(SolutionDir)SFML Debug Dlls\" "$(OutDir)" /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +126,8 @@
       <AdditionalLibraryDirectories>C:\SFML-2.5.1\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)SFML Release Dlls\" $(OutDir)</Command>
+      <Command>xcopy "$(SolutionDir)SFML Release Dlls\" $(OutDir) /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
