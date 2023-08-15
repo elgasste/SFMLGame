@@ -8,16 +8,20 @@ using namespace std;
 
 int main()
 {
-   printf( "Loading all the things..." );
+   printf( IDS_LoadingMessage );
 
    auto loader = make_shared<GameLoader>();
    auto game = loader->Load();
 
-   printf( "done!\nHave fun in there!" );
+   printf( IDS_DoneLoading );
+   printf( "\n" );
+   printf( IDS_HaveFun );
 
    game->Run();
 
-   printf( "\nSigning off, enjoy your burrito!\n\n" );
+   printf( "\n" );
+   printf( IDS_GameClosed );
+   printf( "\n\n" );
 
    return 0;
 }

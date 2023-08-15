@@ -212,6 +212,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" 
     <ClInclude Include="QuitMenuOption.h" />
     <ClInclude Include="RenderConfig.h" />
     <ClInclude Include="SFMLWindow.h" />
+    <ClInclude Include="StringTable.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

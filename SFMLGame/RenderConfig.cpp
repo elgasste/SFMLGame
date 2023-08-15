@@ -12,7 +12,7 @@ RenderConfig::RenderConfig()
    ScreenWidth = 1920;
    ScreenHeight = 1080;
 
-   WindowTitle = "SFML Game";
+   WindowTitle = IDS_WindowTitle;
    WindowStyle = Style::Titlebar | Style::Close;
 
    DiagnosticsWidth = 450;

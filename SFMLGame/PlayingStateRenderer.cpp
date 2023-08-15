@@ -17,7 +17,7 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
    _text->setFont( *_font );
    _text->setCharacterSize( renderConfig->MessageCharSize );
    _text->setFillColor( renderConfig->MessageTextColor );
-   _text->setString( "Press ESC for menu, or F12 to toggle diagnostics" );
+   _text->setString( IDS_PlayStateMessage );
 
    _text->setPosition( ( (float)renderConfig->ScreenWidth / 2 ) - ( _text->getGlobalBounds().width / 2 ),
                        ( (float)renderConfig->ScreenHeight / 2 ) - ( _text->getGlobalBounds().height / 2 ) );

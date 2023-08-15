@@ -36,11 +36,11 @@ void DiagnosticsRenderer::Render()
 {
    string text;
 
-   text += format( "Maximum Frame Rate: {}", _renderConfig->MaximumFrameRate );
-   text += format( "\nCurrent Frame Rate: {}", _clock->GetCurrentFrameRate() );
-   text += format( "\nAverage Frame Rate: {}", _clock->GetAverageFrameRate() );
-   text += format( "\nTotal Frames:       {}", _clock->GetTotalFrameCount() );
-   text += format( "\nLag Frames:         {}", _clock->GetLagFrameCount() );
+   text += format( IDS_MaximumFrameRate, _renderConfig->MaximumFrameRate ) + "\n";
+   text += format( IDS_CurrentFrameRate, _clock->GetCurrentFrameRate() ) + "\n";
+   text += format( IDS_AverageFrameRate, _clock->GetAverageFrameRate() ) + "\n";
+   text += format( IDS_TotalFrames, _clock->GetTotalFrameCount() ) + "\n";
+   text += format( IDS_LagFrames, _clock->GetLagFrameCount() );
 
    _text->setString( text );
 
