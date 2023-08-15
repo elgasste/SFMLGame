@@ -4,7 +4,7 @@
 using namespace NAMESPACE;
 using namespace std;
 
-GameLogic::GameLogic( std::shared_ptr<GameInputHandler> inputHandler ) :
+GameLogic::GameLogic( shared_ptr<GameInputHandler> inputHandler ) :
    _inputHandler( inputHandler )
 {
 }

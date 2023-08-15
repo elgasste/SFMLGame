@@ -1,13 +1,12 @@
 #pragma once
 
-#include <map>
-
 #include "Common.h"
 #include "GameState.h"
 
 NAMESPACE_BEGIN
 
 class GameConfig;
+class GameData;
 class SFMLWindow;
 class DiagnosticsRenderer;
 class GameStateController;
@@ -16,20 +15,20 @@ class IGameStateRenderer;
 class GameRenderer
 {
 public:
-   GameRenderer( std::shared_ptr<GameConfig> config,
+   GameRenderer( std::shared_ptr<GameConfig> gameConfig,
+                 std::shared_ptr<GameData> gameData,
                  std::shared_ptr<SFMLWindow> window,
-                 std::shared_ptr<DiagnosticsRenderer> diagnosticsRenderer,
-                 std::shared_ptr<GameStateController> stateController );
+                 std::shared_ptr<DiagnosticsRenderer> diagnosticsRenderer );
 
    void AddStateRenderer( GameState state, std::shared_ptr<IGameStateRenderer> renderer );
    void Initialize();
    void Render();
 
 private:
-   std::shared_ptr<GameConfig> _config;
+   std::shared_ptr<GameConfig> _gameConfig;
+   std::shared_ptr<GameData> _gameData;
    std::shared_ptr<SFMLWindow> _window;
    std::shared_ptr<DiagnosticsRenderer> _diagnosticsRenderer;
-   std::shared_ptr<GameStateController> _stateController;
 
    std::map<GameState, std::shared_ptr<IGameStateRenderer>> _stateRendererMap;
 };

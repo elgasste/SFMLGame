@@ -100,7 +100,8 @@
       <AdditionalLibraryDirectories>C:\SFML-2.5.1\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)SFML Debug Dlls\" $(OutDir)</Command>
+      <Command>xcopy "$(SolutionDir)SFML Debug Dlls\" "$(OutDir)" /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +126,8 @@
       <AdditionalLibraryDirectories>C:\SFML-2.5.1\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)SFML Release Dlls\" $(OutDir)</Command>
+      <Command>xcopy "$(SolutionDir)SFML Release Dlls\" $(OutDir) /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -163,12 +165,12 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameConfig.cpp" />
+    <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameLoader.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
-    <ClCompile Include="GameStateController.cpp" />
     <ClCompile Include="GameInputHandler.cpp" />
-    <ClCompile Include="KeyboardInputReader.cpp" />
+    <ClCompile Include="InputReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MenuStateInputHandler.cpp" />
@@ -176,6 +178,7 @@
     <ClCompile Include="PlayingStateInputHandler.cpp" />
     <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="QuitMenuOption.cpp" />
+    <ClCompile Include="RenderConfig.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -187,19 +190,18 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameConfig.h" />
+    <ClInclude Include="GameData.h" />
     <ClInclude Include="GameEvent.h" />
     <ClInclude Include="GameLoader.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameRenderer.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="IEventListener.h" />
-    <ClInclude Include="GameStateController.h" />
     <ClInclude Include="IGameStateInputHandler.h" />
     <ClInclude Include="IGameStateRenderer.h" />
-    <ClInclude Include="IInputReader.h" />
     <ClInclude Include="GameInputHandler.h" />
     <ClInclude Include="IMenuOption.h" />
-    <ClInclude Include="KeyboardInputReader.h" />
+    <ClInclude Include="InputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Menu.h" />
@@ -208,7 +210,9 @@
     <ClInclude Include="PlayingStateInputHandler.h" />
     <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="QuitMenuOption.h" />
+    <ClInclude Include="RenderConfig.h" />
     <ClInclude Include="SFMLWindow.h" />
+    <ClInclude Include="StringTable.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

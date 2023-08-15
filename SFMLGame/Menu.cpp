@@ -4,7 +4,12 @@
 using namespace NAMESPACE;
 using namespace std;
 
-void Menu::AddOption( std::shared_ptr<IMenuOption> option )
+Menu::Menu() :
+   _currentOptionIndex( 0 )
+{
+}
+
+void Menu::AddOption( shared_ptr<IMenuOption> option )
 {
    _options.push_back( option );
 }

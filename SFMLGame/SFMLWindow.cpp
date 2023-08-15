@@ -1,7 +1,5 @@
-#include <SFML/Graphics.hpp>
-
 #include "SFMLWindow.h"
-#include "GameConfig.h"
+#include "RenderConfig.h"
 #include "EventAggregator.h"
 #include "GameClock.h"
 #include "GameEvent.h"
@@ -10,10 +8,10 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-SFMLWindow::SFMLWindow( shared_ptr<GameConfig> config,
+SFMLWindow::SFMLWindow( shared_ptr<RenderConfig> renderConfig,
                         shared_ptr<EventAggregator> eventAggregator,
                         shared_ptr<GameClock> clock ) :
-   _config( config ),
+   _renderConfig( renderConfig ),
    _eventAggregator( eventAggregator ),
    _clock( clock )
 {
@@ -21,8 +19,8 @@ SFMLWindow::SFMLWindow( shared_ptr<GameConfig> config,
 
 void SFMLWindow::Initialize()
 {
-   auto videoMode = VideoMode( _config->ScreenWidth, _config->ScreenHeight );
-   _window = shared_ptr<RenderWindow>( new RenderWindow( videoMode, _config->WindowTitle, _config->WindowStyle ) );
+   auto videoMode = VideoMode( _renderConfig->ScreenWidth, _renderConfig->ScreenHeight );
+   _window = shared_ptr<RenderWindow>( new RenderWindow( videoMode, _renderConfig->WindowTitle, _renderConfig->WindowStyle ) );
 }
 
 void SFMLWindow::Show() const
@@ -52,7 +50,7 @@ void SFMLWindow::Clear() const
    _window->clear();
 }
 
-void SFMLWindow::Draw( shared_ptr<sf::Drawable> drawable ) const
+void SFMLWindow::Draw( shared_ptr<Drawable> drawable ) const
 {
    _window->draw( *drawable );
 }
