@@ -21,7 +21,8 @@ void EventAggregator::RaiseEvent( GameEvent event ) const
       return;
    }
 
-   auto listeners = _listenersMap.at( event );
+   auto& listeners = _listenersMap.at( event );
+
    for ( auto listener : listeners )
    {
       listener->HandleEvent( event );
