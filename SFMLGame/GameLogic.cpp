@@ -75,8 +75,8 @@ void GameLogic::MovePlayer() const
 
 bool GameLogic::EntityCollidedWithWall( std::shared_ptr<Entity> entity, float xDest, float yDest ) const
 {
-   auto position = entity->GetPosition();
-   auto subsector = _bspOperator->GetOccupyingSubsector( entity );
+   auto& position = entity->GetPosition();
+   auto& subsector = _bspOperator->GetOccupyingSubsector( entity );
 
    // MUFFINS: take the entity's hit box into consideration. but HOW?? I think using a radius would be
    // pretty neat, and would solve some issues of how to clip to a wall, but it's tough when the
