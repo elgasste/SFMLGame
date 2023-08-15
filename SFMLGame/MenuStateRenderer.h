@@ -12,7 +12,7 @@ namespace sf
 
 NAMESPACE_BEGIN
 
-class GameConfig;
+class RenderConfig;
 class SFMLWindow;
 class GameClock;
 class Menu;
@@ -20,7 +20,7 @@ class Menu;
 class MenuStateRenderer : public IGameStateRenderer
 {
 public:
-   MenuStateRenderer( std::shared_ptr<GameConfig> gameConfig,
+   MenuStateRenderer( std::shared_ptr<RenderConfig> renderConfig,
                       std::shared_ptr<SFMLWindow> window,
                       std::shared_ptr<GameClock> clock,
                       std::shared_ptr<Menu> menu );
@@ -29,7 +29,7 @@ public:
    void Render() override;
 
 private:
-   std::shared_ptr<GameConfig> _gameConfig;
+   std::shared_ptr<RenderConfig> _renderConfig;
    std::shared_ptr<SFMLWindow> _window;
    std::shared_ptr<GameClock> _clock;
    std::shared_ptr<Menu> _menu;

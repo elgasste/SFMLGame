@@ -4,12 +4,12 @@
 
 NAMESPACE_BEGIN
 
-class GameConfig;
+class RenderConfig;
 
 class GameClock
 {
 public:
-   GameClock( std::shared_ptr<GameConfig> gameConfig );
+   GameClock( std::shared_ptr<RenderConfig> renderConfig );
    ~GameClock();
 
    void Initialize();

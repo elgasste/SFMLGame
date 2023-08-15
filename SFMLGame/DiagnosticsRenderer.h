@@ -11,21 +11,21 @@ namespace sf
 
 NAMESPACE_BEGIN
 
-class GameConfig;
+class RenderConfig;
 class GameClock;
 class SFMLWindow;
 
 class DiagnosticsRenderer
 {
 public:
-   DiagnosticsRenderer( std::shared_ptr<GameConfig> gameConfig,
+   DiagnosticsRenderer( std::shared_ptr<RenderConfig> renderConfig,
                         std::shared_ptr<GameClock> clock,
                         std::shared_ptr<SFMLWindow> window );
 
    void Render();
 
 private:
-   std::shared_ptr<GameConfig> _gameConfig;
+   std::shared_ptr<RenderConfig> _renderConfig;
    std::shared_ptr<GameClock> _clock;
    std::shared_ptr<SFMLWindow> _window;
 

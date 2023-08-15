@@ -1,5 +1,6 @@
 #include "GameLoader.h"
 #include "GameConfig.h"
+#include "RenderConfig.h"
 #include "EventAggregator.h"
 #include "GameClock.h"
 #include "KeyboardInputReader.h"
@@ -24,8 +25,9 @@ using namespace std;
 shared_ptr<Game> GameLoader::Load()
 {
    auto gameConfig = make_shared<GameConfig>();
+   auto renderConfig = make_shared<RenderConfig>();
    auto eventAggregator = make_shared<EventAggregator>();
-   auto clock = shared_ptr<GameClock>( new GameClock( gameConfig ) );
+   auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<KeyboardInputReader>( new KeyboardInputReader( gameConfig ) );
    auto stateController = make_shared<GameStateController>();
    auto backMenuOption = shared_ptr<BackMenuOption>( new BackMenuOption( stateController ) );
@@ -39,10 +41,10 @@ shared_ptr<Game> GameLoader::Load()
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
    auto logic = shared_ptr<GameLogic>( new GameLogic( gameInputHandler ) );
-   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( gameConfig, eventAggregator, clock ) );
-   auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( gameConfig, clock, window ) );
-   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( gameConfig, window ) );
-   auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( gameConfig, window, clock, menu ) );
+   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, eventAggregator, clock ) );
+   auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, clock, window ) );
+   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, window ) );
+   auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( renderConfig, window, clock, menu ) );
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( gameConfig, window, diagnosticRenderer, stateController ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Menu, menuStateRenderer );

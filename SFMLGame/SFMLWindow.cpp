@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "SFMLWindow.h"
-#include "GameConfig.h"
+#include "RenderConfig.h"
 #include "EventAggregator.h"
 #include "GameClock.h"
 #include "GameEvent.h"
@@ -10,10 +10,10 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-SFMLWindow::SFMLWindow( shared_ptr<GameConfig> gameConfig,
+SFMLWindow::SFMLWindow( shared_ptr<RenderConfig> renderConfig,
                         shared_ptr<EventAggregator> eventAggregator,
                         shared_ptr<GameClock> clock ) :
-   _gameConfig( gameConfig ),
+   _renderConfig( renderConfig ),
    _eventAggregator( eventAggregator ),
    _clock( clock )
 {
@@ -21,8 +21,8 @@ SFMLWindow::SFMLWindow( shared_ptr<GameConfig> gameConfig,
 
 void SFMLWindow::Initialize()
 {
-   auto videoMode = VideoMode( _gameConfig->ScreenWidth, _gameConfig->ScreenHeight );
-   _window = shared_ptr<RenderWindow>( new RenderWindow( videoMode, _gameConfig->WindowTitle, _gameConfig->WindowStyle ) );
+   auto videoMode = VideoMode( _renderConfig->ScreenWidth, _renderConfig->ScreenHeight );
+   _window = shared_ptr<RenderWindow>( new RenderWindow( videoMode, _renderConfig->WindowTitle, _renderConfig->WindowStyle ) );
 }
 
 void SFMLWindow::Show() const

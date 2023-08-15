@@ -176,6 +176,7 @@
     <ClCompile Include="PlayingStateInputHandler.cpp" />
     <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="QuitMenuOption.cpp" />
+    <ClCompile Include="RenderConfig.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +209,7 @@
     <ClInclude Include="PlayingStateInputHandler.h" />
     <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="QuitMenuOption.h" />
+    <ClInclude Include="RenderConfig.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>

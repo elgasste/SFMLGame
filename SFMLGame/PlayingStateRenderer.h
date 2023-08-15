@@ -12,13 +12,13 @@ namespace sf
 
 NAMESPACE_BEGIN
 
-class GameConfig;
+class RenderConfig;
 class SFMLWindow;
 
 class PlayingStateRenderer : public IGameStateRenderer
 {
 public:
-   PlayingStateRenderer( std::shared_ptr<GameConfig> gameConfig,
+   PlayingStateRenderer( std::shared_ptr<RenderConfig> renderConfig,
                          std::shared_ptr<SFMLWindow> window );
 
    // IGameStateRenderer
