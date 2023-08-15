@@ -22,16 +22,16 @@ RenderConfig::RenderConfig()
    DiagnosticsTextMargin = 20;
    DiagnosticsFont = "consolas.ttf";
    DiagnosticsCharSize = 24;
-   DiagnosticsTextColor = sf::Color::White;
-   DiagnosticsBackgroundColor = sf::Color::Blue;
+   DiagnosticsTextColor = Color::White;
+   DiagnosticsBackgroundColor = Color::Blue;
 
    MessageFont = "consolas.ttf";
    MessageCharSize = 32;
-   MessageTextColor = sf::Color::White;
+   MessageTextColor = Color::White;
 
    MenuFont = "consolas.ttf";
    MenuCharSize = 32;
-   MenuTextColor = sf::Color::White;
+   MenuTextColor = Color::White;
    MenuCaratOffset = 20;
    MenuCaratBlinkRate = 0.2f;
 }

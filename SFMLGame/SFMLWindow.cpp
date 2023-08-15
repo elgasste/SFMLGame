@@ -50,7 +50,7 @@ void SFMLWindow::Clear() const
    _window->clear();
 }
 
-void SFMLWindow::Draw( shared_ptr<sf::Drawable> drawable ) const
+void SFMLWindow::Draw( shared_ptr<Drawable> drawable ) const
 {
    _window->draw( *drawable );
 }

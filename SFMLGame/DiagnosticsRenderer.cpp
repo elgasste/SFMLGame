@@ -27,7 +27,7 @@ DiagnosticsRenderer::DiagnosticsRenderer( shared_ptr<RenderConfig> renderConfig,
    _text->setPosition( renderConfig->DiagnosticsXPosition + renderConfig->DiagnosticsTextMargin,
                        renderConfig->DiagnosticsYPosition + renderConfig->DiagnosticsTextMargin );
 
-   _background = shared_ptr<sf::RectangleShape>( new RectangleShape( { renderConfig->DiagnosticsWidth, renderConfig->DiagnosticsHeight } ) );
+   _background = shared_ptr<RectangleShape>( new RectangleShape( { renderConfig->DiagnosticsWidth, renderConfig->DiagnosticsHeight } ) );
    _background->setFillColor( renderConfig->DiagnosticsBackgroundColor );
    _background->setPosition( renderConfig->DiagnosticsXPosition, renderConfig->DiagnosticsYPosition );
 }
