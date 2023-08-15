@@ -58,7 +58,7 @@ void RaycastRenderer::RenderCeilingAndFloor()
    auto playerAngle = _gameData->GetPlayer()->GetAngle();
    _skyTextureRect.left = -(int)( playerAngle * _skyTextureScalar );
 
-   auto skySprite = _renderData->GetSpriteById( _renderConfig->SkySpriteId );
+   auto& skySprite = _renderData->GetSpriteById( _renderConfig->SkySpriteId );
    skySprite.setPosition( _skyPosition );
    skySprite.setTextureRect( _skyTextureRect );
    _window->Draw( skySprite );
@@ -72,7 +72,7 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
                                      int endColumn )
 {
    auto player = _gameData->GetPlayer();
-   auto playerPosition = player->GetPosition();
+   auto& playerPosition = player->GetPosition();
    auto playerAngle = player->GetAngle();
    static Vector2f pIntersect;
 

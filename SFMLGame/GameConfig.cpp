@@ -34,9 +34,9 @@ GameConfig::GameConfig()
    DefaultPlayerHitBox = FloatRect( 0, 0, 20, 8 );
    DefaultPlayerAngle = RAD_90;
 
-   MaxPlayerVelocity = 1.5f;
-   PlayerVelocityAcceleration = 0.1f;
-   PlayerVelocityDeceleration = 0.03f;
+   MaxPlayerVelocity = 180.0f;
+   PlayerVelocityAcceleration = 950.0f;
+   PlayerVelocityDeceleration = 350.0f;
 
    MouseMoveAngleIncrement = 0.0006f;
    KeyboardTurnAngleIncrement = 0.02f;

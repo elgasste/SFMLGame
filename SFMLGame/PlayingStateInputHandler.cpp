@@ -3,6 +3,7 @@
 #include "PlayingStateInputHandler.h"
 #include "GameConfig.h"
 #include "GameData.h"
+#include "GameClock.h"
 #include "InputReader.h"
 #include "GameStateController.h"
 #include "Entity.h"
@@ -13,10 +14,12 @@ using namespace sf;
 
 PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<GameConfig> gameConfig,
                                                     shared_ptr<GameData> gameData,
+                                                    shared_ptr<GameClock> clock,
                                                     shared_ptr<InputReader> inputReader,
                                                     shared_ptr<GameStateController> stateController ) :
    _gameConfig( gameConfig ),
    _gameData( gameData ),
+   _clock( clock ),
    _inputReader( inputReader ),
    _stateController( stateController )
 {
@@ -75,21 +78,21 @@ void PlayingStateInputHandler::HandlePlayerMovement() const
 
    if ( isMovingForward && !isMovingBackward )
    {
-      player->SetForwardVelocity( min( forwardVelocity + _gameConfig->PlayerVelocityAcceleration, _gameConfig->MaxPlayerVelocity ) );
+      player->SetForwardVelocity( min( forwardVelocity + ( _gameConfig->PlayerVelocityAcceleration * _clock->GetFrameSeconds() ), _gameConfig->MaxPlayerVelocity ) );
    }
    else if ( isMovingBackward && !isMovingForward )
    {
-      player->SetForwardVelocity( max( forwardVelocity - _gameConfig->PlayerVelocityAcceleration, -( _gameConfig->MaxPlayerVelocity ) ) );
+      player->SetForwardVelocity( max( forwardVelocity - ( _gameConfig->PlayerVelocityAcceleration * _clock->GetFrameSeconds() ), -( _gameConfig->MaxPlayerVelocity ) ));
    }
 
    auto sidewaysVelocity = player->GetSidewaysVelocity();
 
    if ( isStrafingLeft && !isStrafingRight )
    {
-      player->SetSidewaysVelocity( max( sidewaysVelocity - _gameConfig->PlayerVelocityAcceleration, -( _gameConfig->MaxPlayerVelocity ) ) );
+      player->SetSidewaysVelocity( max( sidewaysVelocity - ( _gameConfig->PlayerVelocityAcceleration * _clock->GetFrameSeconds() ), -( _gameConfig->MaxPlayerVelocity ) ));
    }
    else if ( isStrafingRight && !isStrafingLeft )
    {
-      player->SetSidewaysVelocity( min( sidewaysVelocity + _gameConfig->PlayerVelocityAcceleration, _gameConfig->MaxPlayerVelocity ) );
+      player->SetSidewaysVelocity( min( sidewaysVelocity + ( _gameConfig->PlayerVelocityAcceleration * _clock->GetFrameSeconds() ), _gameConfig->MaxPlayerVelocity ));
    }
 }

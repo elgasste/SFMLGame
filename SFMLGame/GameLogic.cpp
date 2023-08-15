@@ -3,6 +3,7 @@
 #include "GameLogic.h"
 #include "GameConfig.h"
 #include "GameData.h"
+#include "GameClock.h"
 #include "GameInputHandler.h"
 #include "BspOperator.h"
 #include "Entity.h"
@@ -14,10 +15,12 @@ using namespace sf;
 
 GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
                       shared_ptr<GameData> gameData,
+                      shared_ptr<GameClock> clock,
                       shared_ptr<GameInputHandler> inputHandler,
                       shared_ptr<BspOperator> bspOperator ) :
    _gameConfig( gameConfig ),
    _gameData( gameData ),
+   _clock( clock ),
    _inputHandler( inputHandler ),
    _bspOperator( bspOperator )
 {
@@ -41,19 +44,19 @@ void GameLogic::MovePlayer() const
       return;
    }
 
-   auto position = player->GetPosition();
+   auto& position = player->GetPosition();
    auto forwardAngle = player->GetAngle();
    auto sidewaysAngle = forwardAngle + RAD_90;
    NORMALIZE_ANGLE( sidewaysAngle );
 
    // forward/backward movement
-   auto dx = cosf( forwardAngle ) * forwardVelocity;
+   auto dx = cosf( forwardAngle ) * ( forwardVelocity * _clock->GetFrameSeconds() );
    auto dy = tanf( forwardAngle ) * dx;
    auto newPositionX = position.x + dx;
    auto newPositionY = position.y - dy;
 
    // sideways movement
-   dx = cosf( sidewaysAngle ) * sidewaysVelocity;
+   dx = cosf( sidewaysAngle ) * ( sidewaysVelocity * _clock->GetFrameSeconds() );
    dy = tanf( sidewaysAngle ) * dx;
    newPositionX -= dx;
    newPositionY += dy;
@@ -110,11 +113,11 @@ void GameLogic::DeceleratePlayer( shared_ptr<Entity> player, bool collidedWithWa
    auto sidewaysVelocity = player->GetSidewaysVelocity();
 
    auto newForwardVelocity = ( forwardVelocity > 0 )
-      ? max( 0.0f, forwardVelocity - _gameConfig->PlayerVelocityDeceleration )
-      : min( 0.0f, forwardVelocity + _gameConfig->PlayerVelocityDeceleration );
+      ? max( 0.0f, forwardVelocity - ( _gameConfig->PlayerVelocityDeceleration * _clock->GetFrameSeconds() ) )
+      : min( 0.0f, forwardVelocity + ( _gameConfig->PlayerVelocityDeceleration * _clock->GetFrameSeconds() ) );
    auto newSidewaysVelocity = ( sidewaysVelocity > 0 )
-      ? max( 0.0f, sidewaysVelocity - _gameConfig->PlayerVelocityDeceleration )
-      : min( 0.0f, sidewaysVelocity + _gameConfig->PlayerVelocityDeceleration );
+      ? max( 0.0f, sidewaysVelocity - ( _gameConfig->PlayerVelocityDeceleration * _clock->GetFrameSeconds() ) )
+      : min( 0.0f, sidewaysVelocity + ( _gameConfig->PlayerVelocityDeceleration * _clock->GetFrameSeconds() ) );
 
    player->SetForwardVelocity( newForwardVelocity );
    player->SetSidewaysVelocity( newSidewaysVelocity );

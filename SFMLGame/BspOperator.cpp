@@ -53,7 +53,7 @@ void BspOperator::DeleteTreeRecursive( BspNode* node )
 const Subsector& BspOperator::GetOccupyingSubsector( shared_ptr<Entity> entity )
 {
    BspNode* node = _rootNode;
-   auto origin = entity->GetPosition();
+   auto& origin = entity->GetPosition();
 
    while ( !node->isLeaf )
    {
