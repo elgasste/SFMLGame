@@ -1,12 +1,12 @@
 #include "WindowsLibs.h"
 
-#include "KeyboardInputReader.h"
+#include "InputReader.h"
 #include "GameConfig.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-KeyboardInputReader::KeyboardInputReader( shared_ptr<GameConfig> gameConfig )
+InputReader::InputReader( shared_ptr<GameConfig> gameConfig )
 {
    for ( int i = 0; i < (int)Button::ButtonCount; i++ )
    {
@@ -29,7 +29,7 @@ KeyboardInputReader::KeyboardInputReader( shared_ptr<GameConfig> gameConfig )
    }
 }
 
-void KeyboardInputReader::ReadInput()
+void InputReader::ReadInput()
 {
    for ( auto const& [button, keyCodes] : _buttonKeyBindings )
    {
@@ -57,17 +57,17 @@ void KeyboardInputReader::ReadInput()
    }
 }
 
-bool KeyboardInputReader::WasButtonPressed( Button button ) const
+bool InputReader::WasButtonPressed( Button button ) const
 {
    return _buttonStates.at( button ).WasPressed;
 }
 
-bool KeyboardInputReader::IsButtonDown( Button button ) const
+bool InputReader::IsButtonDown( Button button ) const
 {
    return _buttonStates.at( button ).IsDown;
 }
 
-bool KeyboardInputReader::WasAnyButtonPressed() const
+bool InputReader::WasAnyButtonPressed() const
 {
    for ( int i = 0; i < (int)Button::ButtonCount; i++ )
    {
@@ -82,7 +82,7 @@ bool KeyboardInputReader::WasAnyButtonPressed() const
    return false;
 }
 
-bool KeyboardInputReader::IsKeyDown( KeyCode keyCode ) const
+bool InputReader::IsKeyDown( KeyCode keyCode ) const
 {
    // if the high-order bit is 1, the key is down
    return GetKeyState( (int)keyCode ) & 0x800;

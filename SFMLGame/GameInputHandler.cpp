@@ -1,18 +1,18 @@
 #include "GameInputHandler.h"
 #include "GameConfig.h"
-#include "IInputReader.h"
-#include "GameStateController.h"
+#include "GameData.h"
+#include "InputReader.h"
 #include "IGameStateInputHandler.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
 GameInputHandler::GameInputHandler( shared_ptr<GameConfig> gameConfig,
-                                    shared_ptr<IInputReader> inputReader,
-                                    shared_ptr<GameStateController> stateController ) :
+                                    shared_ptr<GameData> gameData,
+                                    shared_ptr<InputReader> inputReader ) :
    _gameConfig( gameConfig ),
-   _inputReader( inputReader ),
-   _stateController( stateController )
+   _gameData( gameData ),
+   _inputReader( inputReader )
 {
 }
 
@@ -23,7 +23,7 @@ void GameInputHandler::AddStateInputHandler( GameState state, shared_ptr<IGameSt
 
 void GameInputHandler::HandleInput()
 {
-   _stateInputHandlerMap.at( _stateController->GetState() )->HandleInput();
+   _stateInputHandlerMap.at( _gameData->GetGameState() )->HandleInput();
 
    if ( _inputReader->WasButtonPressed( Button::Diagnostics ) )
    {

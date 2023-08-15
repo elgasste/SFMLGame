@@ -1,16 +1,16 @@
 #include "MenuStateInputHandler.h"
-#include "IInputReader.h"
-#include "GameStateController.h"
+#include "InputReader.h"
+#include "GameData.h"
 #include "Menu.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-MenuStateInputHandler::MenuStateInputHandler( shared_ptr<IInputReader> inputReader,
-                                              shared_ptr<GameStateController> stateController,
+MenuStateInputHandler::MenuStateInputHandler( shared_ptr<InputReader> inputReader,
+                                              shared_ptr<GameData> gameData,
                                               shared_ptr<Menu> menu ) :
    _inputReader( inputReader ),
-   _stateController( stateController ),
+   _gameData( gameData ),
    _menu( menu )
 {
 }
@@ -19,7 +19,7 @@ void MenuStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
-      _stateController->SetState( GameState::Playing );
+      _gameData->SetGameState( GameState::Playing );
    }
    else if ( _inputReader->WasButtonPressed( Button::Up ) )
    {

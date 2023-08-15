@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-#include "IInputReader.h"
+#include "Button.h"
 #include "ButtonState.h"
 #include "KeyCode.h"
 
@@ -9,16 +9,16 @@ NAMESPACE_BEGIN
 
 class GameConfig;
 
-class KeyboardInputReader : public IInputReader
+class InputReader
 {
 public:
-   KeyboardInputReader( std::shared_ptr<GameConfig> gameConfig );
+   InputReader( std::shared_ptr<GameConfig> gameConfig );
 
    // IInputReader
-   void ReadInput() override;
-   bool WasButtonPressed( Button button ) const override;
-   bool IsButtonDown( Button button ) const override;
-   bool WasAnyButtonPressed() const override;
+   void ReadInput();
+   bool WasButtonPressed( Button button ) const;
+   bool IsButtonDown( Button button ) const;
+   bool WasAnyButtonPressed() const;
 
 private:
    bool IsKeyDown( KeyCode keyCode ) const;
