@@ -8,7 +8,7 @@ using namespace std;
 RenderConfig::RenderConfig( shared_ptr<GameConfig> gameConfig )
 {
    MinimumFrameRate = 30;
-   MaximumFrameRate = 120;
+   MaximumFrameRate = 300;
 
    FovAngle = RAD_30 * 2.0f;
    FovAngleIncrement = FovAngle / gameConfig->ScreenWidth;

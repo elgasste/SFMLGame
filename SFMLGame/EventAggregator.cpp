@@ -6,7 +6,7 @@ using namespace std;
 
 void EventAggregator::AddListener( GameEvent event, IEventListener* listener )
 {
-   auto listeners = _listenersMap[event];
+   auto& listeners = _listenersMap[event];
 
    if ( find( listeners.begin(), listeners.end(), listener ) == listeners.end() )
    {
@@ -21,7 +21,7 @@ void EventAggregator::RaiseEvent( GameEvent event ) const
       return;
    }
 
-   auto listeners = _listenersMap.at( event );
+   auto& listeners = _listenersMap.at( event );
    for ( auto listener : listeners )
    {
       listener->HandleEvent( event );
