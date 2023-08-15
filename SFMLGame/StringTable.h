@@ -18,3 +18,7 @@
 
 // playing state
 #define IDS_PlayStateMessage        "Press ESC for menu, or F12 to toggle diagnostics"
+
+// menu
+#define IDS_MenuOptionBack          "Back"
+#define IDS_MenuOptionQuit          "Quit"
