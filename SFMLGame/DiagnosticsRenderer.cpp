@@ -1,7 +1,5 @@
 #include <format>
 
-#include <SFML/Graphics.hpp>
-
 #include "DiagnosticsRenderer.h"
 #include "RenderConfig.h"
 #include "GameClock.h"

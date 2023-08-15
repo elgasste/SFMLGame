@@ -1,5 +1,3 @@
-#include <SFML/Window/WindowStyle.hpp>
-
 #include "RenderConfig.h"
 
 using namespace NAMESPACE;

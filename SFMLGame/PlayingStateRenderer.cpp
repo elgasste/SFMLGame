@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-
 #include "PlayingStateRenderer.h"
 #include "RenderConfig.h"
 #include "SFMLWindow.h"

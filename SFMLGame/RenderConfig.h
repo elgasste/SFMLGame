@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string>
-#include <SFML/Graphics/Color.hpp>
-
 #include "Common.h"
 
 NAMESPACE_BEGIN

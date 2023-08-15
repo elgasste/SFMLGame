@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include "Common.h"
 
 NAMESPACE_BEGIN

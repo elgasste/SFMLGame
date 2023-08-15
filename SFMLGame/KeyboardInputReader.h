@@ -1,8 +1,5 @@
 #pragma once
 
-#include <map>
-#include <vector>
-
 #include "Common.h"
 #include "IInputReader.h"
 #include "ButtonState.h"

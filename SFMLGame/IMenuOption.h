@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include "Common.h"
 
 NAMESPACE_BEGIN

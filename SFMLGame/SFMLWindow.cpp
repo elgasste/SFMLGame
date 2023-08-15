@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-
 #include "SFMLWindow.h"
 #include "RenderConfig.h"
 #include "EventAggregator.h"

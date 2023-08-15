@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-
 #include "MenuStateRenderer.h"
 #include "RenderConfig.h"
 #include "SFMLWindow.h"
