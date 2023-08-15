@@ -76,6 +76,8 @@ void BspOperator::RenderWorld( shared_ptr<Entity> viewingEntity )
    _raycastRenderer->RenderCeilingAndFloor();
 
    RenderNodeRecursive( _rootNode );
+
+   assert( _undrawnRanges.empty() );
 }
 
 void BspOperator::RenderNodeRecursive( BspNode* node )
