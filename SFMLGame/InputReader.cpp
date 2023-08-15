@@ -99,8 +99,6 @@ void InputReader::ReadKeyboardInput()
    }
 }
 
-static bool g_started = false;
-
 void InputReader::ReadMouseInput()
 {
    _mouseDelta.x = Mouse::getPosition().x - _mouseCenterPoint.x;
