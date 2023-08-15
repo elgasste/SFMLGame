@@ -163,6 +163,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameConfig.cpp" />
+    <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameLoader.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameConfig.h" />
+    <ClInclude Include="GameData.h" />
     <ClInclude Include="GameEvent.h" />
     <ClInclude Include="GameLoader.h" />
     <ClInclude Include="GameLogic.h" />
