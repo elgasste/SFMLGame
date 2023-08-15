@@ -2,9 +2,11 @@
 
 #include "InputReader.h"
 #include "GameConfig.h"
+#include "RenderConfig.h"
 
 using namespace NAMESPACE;
 using namespace std;
+using namespace sf;
 
 InputReader::InputReader( shared_ptr<GameConfig> gameConfig )
 {
@@ -27,9 +29,19 @@ InputReader::InputReader( shared_ptr<GameConfig> gameConfig )
          }
       }
    }
+
+   _mousePosition = Mouse::getPosition();
+   _mousePreviousPosition = _mousePosition;
+   _mouseDelta = Vector2i( 0, 0 );
 }
 
 void InputReader::ReadInput()
+{
+   ReadKeyboardInput();
+   ReadMouseInput();
+}
+
+void InputReader::ReadKeyboardInput()
 {
    for ( auto const& [button, keyCodes] : _buttonKeyBindings )
    {
@@ -55,6 +67,18 @@ void InputReader::ReadInput()
          _buttonStates.at( button ).IsDown = false;
       }
    }
+}
+
+void InputReader::ReadMouseInput()
+{
+   _mousePreviousPosition.x = _mousePosition.x;
+   _mousePreviousPosition.y = _mousePosition.y;
+
+   _mousePosition.x = Mouse::getPosition().x;
+   _mousePosition.y = Mouse::getPosition().y;
+
+   _mouseDelta.x = _mousePosition.x - _mousePreviousPosition.x;
+   _mouseDelta.y = _mousePosition.y - _mousePreviousPosition.y;
 }
 
 bool InputReader::WasButtonPressed( Button button ) const
