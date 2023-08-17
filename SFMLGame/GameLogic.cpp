@@ -24,8 +24,11 @@ void GameLogic::Tick()
 {
    _inputHandler->HandleInput();
 
-   UpdateBallPosition();
-   ClipBall();
+   if ( _gameData->GetGameState() == GameState::Playing )
+   {
+      UpdateBallPosition();
+      ClipBall();
+   }
 }
 
 void GameLogic::UpdateBallPosition() const
