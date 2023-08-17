@@ -7,6 +7,7 @@ using namespace std;
 using namespace sf;
 
 PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfig,
+                                            shared_ptr<RenderData> renderData,
                                             shared_ptr<SFMLWindow> window ) :
    _window( window )
 {

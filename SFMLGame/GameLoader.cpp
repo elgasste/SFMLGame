@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "GameData.h"
 #include "RenderConfig.h"
+#include "RenderData.h"
 #include "EventAggregator.h"
 #include "GameClock.h"
 #include "InputReader.h"
@@ -22,12 +23,14 @@
 
 using namespace NAMESPACE;
 using namespace std;
+using namespace sf;
 
 shared_ptr<Game> GameLoader::Load() const
 {
    auto gameConfig = make_shared<GameConfig>();
-   auto renderConfig = make_shared<RenderConfig>();
    auto gameData = LoadGameData( gameConfig );
+   auto renderConfig = make_shared<RenderConfig>();
+   auto renderData = LoadRenderData();
    auto eventAggregator = make_shared<EventAggregator>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
@@ -44,7 +47,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto logic = shared_ptr<GameLogic>( new GameLogic( gameInputHandler ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, eventAggregator, clock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, clock, window ) );
-   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, window ) );
+   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, window ) );
    auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( renderConfig, window, clock, menu ) );
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( gameConfig, gameData, window, diagnosticRenderer ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
@@ -64,4 +67,14 @@ shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig
    auto gameData = shared_ptr<GameData>( new GameData( ball ) );
 
    return gameData;
+}
+
+shared_ptr<RenderData> GameLoader::LoadRenderData() const
+{
+   auto ballTexture = shared_ptr<Texture>( new Texture() );
+   ballTexture->loadFromFile( "Resources/Textures/ball.png" );
+
+   auto renderData = shared_ptr<RenderData>( new RenderData( ballTexture ) );
+
+   return renderData;
 }
