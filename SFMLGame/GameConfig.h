@@ -20,6 +20,8 @@ public:
    float DefaultBallAngle;
    float DefaultBallVelocity;
    float BallDiameter;
+
+   float TurnAngleIncrement;
 };
 
 NAMESPACE_END

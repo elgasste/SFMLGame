@@ -23,4 +23,6 @@ GameConfig::GameConfig()
    DefaultBallAngle = RAD_45;
    DefaultBallVelocity = 600;
    BallDiameter = 100;
+
+   TurnAngleIncrement = 3;
 }
