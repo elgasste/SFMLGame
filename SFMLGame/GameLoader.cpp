@@ -1,5 +1,6 @@
 #include "GameLoader.h"
 #include "GameConfig.h"
+#include "Entity.h"
 #include "GameData.h"
 #include "RenderConfig.h"
 #include "EventAggregator.h"
@@ -22,11 +23,11 @@
 using namespace NAMESPACE;
 using namespace std;
 
-shared_ptr<Game> GameLoader::Load()
+shared_ptr<Game> GameLoader::Load() const
 {
    auto gameConfig = make_shared<GameConfig>();
    auto renderConfig = make_shared<RenderConfig>();
-   auto gameData = make_shared<GameData>();
+   auto gameData = LoadGameData( gameConfig );
    auto eventAggregator = make_shared<EventAggregator>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
@@ -51,4 +52,16 @@ shared_ptr<Game> GameLoader::Load()
    auto game = shared_ptr<Game>( new Game( gameData, eventAggregator, clock, inputReader, logic, gameRenderer ) );
 
    return game;
+}
+
+shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig ) const
+{
+   auto ball = make_shared<Entity>();
+   ball->SetPosition( gameConfig->DefaultBallPosition.x, gameConfig->DefaultBallPosition.y );
+   ball->SetAngle( gameConfig->DefaultBallAngle );
+   ball->SetVelocity( gameConfig->DefaultBallVelocity );
+
+   auto gameData = shared_ptr<GameData>( new GameData( ball ) );
+
+   return gameData;
 }

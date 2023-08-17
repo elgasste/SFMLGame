@@ -1,4 +1,5 @@
 #include "GameConfig.h"
+#include "Geometry.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -17,4 +18,8 @@ GameConfig::GameConfig()
    };
 
    ShowDiagnostics = false;
+
+   DefaultBallPosition = { 960, 540 };
+   DefaultBallAngle = RAD_45;
+   DefaultBallVelocity = 300;
 }

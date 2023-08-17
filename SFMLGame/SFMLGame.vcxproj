@@ -102,7 +102,7 @@
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)SFML Debug Dlls\" "$(OutDir)" /Y
 xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y
-xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$OutDir)\Resources\Textures\" /Y</Command>
+xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textures\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,7 +129,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$OutDir)\Resources\Textur
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)SFML Release Dlls\" $(OutDir) /Y
 xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y
-xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$OutDir)\Resources\Textures\" /Y</Command>
+xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textures\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -200,6 +200,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$OutDir)\Resources\Textur
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameRenderer.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="IEventListener.h" />
     <ClInclude Include="IGameStateInputHandler.h" />
     <ClInclude Include="IGameStateRenderer.h" />
