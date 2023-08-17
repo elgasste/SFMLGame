@@ -34,4 +34,6 @@ RenderConfig::RenderConfig()
    MenuTextColor = Color::White;
    MenuCaratOffset = 20;
    MenuCaratBlinkRate = 0.2f;
+
+   BallOrigin = { 290.5f, 290.5f };
 }

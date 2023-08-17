@@ -5,6 +5,7 @@
 
 NAMESPACE_BEGIN
 
+class RenderData;
 class GameConfig;
 class GameData;
 class SFMLWindow;
@@ -15,7 +16,8 @@ class IGameStateRenderer;
 class GameRenderer
 {
 public:
-   GameRenderer( std::shared_ptr<GameConfig> gameConfig,
+   GameRenderer( std::shared_ptr<RenderData> renderData,
+                 std::shared_ptr<GameConfig> gameConfig,
                  std::shared_ptr<GameData> gameData,
                  std::shared_ptr<SFMLWindow> window,
                  std::shared_ptr<DiagnosticsRenderer> diagnosticsRenderer );
@@ -25,6 +27,7 @@ public:
    void Render();
 
 private:
+   std::shared_ptr<RenderData> _renderData;
    std::shared_ptr<GameConfig> _gameConfig;
    std::shared_ptr<GameData> _gameData;
    std::shared_ptr<SFMLWindow> _window;

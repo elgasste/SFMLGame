@@ -19,6 +19,7 @@ public:
    sf::Vector2f DefaultBallPosition;
    float DefaultBallAngle;
    float DefaultBallVelocity;
+   float BallDiameter;
 };
 
 NAMESPACE_END
