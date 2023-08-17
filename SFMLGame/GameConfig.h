@@ -15,6 +15,13 @@ public:
    std::map<KeyCode, Button> KeyBindingsMap;
 
    bool ShowDiagnostics;
+
+   sf::Vector2f DefaultBallPosition;
+   float DefaultBallAngle;
+   float DefaultBallVelocity;
+   float BallDiameter;
+
+   float TurnAngleIncrement;
 };
 
 NAMESPACE_END

@@ -101,7 +101,8 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)SFML Debug Dlls\" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y</Command>
+xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textures\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,7 +128,8 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" 
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)SFML Release Dlls\" $(OutDir) /Y
-xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y</Command>
+xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textures\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -161,6 +163,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" 
   <ItemGroup>
     <ClCompile Include="BackMenuOption.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EventAggregator.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
@@ -179,6 +182,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" 
     <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="QuitMenuOption.cpp" />
     <ClCompile Include="RenderConfig.cpp" />
+    <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +190,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" 
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="EventAggregator.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
@@ -196,6 +201,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" 
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameRenderer.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="IEventListener.h" />
     <ClInclude Include="IGameStateInputHandler.h" />
     <ClInclude Include="IGameStateRenderer.h" />
@@ -211,6 +217,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" 
     <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="QuitMenuOption.h" />
     <ClInclude Include="RenderConfig.h" />
+    <ClInclude Include="RenderData.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="StringTable.h" />
     <ClInclude Include="WindowsLibs.h" />

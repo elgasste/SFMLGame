@@ -38,6 +38,8 @@ public:
    sf::Color MenuTextColor;
    float MenuCaratOffset;
    float MenuCaratBlinkRate;
+
+   sf::Vector2f BallOrigin;
 };
 
 NAMESPACE_END

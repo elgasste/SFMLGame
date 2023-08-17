@@ -55,6 +55,11 @@ void SFMLWindow::Draw( shared_ptr<Drawable> drawable ) const
    _window->draw( *drawable );
 }
 
+void SFMLWindow::Draw( const Drawable& drawable ) const
+{
+   _window->draw( drawable );
+}
+
 void SFMLWindow::Render() const
 {
    _window->display();

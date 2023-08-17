@@ -26,6 +26,7 @@ public:
    void HandleEvents() const;
    void Clear() const;
    void Draw( std::shared_ptr<sf::Drawable> drawable ) const;
+   void Draw( const sf::Drawable& drawable ) const;
    void Render() const;
 
 private:

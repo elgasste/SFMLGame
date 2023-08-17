@@ -8,10 +8,12 @@
 using namespace NAMESPACE;
 using namespace std;
 
-GameRenderer::GameRenderer( shared_ptr<GameConfig> gameConfig,
+GameRenderer::GameRenderer( shared_ptr<RenderData> renderData,
+                            shared_ptr<GameConfig> gameConfig,
                             shared_ptr<GameData> gameData,
                             shared_ptr<SFMLWindow> window,
                             shared_ptr<DiagnosticsRenderer> diagnosticsRenderer ) :
+   _renderData( renderData ),
    _gameConfig( gameConfig ),
    _gameData( gameData ),
    _window( window ),
