@@ -4,6 +4,7 @@
 #include "GameInputHandler.h"
 #include "GameClock.h"
 #include "Entity.h"
+#include "Geometry.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -50,23 +51,35 @@ void GameLogic::ClipBall() const
 
    if ( hitBox.top < 0 )
    {
-      // we've hit the top of the arena
+      // hit the top edge of the arena
       ball->SetPosition( ball->GetPosition().x, ( hitBox.height / 2.0f ) );
+      auto newAngle = RAD_360 - ball->GetAngle();
+      NORMALIZE_ANGLE( newAngle );
+      ball->SetAngle( newAngle );
    }
    else if ( ( hitBox.top + hitBox.height ) >= ( _renderConfig->ScreenHeight - 1 ) )
    {
-      // we've hit the bottom of the arena
+      // hit the bottom edge of the arena
       ball->SetPosition( ball->GetPosition().x, ( _renderConfig->ScreenHeight - 1 ) - ( hitBox.height / 2.0f ) );
+      auto newAngle = RAD_360 - ball->GetAngle();
+      NORMALIZE_ANGLE( newAngle );
+      ball->SetAngle( newAngle );
    }
 
    if ( hitBox.left < 0 )
    {
-      // we've hit the left of the arena
+      // hit the left edge of the arena
       ball->SetPosition( ( hitBox.width / 2.0f ), ball->GetPosition().y );
+      auto newAngle = RAD_180 - ball->GetAngle();
+      NORMALIZE_ANGLE( newAngle );
+      ball->SetAngle( newAngle );
    }
    else if ( ( hitBox.left + hitBox.width ) >= ( _renderConfig->ScreenWidth - 1 ) )
    {
-      // we've hit the right of the arena
+      // hit the right edge of the arena
       ball->SetPosition( ( _renderConfig->ScreenWidth - 1 ) - ( hitBox.width / 2.0f ), ball->GetPosition().y );
+      auto newAngle = RAD_180 - ball->GetAngle();
+      NORMALIZE_ANGLE( newAngle );
+      ball->SetAngle( newAngle );
    }
 }
