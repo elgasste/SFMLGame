@@ -44,7 +44,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( gameConfig, gameData, inputReader ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
-   auto logic = shared_ptr<GameLogic>( new GameLogic( gameInputHandler ) );
+   auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameData, gameInputHandler, clock ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, eventAggregator, clock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, clock, window ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );
@@ -52,7 +52,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderData, gameConfig, gameData, window, diagnosticRenderer ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Menu, menuStateRenderer );
-   auto game = shared_ptr<Game>( new Game( gameData, eventAggregator, clock, inputReader, logic, gameRenderer ) );
+   auto game = shared_ptr<Game>( new Game( gameData, eventAggregator, clock, inputReader, gameLogic, gameRenderer ) );
 
    return game;
 }
