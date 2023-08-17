@@ -15,6 +15,7 @@
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
 #include "RaycastRenderer.h"
+#include "ColumnTracker.h"
 #include "GameData.h"
 #include "Subsector.h"
 #include "BspOperator.h"
@@ -46,8 +47,9 @@ shared_ptr<Game> GameLoader::Load() const
    menu->AddOption( backMenuOption );
    menu->AddOption( quitMenuOption );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( gameConfig, eventAggregator, clock ) );
-   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, gameData, renderData, window));
-   auto bspOperator = shared_ptr<BspOperator>( new BspOperator( gameConfig, renderConfig, raycastRenderer, bspRootNode ) );
+   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, gameData, renderData, window ) );
+   auto columnTracker = make_shared<ColumnTracker>();
+   auto bspOperator = shared_ptr<BspOperator>( new BspOperator( gameConfig, renderConfig, raycastRenderer, columnTracker, bspRootNode ) );
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( gameConfig, gameData, clock, inputReader, stateController ) );
    auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, stateController, menu ) );
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( renderConfig, inputReader, stateController ) );

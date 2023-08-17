@@ -147,6 +147,9 @@
     <ClCompile Include="RenderData.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="ColumnTracker.cpp">
+      <Filter>Source Files\Bsp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="RenderData.h">
       <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ColumnTracker.h">
+      <Filter>Header Files\Bsp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

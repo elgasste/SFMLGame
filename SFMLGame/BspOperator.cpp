@@ -5,6 +5,7 @@
 #include "RenderConfig.h"
 #include "Entity.h"
 #include "RaycastRenderer.h"
+#include "ColumnTracker.h"
 #include "BspNode.h"
 #include "Geometry.h"
 
@@ -14,10 +15,12 @@ using namespace std;
 BspOperator::BspOperator( shared_ptr<GameConfig> gameConfig,
                           shared_ptr<RenderConfig> renderConfig,
                           shared_ptr<RaycastRenderer> raycastRenderer,
+                          shared_ptr<ColumnTracker> columnTracker,
                           BspNode* rootNode ) :
    _gameConfig( gameConfig ),
    _renderConfig( renderConfig ),
    _raycastRenderer( raycastRenderer ),
+   _columnTracker( columnTracker ),
    _rootNode( rootNode ),
    _leftFovAngle( 0 )
 {
@@ -66,8 +69,7 @@ const Subsector& BspOperator::GetOccupyingSubsector( shared_ptr<Entity> entity )
 
 void BspOperator::RenderWorld( shared_ptr<Entity> viewingEntity )
 {
-   _undrawnRanges.clear();
-   _undrawnRanges.push_back( { 0, _gameConfig->ScreenWidth - 1 } );
+   _columnTracker->Reset( 0, _gameConfig->ScreenWidth - 1 );
 
    _viewOrigin = viewingEntity->GetPosition();
    _leftFovAngle = viewingEntity->GetAngle() + ( _renderConfig->FovAngle / 2.0f );
@@ -77,7 +79,7 @@ void BspOperator::RenderWorld( shared_ptr<Entity> viewingEntity )
 
    RenderNodeRecursive( _rootNode );
 
-   assert( _undrawnRanges.empty() );
+   assert( _columnTracker->IsFullyTracked() );
 }
 
 void BspOperator::RenderNodeRecursive( BspNode* node )
@@ -102,7 +104,7 @@ void BspOperator::RenderNodeRecursive( BspNode* node )
    {
       RenderNodeRecursive( node->rightChild );
 
-      if ( !_undrawnRanges.empty() )
+      if ( !_columnTracker->IsFullyTracked() )
       {
          RenderNodeRecursive( node->leftChild );
       }
@@ -111,7 +113,7 @@ void BspOperator::RenderNodeRecursive( BspNode* node )
    {
       RenderNodeRecursive( node->leftChild );
 
-      if ( !_undrawnRanges.empty() )
+      if ( !_columnTracker->IsFullyTracked() )
       {
          RenderNodeRecursive( node->rightChild );
       }
@@ -122,10 +124,13 @@ void BspOperator::RenderLeaf( BspNode* leaf )
 {
    for ( const auto& lineseg : leaf->subsector->linesegs )
    {
-      for ( int i = 0; i < (int)_undrawnRanges.size(); i++ )
+      for ( int i = 0; i < _columnTracker->GetUntrackedRangeCount(); i++ )
       {
-         auto undrawnLeftAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * _undrawnRanges[i].start );
-         auto undrawnRightAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * _undrawnRanges[i].end );
+         auto rangeStart = _columnTracker->GetRangeStart( i );
+         auto rangeEnd = _columnTracker->GetRangeEnd( i );
+
+         auto undrawnLeftAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * rangeStart );
+         auto undrawnRightAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * rangeEnd );
 
          NORMALIZE_ANGLE( undrawnLeftAngle );
          NORMALIZE_ANGLE( undrawnRightAngle );
@@ -161,70 +166,30 @@ void BspOperator::RenderLeaf( BspNode* leaf )
 
          // reverse the calculation on the draw angles to find the pixel range that was drawn
          auto drawStartPixel = ( leftDrawAngle <= undrawnLeftAngle )
-            ? _undrawnRanges[i].start + (int)( ( undrawnLeftAngle - leftDrawAngle ) / _renderConfig->FovAngleIncrement )
-            : _undrawnRanges[i].start + (int)( ( undrawnLeftAngle + ( RAD_360 - leftDrawAngle ) ) / _renderConfig->FovAngleIncrement );
+            ? rangeStart + (int)( ( undrawnLeftAngle - leftDrawAngle ) / _renderConfig->FovAngleIncrement )
+            : rangeStart + (int)( ( undrawnLeftAngle + ( RAD_360 - leftDrawAngle ) ) / _renderConfig->FovAngleIncrement );
          auto drawEndPixel = ( rightDrawAngle >= undrawnRightAngle )
-            ? _undrawnRanges[i].end - (int)( ( rightDrawAngle - undrawnRightAngle ) / _renderConfig->FovAngleIncrement )
-            : _undrawnRanges[i].end - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _renderConfig->FovAngleIncrement );
+            ? rangeEnd - (int)( ( rightDrawAngle - undrawnRightAngle ) / _renderConfig->FovAngleIncrement )
+            : rangeEnd - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _renderConfig->FovAngleIncrement );
 
          _raycastRenderer->RenderLineseg( lineseg, leftDrawAngle, drawStartPixel, drawEndPixel );
 
-         auto prevRangeCount = _undrawnRanges.size();
-         MarkRangeAsDrawn( drawStartPixel, drawEndPixel );
+         auto prevRangeCount = _columnTracker->GetUntrackedRangeCount();
+         _columnTracker->TrackRange( drawStartPixel, drawEndPixel );
+         auto newRangeCount = _columnTracker->GetUntrackedRangeCount();
 
-         if ( _undrawnRanges.empty() )
+         if ( _columnTracker->IsFullyTracked() )
          {
             return;
          }
-         else if ( _undrawnRanges.size() > prevRangeCount )
+         else if ( newRangeCount > prevRangeCount )
          {
             // this range was split in the middle, skip to the next range
             i++;
          }
-         else if ( _undrawnRanges.size() < prevRangeCount )
+         else if ( newRangeCount < prevRangeCount )
          {
             // this entire range was removed, stay on the same index
-            i--;
-         }
-      }
-   }
-}
-
-void BspOperator::MarkRangeAsDrawn( int start, int end )
-{
-   for ( int i = 0; i < (int)_undrawnRanges.size(); i++ )
-   {
-      auto& undrawnRange = _undrawnRanges[i];
-
-      if ( end < undrawnRange.start )
-      {
-         // the list is ordered left to right, so we don't need to check further
-         return;
-      }
-      else if ( start > undrawnRange.end )
-      {
-         continue;
-      }
-
-      if ( start > undrawnRange.start )
-      {
-         auto originalEnd = undrawnRange.end;
-         undrawnRange.end = start - 1;
-
-         if ( end < originalEnd )
-         {
-            _undrawnRanges.insert( _undrawnRanges.begin() + i + 1, { end + 1, originalEnd } );
-         }
-      }
-      else
-      {
-         if ( end < undrawnRange.end )
-         {
-            undrawnRange.start = end + 1;
-         }
-         else
-         {
-            _undrawnRanges.erase( _undrawnRanges.begin() + i );
             i--;
          }
       }
