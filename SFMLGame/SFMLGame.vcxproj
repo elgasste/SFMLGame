@@ -101,7 +101,8 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)SFML Debug Dlls\" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y</Command>
+xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$OutDir)\Resources\Textures\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,7 +128,8 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" 
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)SFML Release Dlls\" $(OutDir) /Y
-xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y</Command>
+xcopy "$(SolutionDir)SFMLGame\Resources\Fonts\*.*" "$(OutDir)\Resources\Fonts\" /Y
+xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$OutDir)\Resources\Textures\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
