@@ -25,6 +25,8 @@ RenderConfig::RenderConfig()
    DiagnosticsTextColor = Color::White;
    DiagnosticsBackgroundColor = Color::Blue;
 
+   ArenaBackgroundColor = Color( 64, 64, 64 );
+
    MessageFont = "Resources/Fonts/Consolas.ttf";
    MessageCharSize = 32;
    MessageTextColor = Color::White;
