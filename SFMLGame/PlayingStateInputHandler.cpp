@@ -28,21 +28,34 @@ void PlayingStateInputHandler::HandleInput()
       return;
    }
 
+   auto ball = _gameData->GetBall();
    bool isLeftDown = _inputReader->IsButtonDown( Button::Left );
    bool isRightDown = _inputReader->IsButtonDown( Button::Right );
 
    if ( isLeftDown && !isRightDown )
    {
-      auto ball = _gameData->GetBall();
-      auto newAngle = ball->GetAngle() + ( _gameConfig->TurnAngleIncrement * _clock->GetFrameSeconds() );
+      auto newAngle = ball->GetAngle() + ( _gameConfig->BallTurnAngleIncrement * _clock->GetFrameSeconds() );
       NORMALIZE_ANGLE( newAngle );
-      _gameData->GetBall()->SetAngle( newAngle );
+      ball->SetAngle( newAngle );
    }
    else if ( isRightDown && !isLeftDown )
    {
-      auto ball = _gameData->GetBall();
-      auto newAngle = ball->GetAngle() - ( _gameConfig->TurnAngleIncrement * _clock->GetFrameSeconds() );
+      auto newAngle = ball->GetAngle() - ( _gameConfig->BallTurnAngleIncrement * _clock->GetFrameSeconds() );
       NORMALIZE_ANGLE( newAngle );
-      _gameData->GetBall()->SetAngle( newAngle );
+      ball->SetAngle( newAngle );
+   }
+
+   bool isForwardDown = _inputReader->IsButtonDown( Button::Up );
+   bool isBackwardDown = _inputReader->IsButtonDown( Button::Down );
+
+   if ( isForwardDown && !isBackwardDown )
+   {
+      auto newVelocity = ball->GetVelocity() + ( _gameConfig->BallVelocityIncrement * _clock->GetFrameSeconds() );
+      ball->SetVelocity( min( newVelocity, _gameConfig->MaximumBallVelocity ) );
+   }
+   else if ( isBackwardDown && !isForwardDown )
+   {
+      auto newVelocity = ball->GetVelocity() - ( _gameConfig->BallVelocityIncrement * _clock->GetFrameSeconds() );
+      ball->SetVelocity( max( newVelocity, _gameConfig->MinimumBallVelocity ) );
    }
 }
