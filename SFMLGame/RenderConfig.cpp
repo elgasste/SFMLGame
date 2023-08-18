@@ -16,7 +16,7 @@ RenderConfig::RenderConfig()
    WindowStyle = Style::Titlebar | Style::Close;
 
    DiagnosticsWidth = 450;
-   DiagnosticsHeight = 180;
+   DiagnosticsHeight = 265;
    DiagnosticsXPosition = ScreenWidth - DiagnosticsWidth;
    DiagnosticsYPosition = 0;
    DiagnosticsTextMargin = 20;

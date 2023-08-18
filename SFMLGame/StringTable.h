@@ -15,6 +15,8 @@
 #define IDS_AverageFrameRate        "Average Frame Rate: {}"
 #define IDS_TotalFrames             "Total Frames:       {}"
 #define IDS_LagFrames               "Lag Frames:         {}"
+#define IDS_BallAngle               "Ball Angle:         {}"
+#define IDS_BallVelocity            "Ball Velocity:      {}"
 
 // playing state
 #define IDS_PlayStateMessage        "Press ESC for menu, or F12 to toggle diagnostics"

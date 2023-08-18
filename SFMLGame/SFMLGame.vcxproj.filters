@@ -215,9 +215,6 @@
     <ClInclude Include="InputReader.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="StringTable.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="GameData.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
@@ -232,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="RenderData.h">
       <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="StringTable.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
