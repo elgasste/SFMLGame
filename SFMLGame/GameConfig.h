@@ -19,9 +19,12 @@ public:
    sf::Vector2f DefaultBallPosition;
    float DefaultBallAngle;
    float DefaultBallVelocity;
+   float MinimumBallVelocity;
+   float MaximumBallVelocity;
    float BallDiameter;
 
-   float TurnAngleIncrement;
+   float BallTurnAngleIncrement;
+   float BallVelocityIncrement;
 };
 
 NAMESPACE_END

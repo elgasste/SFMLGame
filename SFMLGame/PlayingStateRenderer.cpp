@@ -18,6 +18,9 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
    _gameData( gameData ),
    _window( window )
 {
+   _backgroundRect = RectangleShape( { (float)renderConfig->ScreenWidth, (float)renderConfig->ScreenHeight } );
+   _backgroundRect.setFillColor( renderConfig->ArenaBackgroundColor );
+
    _font = make_shared<Font>();
    _font->loadFromFile( renderConfig->MessageFont );
 
@@ -38,6 +41,8 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
 
 void PlayingStateRenderer::Render()
 {
+   _window->Draw( _backgroundRect );
+
    _ballSprite.setPosition( _gameData->GetBall()->GetPosition() );
    _window->Draw( _ballSprite );
 

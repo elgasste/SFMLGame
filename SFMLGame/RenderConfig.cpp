@@ -16,7 +16,7 @@ RenderConfig::RenderConfig()
    WindowStyle = Style::Titlebar | Style::Close;
 
    DiagnosticsWidth = 450;
-   DiagnosticsHeight = 180;
+   DiagnosticsHeight = 265;
    DiagnosticsXPosition = ScreenWidth - DiagnosticsWidth;
    DiagnosticsYPosition = 0;
    DiagnosticsTextMargin = 20;
@@ -24,6 +24,8 @@ RenderConfig::RenderConfig()
    DiagnosticsCharSize = 24;
    DiagnosticsTextColor = Color::White;
    DiagnosticsBackgroundColor = Color::Blue;
+
+   ArenaBackgroundColor = Color( 64, 64, 64 );
 
    MessageFont = "Resources/Fonts/Consolas.ttf";
    MessageCharSize = 32;

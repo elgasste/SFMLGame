@@ -22,7 +22,10 @@ GameConfig::GameConfig()
    DefaultBallPosition = { 960, 540 };
    DefaultBallAngle = RAD_45;
    DefaultBallVelocity = 600;
+   MinimumBallVelocity = 60;
+   MaximumBallVelocity = 5000;
    BallDiameter = 100;
 
-   TurnAngleIncrement = 3;
+   BallTurnAngleIncrement = 3;
+   BallVelocityIncrement = 400;
 }

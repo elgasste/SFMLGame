@@ -29,6 +29,8 @@ public:
    sf::Color DiagnosticsTextColor;
    sf::Color DiagnosticsBackgroundColor;
 
+   sf::Color ArenaBackgroundColor;
+
    std::string MessageFont;
    unsigned int MessageCharSize;
    sf::Color MessageTextColor;
