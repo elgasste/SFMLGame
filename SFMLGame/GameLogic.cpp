@@ -8,6 +8,7 @@
 #include "Entity.h"
 #include "Geometry.h"
 #include "ChangeGameStateArgs.h"
+#include "TurnBallArgs.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -54,6 +55,9 @@ void GameLogic::HandleEvents()
             break;
          case GameEventType::ChangeGameState:
             OnChangeGameState( event.args );
+            break;
+         case GameEventType::TurnBall:
+            OnTurnBall( event.args );
             break;
       }
    }
@@ -115,9 +119,20 @@ void GameLogic::ClipBall() const
    }
 }
 
-void GameLogic::OnChangeGameState( shared_ptr<IGameEventArgs> args )
+void GameLogic::OnChangeGameState( shared_ptr<IGameEventArgs> args ) const
 {
    // TODO: make sure this new state is possible
    auto stateArgs = (ChangeGameStateArgs*)( args.get() );
    _gameData->SetGameState( stateArgs->GetNewState() );
+}
+
+void GameLogic::OnTurnBall( shared_ptr<IGameEventArgs> args ) const
+{
+   auto ball = _gameData->GetBall();
+   auto turnArgs = (TurnBallArgs*)( args.get() );
+
+   auto newAngle = ball->GetAngle() + ( turnArgs->GetIncrement() * _clock->GetFrameSeconds() );
+   NORMALIZE_ANGLE( newAngle );
+
+   ball->SetAngle( newAngle );
 }

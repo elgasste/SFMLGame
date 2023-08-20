@@ -29,7 +29,8 @@ private:
    void UpdateBallPosition() const;
    void ClipBall() const;
 
-   void OnChangeGameState( std::shared_ptr<IGameEventArgs> args );
+   void OnChangeGameState( std::shared_ptr<IGameEventArgs> args ) const;
+   void OnTurnBall( std::shared_ptr<IGameEventArgs> args ) const;
 
 private:
    std::shared_ptr<GameData> _gameData;

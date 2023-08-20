@@ -8,12 +8,12 @@ NAMESPACE_BEGIN
 class TurnBallArgs : public IGameEventArgs
 {
 public:
-   TurnBallArgs( float newAngle ) { _newAngle = newAngle; }
+   TurnBallArgs( float increment ) { _increment = increment; }
 
-   float GetNewAngle() { return _newAngle; }
+   float GetIncrement() { return _increment; }
 
 private:
-   float _newAngle;
+   float _increment;
 };
 
 NAMESPACE_END
