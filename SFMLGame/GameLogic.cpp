@@ -3,7 +3,7 @@
 #include "GameData.h"
 #include "RenderConfig.h"
 #include "GameInputHandler.h"
-#include "EventAggregator.h"
+#include "EventQueue.h"
 #include "GameClock.h"
 #include "GameRunningTracker.h"
 #include "Entity.h"
@@ -19,14 +19,14 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
                       shared_ptr<GameData> gameData,
                       shared_ptr<RenderConfig> renderConfig,
                       shared_ptr<GameInputHandler> inputHandler,
-                      shared_ptr<EventAggregator> eventAggregator,
+                      shared_ptr<EventQueue> eventQueue,
                       shared_ptr<GameClock> clock,
                       shared_ptr<GameRunningTracker> gameRunningTracker ) :
    _gameConfig( gameConfig ),
    _gameData( gameData ),
    _renderConfig( renderConfig ),
    _inputHandler( inputHandler ),
-   _eventAggregator( eventAggregator ),
+   _eventQueue( eventQueue ),
    _clock( clock ),
    _gameRunningTracker( gameRunningTracker )
 {
@@ -46,16 +46,16 @@ void GameLogic::Tick()
 
 void GameLogic::HandleEvents()
 {
-   while ( _eventAggregator->HasEvents() )
+   while ( _eventQueue->HasEvents() )
    {
-      auto event = _eventAggregator->GetNextEvent();
+      auto event = _eventQueue->GetNext();
 
       switch ( event.type )
       {
          case GameEventType::Quit:
             // TODO: whatever needs to be done to clean up (saving the game, etc)
+            _eventQueue->Flush();
             _gameRunningTracker->isRunning = false;
-            _eventAggregator->Flush();
             break;
          case GameEventType::ChangeGameState:
             OnChangeGameState( event.args );

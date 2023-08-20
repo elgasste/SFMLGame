@@ -1,7 +1,7 @@
 #include "MenuStateInputHandler.h"
 #include "InputReader.h"
 #include "GameData.h"
-#include "EventAggregator.h"
+#include "EventQueue.h"
 #include "Menu.h"
 #include "ChangeGameStateArgs.h"
 
@@ -10,11 +10,11 @@ using namespace std;
 
 MenuStateInputHandler::MenuStateInputHandler( shared_ptr<InputReader> inputReader,
                                               shared_ptr<GameData> gameData,
-                                              shared_ptr<EventAggregator> eventAggregator,
+                                              shared_ptr<EventQueue> eventQueue,
                                               shared_ptr<Menu> menu ) :
    _inputReader( inputReader ),
    _gameData( gameData ),
-   _eventAggregator( eventAggregator ),
+   _eventQueue( eventQueue ),
    _menu( menu )
 {
 }
@@ -23,7 +23,7 @@ void MenuStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
-      _eventAggregator->PushEvent( { GameEventType::ChangeGameState, shared_ptr<ChangeGameStateArgs>( new ChangeGameStateArgs( GameState::Playing ) ) } );
+      _eventQueue->Push( { GameEventType::ChangeGameState, shared_ptr<ChangeGameStateArgs>( new ChangeGameStateArgs( GameState::Playing ) ) } );
    }
    else if ( _inputReader->WasButtonPressed( Button::Up ) )
    {

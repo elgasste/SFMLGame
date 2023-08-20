@@ -1,14 +1,14 @@
-#include "EventAggregator.h"
+#include "EventQueue.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-void EventAggregator::PushEvent( GameEvent event )
+void EventQueue::Push( GameEvent event )
 {
    _eventQueue.push( event );
 }
 
-GameEvent EventAggregator::GetNextEvent()
+GameEvent EventQueue::GetNext()
 {
    auto nextEvent = _eventQueue.front();
    _eventQueue.pop();
@@ -16,7 +16,7 @@ GameEvent EventAggregator::GetNextEvent()
    return nextEvent;
 }
 
-void EventAggregator::Flush()
+void EventQueue::Flush()
 {
    while ( !_eventQueue.empty() )
    {

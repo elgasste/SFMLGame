@@ -164,7 +164,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClCompile Include="BackMenuOption.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="EventAggregator.cpp" />
+    <ClCompile Include="EventQueue.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameConfig.cpp" />
@@ -192,7 +192,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="ChangeGameStateArgs.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="EventAggregator.h" />
+    <ClInclude Include="EventQueue.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameConfig.h" />

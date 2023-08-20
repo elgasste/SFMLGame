@@ -5,12 +5,12 @@
 
 NAMESPACE_BEGIN
 
-class EventAggregator
+class EventQueue
 {
 public:
    bool HasEvents() { return !_eventQueue.empty(); }
-   void PushEvent( GameEvent event );
-   GameEvent GetNextEvent();
+   void Push( GameEvent event );
+   GameEvent GetNext();
    void Flush();
 
 private:
