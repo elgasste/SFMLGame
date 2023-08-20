@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.h"
+#include "GameRunningTracker.h"
 
 NAMESPACE_BEGIN
 
@@ -17,7 +18,8 @@ public:
               std::shared_ptr<RenderConfig> renderConfig,
               std::shared_ptr<GameInputHandler> inputHandler,
               std::shared_ptr<EventAggregator> eventAggregator,
-              std::shared_ptr<GameClock> clock );
+              std::shared_ptr<GameClock> clock,
+              std::shared_ptr<GameRunningTracker> gameRunningTracker );
 
    void Tick();
 
@@ -32,6 +34,7 @@ private:
    std::shared_ptr<GameInputHandler> _inputHandler;
    std::shared_ptr<EventAggregator> _eventAggregator;
    std::shared_ptr<GameClock> _clock;
+   std::shared_ptr<GameRunningTracker> _gameRunningTracker;
 };
 
 NAMESPACE_END

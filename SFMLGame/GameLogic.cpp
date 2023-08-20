@@ -4,6 +4,7 @@
 #include "GameInputHandler.h"
 #include "EventAggregator.h"
 #include "GameClock.h"
+#include "GameRunningTracker.h"
 #include "Entity.h"
 #include "Geometry.h"
 
@@ -14,12 +15,14 @@ GameLogic::GameLogic( shared_ptr<GameData> gameData,
                       shared_ptr<RenderConfig> renderConfig,
                       shared_ptr<GameInputHandler> inputHandler,
                       shared_ptr<EventAggregator> eventAggregator,
-                      shared_ptr<GameClock> clock ) :
+                      shared_ptr<GameClock> clock,
+                      shared_ptr<GameRunningTracker> gameRunningTracker ) :
    _gameData( gameData ),
    _renderConfig( renderConfig ),
    _inputHandler( inputHandler ),
    _eventAggregator( eventAggregator ),
-   _clock( clock )
+   _clock( clock ),
+   _gameRunningTracker( gameRunningTracker )
 {
 }
 
@@ -43,7 +46,9 @@ void GameLogic::HandleEvents() const
 
       if ( event == GameEvent::Quit )
       {
-         // TODO: quit the game
+         // TODO: whatever needs to be done to clean up (saving the game, etc)
+         _gameRunningTracker->isRunning = false;
+         return;
       }
    }
 }
