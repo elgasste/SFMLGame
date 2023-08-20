@@ -7,6 +7,7 @@ NAMESPACE_BEGIN
 
 class InputReader;
 class GameData;
+class EventAggregator;
 class Menu;
 
 class MenuStateInputHandler : public IGameStateInputHandler
@@ -14,6 +15,7 @@ class MenuStateInputHandler : public IGameStateInputHandler
 public:
    MenuStateInputHandler( std::shared_ptr<InputReader> inputReader,
                           std::shared_ptr<GameData> gameData,
+                          std::shared_ptr<EventAggregator> eventAggregator,
                           std::shared_ptr<Menu> menu );
 
    // IGameStateInputHandler
@@ -22,7 +24,7 @@ public:
 private:
    std::shared_ptr<InputReader> _inputReader;
    std::shared_ptr<GameData> _gameData;
-
+   std::shared_ptr<EventAggregator> _eventAggregator;
    std::shared_ptr<Menu> _menu;
 };
 

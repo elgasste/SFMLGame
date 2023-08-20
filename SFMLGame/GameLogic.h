@@ -10,6 +10,7 @@ class RenderConfig;
 class GameInputHandler;
 class EventAggregator;
 class GameClock;
+class IGameEventArgs;
 
 class GameLogic
 {
@@ -24,9 +25,11 @@ public:
    void Tick();
 
 private:
-   void HandleEvents() const;
+   void HandleEvents();
    void UpdateBallPosition() const;
    void ClipBall() const;
+
+   void OnChangeGameState( std::shared_ptr<IGameEventArgs> args );
 
 private:
    std::shared_ptr<GameData> _gameData;

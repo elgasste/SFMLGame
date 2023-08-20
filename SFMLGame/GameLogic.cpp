@@ -7,6 +7,7 @@
 #include "GameRunningTracker.h"
 #include "Entity.h"
 #include "Geometry.h"
+#include "ChangeGameStateArgs.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -38,17 +39,22 @@ void GameLogic::Tick()
    }
 }
 
-void GameLogic::HandleEvents() const
+void GameLogic::HandleEvents()
 {
    while ( _eventAggregator->HasEvents() )
    {
       auto event = _eventAggregator->GetNextEvent();
 
-      if ( event.type == GameEventType::Quit )
+      switch ( event.type )
       {
-         // TODO: whatever needs to be done to clean up (saving the game, etc)
-         _gameRunningTracker->isRunning = false;
-         return;
+         case GameEventType::Quit:
+            // TODO: whatever needs to be done to clean up (saving the game, etc)
+            _gameRunningTracker->isRunning = false;
+            _eventAggregator->Flush();
+            break;
+         case GameEventType::ChangeGameState:
+            OnChangeGameState( event.args );
+            break;
       }
    }
 }
@@ -107,4 +113,11 @@ void GameLogic::ClipBall() const
       NORMALIZE_ANGLE( newAngle );
       ball->SetAngle( newAngle );
    }
+}
+
+void GameLogic::OnChangeGameState( shared_ptr<IGameEventArgs> args )
+{
+   // TODO: make sure this new state is possible
+   auto stateArgs = (ChangeGameStateArgs*)( args.get() );
+   _gameData->SetGameState( stateArgs->GetNewState() );
 }

@@ -6,7 +6,8 @@ NAMESPACE_BEGIN
 
 enum class GameEventType
 {
-   Quit = 0
+   Quit = 0,
+   ChangeGameState
 };
 
 NAMESPACE_END
