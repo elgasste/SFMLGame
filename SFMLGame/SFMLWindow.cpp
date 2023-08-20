@@ -1,7 +1,7 @@
 #include "SFMLWindow.h"
 #include "RenderConfig.h"
 #include "GameClock.h"
-#include "GameEvent.h"
+#include "GameEventType.h"
 
 using namespace NAMESPACE;
 using namespace std;

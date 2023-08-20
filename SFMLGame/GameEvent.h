@@ -1,12 +1,16 @@
 #pragma once
 
 #include "Common.h"
+#include "GameEventType.h"
 
 NAMESPACE_BEGIN
 
-enum class GameEvent
+class IGameEventArgs;
+
+struct GameEvent
 {
-   Quit = 0
+   GameEventType type;
+   std::shared_ptr<IGameEventArgs> args;
 };
 
 NAMESPACE_END

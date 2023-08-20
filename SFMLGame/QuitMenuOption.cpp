@@ -12,5 +12,5 @@ QuitMenuOption::QuitMenuOption( shared_ptr<EventAggregator> eventAggregator ) :
 
 void QuitMenuOption::Select()
 {
-   _eventAggregator->PushEvent( GameEvent::Quit );
+   _eventAggregator->PushEvent( { GameEventType::Quit } );
 }

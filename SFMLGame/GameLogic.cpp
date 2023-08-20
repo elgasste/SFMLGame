@@ -44,7 +44,7 @@ void GameLogic::HandleEvents() const
    {
       auto event = _eventAggregator->GetNextEvent();
 
-      if ( event == GameEvent::Quit )
+      if ( event.type == GameEventType::Quit )
       {
          // TODO: whatever needs to be done to clean up (saving the game, etc)
          _gameRunningTracker->isRunning = false;

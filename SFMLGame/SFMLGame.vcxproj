@@ -197,12 +197,14 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameEvent.h" />
+    <ClInclude Include="GameEventType.h" />
     <ClInclude Include="GameLoader.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameRenderer.h" />
     <ClInclude Include="GameRunningTracker.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="IGameEventArgs.h" />
     <ClInclude Include="IGameStateInputHandler.h" />
     <ClInclude Include="IGameStateRenderer.h" />
     <ClInclude Include="GameInputHandler.h" />
