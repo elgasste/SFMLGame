@@ -223,6 +223,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="RenderData.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="StringTable.h" />
+    <ClInclude Include="TurnBallArgs.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
