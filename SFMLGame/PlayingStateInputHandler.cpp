@@ -1,7 +1,6 @@
 #include "PlayingStateInputHandler.h"
 #include "InputReader.h"
 #include "GameConfig.h"
-#include "GameClock.h"
 #include "EventQueue.h"
 #include "Entity.h"
 #include "Geometry.h"
@@ -14,11 +13,9 @@ using namespace std;
 
 PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputReader> inputReader,
                                                     shared_ptr<GameConfig> gameConfig,
-                                                    shared_ptr<GameClock> clock,
                                                     shared_ptr<EventQueue> eventQueue ) :
    _inputReader( inputReader ),
    _gameConfig( gameConfig ),
-   _clock( clock ),
    _eventQueue( eventQueue )
 {
 }

@@ -40,7 +40,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto menu = make_shared<Menu>();
    menu->AddOption( backMenuOption );
    menu->AddOption( quitMenuOption );
-   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, gameConfig, clock, eventQueue ) );
+   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, gameConfig, eventQueue ) );
    auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, menu ) );
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( gameConfig, gameData, inputReader ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
