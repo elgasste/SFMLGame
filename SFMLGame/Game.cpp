@@ -1,6 +1,5 @@
 #include "Game.h"
 #include "GameData.h"
-#include "EventAggregator.h"
 #include "GameClock.h"
 #include "InputReader.h"
 #include "GameLogic.h"
@@ -10,36 +9,34 @@ using namespace NAMESPACE;
 using namespace std;
 
 Game::Game( shared_ptr<GameData> gameData,
-            shared_ptr<EventAggregator> eventAggregator,
             shared_ptr<GameClock> clock,
             shared_ptr<InputReader> inputReader,
             shared_ptr<GameLogic> logic,
-            shared_ptr<GameRenderer> renderer ) :
+            shared_ptr<GameRenderer> renderer,
+            shared_ptr<GameRunningTracker> gameRunningTracker ) :
    _gameData( gameData ),
-   _eventAggregator( eventAggregator ),
    _clock( clock ),
    _inputReader( inputReader ),
    _logic( logic ),
    _renderer( renderer ),
-   _isRunning( false )
+   _gameRunningTracker( gameRunningTracker )
 {
-   _eventAggregator->AddListener( GameEvent::Quit, this );
 }
 
 void Game::Run()
 {
-   if ( _isRunning )
+   if ( _gameRunningTracker->isRunning )
    {
       return;
    }
 
-   _isRunning = true;
+   _gameRunningTracker->isRunning = true;
 
    _renderer->Initialize();
    _clock->Initialize();
    _gameData->SetGameState( GameState::Playing );
 
-   while ( _isRunning )
+   while ( _gameRunningTracker->isRunning )
    {
       _clock->StartFrame();
 
@@ -48,13 +45,5 @@ void Game::Run()
       _renderer->Render();
 
       _clock->EndFrame();
-   }
-}
-
-void Game::HandleEvent( GameEvent event )
-{
-   if ( event == GameEvent::Quit )
-   {
-      _isRunning = false;
    }
 }

@@ -1,22 +1,22 @@
 #include "PlayingStateInputHandler.h"
 #include "InputReader.h"
 #include "GameConfig.h"
-#include "GameData.h"
-#include "GameClock.h"
+#include "EventQueue.h"
 #include "Entity.h"
 #include "Geometry.h"
+#include "ChangeGameStateArgs.h"
+#include "TurnBallArgs.h"
+#include "PushBallArgs.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
 PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputReader> inputReader,
                                                     shared_ptr<GameConfig> gameConfig,
-                                                    shared_ptr<GameData> gameData,
-                                                    shared_ptr<GameClock> clock ) :
+                                                    shared_ptr<EventQueue> eventQueue ) :
    _inputReader( inputReader ),
    _gameConfig( gameConfig ),
-   _gameData( gameData ),
-   _clock( clock )
+   _eventQueue( eventQueue )
 {
 }
 
@@ -24,25 +24,20 @@ void PlayingStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
-      _gameData->SetGameState( GameState::Menu );
+      _eventQueue->Push( { GameEventType::ChangeGameState, shared_ptr<ChangeGameStateArgs>( new ChangeGameStateArgs( GameState::Menu ) ) } );
       return;
    }
 
-   auto ball = _gameData->GetBall();
    bool isLeftDown = _inputReader->IsButtonDown( Button::Left );
    bool isRightDown = _inputReader->IsButtonDown( Button::Right );
 
    if ( isLeftDown && !isRightDown )
    {
-      auto newAngle = ball->GetAngle() + ( _gameConfig->BallTurnAngleIncrement * _clock->GetFrameSeconds() );
-      NORMALIZE_ANGLE( newAngle );
-      ball->SetAngle( newAngle );
+      _eventQueue->Push( { GameEventType::TurnBall, shared_ptr<TurnBallArgs>( new TurnBallArgs( _gameConfig->BallTurnAngleIncrement ) ) } );
    }
    else if ( isRightDown && !isLeftDown )
    {
-      auto newAngle = ball->GetAngle() - ( _gameConfig->BallTurnAngleIncrement * _clock->GetFrameSeconds() );
-      NORMALIZE_ANGLE( newAngle );
-      ball->SetAngle( newAngle );
+      _eventQueue->Push( { GameEventType::TurnBall, shared_ptr<TurnBallArgs>( new TurnBallArgs( -( _gameConfig->BallTurnAngleIncrement ) ) ) } );
    }
 
    bool isForwardDown = _inputReader->IsButtonDown( Button::Up );
@@ -50,12 +45,10 @@ void PlayingStateInputHandler::HandleInput()
 
    if ( isForwardDown && !isBackwardDown )
    {
-      auto newVelocity = ball->GetVelocity() + ( _gameConfig->BallVelocityIncrement * _clock->GetFrameSeconds() );
-      ball->SetVelocity( min( newVelocity, _gameConfig->MaximumBallVelocity ) );
+      _eventQueue->Push( { GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( _gameConfig->BallVelocityIncrement ) ) } );
    }
    else if ( isBackwardDown && !isForwardDown )
    {
-      auto newVelocity = ball->GetVelocity() - ( _gameConfig->BallVelocityIncrement * _clock->GetFrameSeconds() );
-      ball->SetVelocity( max( newVelocity, _gameConfig->MinimumBallVelocity ) );
+      _eventQueue->Push( { GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( -_gameConfig->BallVelocityIncrement ) ) } );
    }
 }

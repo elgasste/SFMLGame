@@ -1,18 +1,15 @@
 #include "SFMLWindow.h"
 #include "RenderConfig.h"
-#include "EventAggregator.h"
 #include "GameClock.h"
-#include "GameEvent.h"
+#include "GameEventType.h"
 
 using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
 SFMLWindow::SFMLWindow( shared_ptr<RenderConfig> renderConfig,
-                        shared_ptr<EventAggregator> eventAggregator,
                         shared_ptr<GameClock> clock ) :
    _renderConfig( renderConfig ),
-   _eventAggregator( eventAggregator ),
    _clock( clock )
 {
 }
@@ -39,7 +36,6 @@ void SFMLWindow::HandleEvents() const
       {
          case Event::Closed:
             _window->close();
-            _eventAggregator->RaiseEvent( GameEvent::Quit );
             break;
       }
    }

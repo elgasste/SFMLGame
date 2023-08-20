@@ -11,14 +11,12 @@ namespace sf
 NAMESPACE_BEGIN
 
 class RenderConfig;
-class EventAggregator;
 class GameClock;
 
 class SFMLWindow
 {
 public:
    SFMLWindow( std::shared_ptr<RenderConfig> renderConfig,
-               std::shared_ptr<EventAggregator> eventAggregator,
                std::shared_ptr<GameClock> clock );
 
    void Initialize();
@@ -31,7 +29,6 @@ public:
 
 private:
    std::shared_ptr<RenderConfig> _renderConfig;
-   std::shared_ptr<EventAggregator> _eventAggregator;
    std::shared_ptr<GameClock> _clock;
 
    std::shared_ptr<sf::RenderWindow> _window;
