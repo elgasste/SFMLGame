@@ -203,7 +203,6 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="GameRunningTracker.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Geometry.h" />
-    <ClInclude Include="IEventListener.h" />
     <ClInclude Include="IGameStateInputHandler.h" />
     <ClInclude Include="IGameStateRenderer.h" />
     <ClInclude Include="GameInputHandler.h" />
