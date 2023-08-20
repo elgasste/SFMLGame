@@ -1,11 +1,11 @@
 #include "PlayingStateInputHandler.h"
 #include "InputReader.h"
 #include "GameConfig.h"
-#include "GameData.h"
 #include "GameClock.h"
 #include "EventAggregator.h"
 #include "Entity.h"
 #include "Geometry.h"
+#include "ChangeGameStateArgs.h"
 #include "TurnBallArgs.h"
 #include "PushBallArgs.h"
 
@@ -14,12 +14,10 @@ using namespace std;
 
 PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputReader> inputReader,
                                                     shared_ptr<GameConfig> gameConfig,
-                                                    shared_ptr<GameData> gameData,
                                                     shared_ptr<GameClock> clock,
                                                     shared_ptr<EventAggregator> eventAggregator ) :
    _inputReader( inputReader ),
    _gameConfig( gameConfig ),
-   _gameData( gameData ),
    _clock( clock ),
    _eventAggregator( eventAggregator )
 {
@@ -29,7 +27,7 @@ void PlayingStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
-      _gameData->SetGameState( GameState::Menu );
+      _eventAggregator->PushEvent( { GameEventType::ChangeGameState, shared_ptr<ChangeGameStateArgs>( new ChangeGameStateArgs( GameState::Menu ) ) } );
       return;
    }
 
