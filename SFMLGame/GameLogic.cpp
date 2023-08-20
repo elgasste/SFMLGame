@@ -2,6 +2,7 @@
 #include "GameData.h"
 #include "RenderConfig.h"
 #include "GameInputHandler.h"
+#include "EventAggregator.h"
 #include "GameClock.h"
 #include "Entity.h"
 #include "Geometry.h"
@@ -12,10 +13,12 @@ using namespace std;
 GameLogic::GameLogic( shared_ptr<GameData> gameData,
                       shared_ptr<RenderConfig> renderConfig,
                       shared_ptr<GameInputHandler> inputHandler,
+                      shared_ptr<EventAggregator> eventAggregator,
                       shared_ptr<GameClock> clock ) :
    _gameData( gameData ),
    _renderConfig( renderConfig ),
    _inputHandler( inputHandler ),
+   _eventAggregator( eventAggregator ),
    _clock( clock )
 {
 }
@@ -23,11 +26,25 @@ GameLogic::GameLogic( shared_ptr<GameData> gameData,
 void GameLogic::Tick()
 {
    _inputHandler->HandleInput();
+   HandleEvents();
 
    if ( _gameData->GetGameState() == GameState::Playing )
    {
       UpdateBallPosition();
       ClipBall();
+   }
+}
+
+void GameLogic::HandleEvents() const
+{
+   while ( _eventAggregator->HasEvents() )
+   {
+      auto event = _eventAggregator->GetNextEvent();
+
+      if ( event == GameEvent::Quit )
+      {
+         // TODO: quit the game
+      }
    }
 }
 
