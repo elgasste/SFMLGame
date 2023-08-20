@@ -69,9 +69,6 @@
     <ClCompile Include="DiagnosticsRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="EventAggregator.cpp">
-      <Filter>Source Files\Events</Filter>
-    </ClCompile>
     <ClCompile Include="GameClock.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
@@ -126,6 +123,9 @@
     <ClCompile Include="RenderData.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="EventQueue.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -149,9 +149,6 @@
     <ClInclude Include="GameEvent.h">
       <Filter>Header Files\Events</Filter>
     </ClInclude>
-    <ClInclude Include="IEventListener.h">
-      <Filter>Header Files\Events</Filter>
-    </ClInclude>
     <ClInclude Include="GameLoader.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
@@ -166,9 +163,6 @@
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="EventAggregator.h">
-      <Filter>Header Files\Events</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files\Game</Filter>
@@ -232,6 +226,27 @@
     </ClInclude>
     <ClInclude Include="StringTable.h">
       <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ChangeGameStateArgs.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="EventQueue.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEventType.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRunningTracker.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="IGameEventArgs.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="PushBallArgs.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnBallArgs.h">
+      <Filter>Header Files\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
