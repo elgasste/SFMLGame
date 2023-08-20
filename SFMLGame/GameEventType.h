@@ -8,7 +8,8 @@ enum class GameEventType
 {
    Quit = 0,
    ChangeGameState,
-   TurnBall
+   TurnBall,
+   PushBall
 };
 
 NAMESPACE_END

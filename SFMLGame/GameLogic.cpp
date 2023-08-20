@@ -1,3 +1,4 @@
+#include "GameConfig.h"
 #include "GameLogic.h"
 #include "GameData.h"
 #include "RenderConfig.h"
@@ -9,16 +10,19 @@
 #include "Geometry.h"
 #include "ChangeGameStateArgs.h"
 #include "TurnBallArgs.h"
+#include "PushBallArgs.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-GameLogic::GameLogic( shared_ptr<GameData> gameData,
+GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
+                      shared_ptr<GameData> gameData,
                       shared_ptr<RenderConfig> renderConfig,
                       shared_ptr<GameInputHandler> inputHandler,
                       shared_ptr<EventAggregator> eventAggregator,
                       shared_ptr<GameClock> clock,
                       shared_ptr<GameRunningTracker> gameRunningTracker ) :
+   _gameConfig( gameConfig ),
    _gameData( gameData ),
    _renderConfig( renderConfig ),
    _inputHandler( inputHandler ),
@@ -58,6 +62,9 @@ void GameLogic::HandleEvents()
             break;
          case GameEventType::TurnBall:
             OnTurnBall( event.args );
+            break;
+         case GameEventType::PushBall:
+            OnPushBall( event.args );
             break;
       }
    }
@@ -135,4 +142,13 @@ void GameLogic::OnTurnBall( shared_ptr<IGameEventArgs> args ) const
    NORMALIZE_ANGLE( newAngle );
 
    ball->SetAngle( newAngle );
+}
+
+void GameLogic::OnPushBall( shared_ptr<IGameEventArgs> args ) const
+{
+   auto ball = _gameData->GetBall();
+   auto pushArgs = (PushBallArgs*)( args.get() );
+
+   auto newVelocity = ball->GetVelocity() + ( pushArgs->GetIncrement() * _clock->GetFrameSeconds() );
+   ball->SetVelocity( min( newVelocity, _gameConfig->MaximumBallVelocity ) );
 }

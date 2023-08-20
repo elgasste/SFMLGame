@@ -7,6 +7,7 @@
 #include "Entity.h"
 #include "Geometry.h"
 #include "TurnBallArgs.h"
+#include "PushBallArgs.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -32,7 +33,6 @@ void PlayingStateInputHandler::HandleInput()
       return;
    }
 
-   auto ball = _gameData->GetBall();
    bool isLeftDown = _inputReader->IsButtonDown( Button::Left );
    bool isRightDown = _inputReader->IsButtonDown( Button::Right );
 
@@ -50,12 +50,10 @@ void PlayingStateInputHandler::HandleInput()
 
    if ( isForwardDown && !isBackwardDown )
    {
-      auto newVelocity = ball->GetVelocity() + ( _gameConfig->BallVelocityIncrement * _clock->GetFrameSeconds() );
-      ball->SetVelocity( min( newVelocity, _gameConfig->MaximumBallVelocity ) );
+      _eventAggregator->PushEvent( { GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( _gameConfig->BallVelocityIncrement ) ) } );
    }
    else if ( isBackwardDown && !isForwardDown )
    {
-      auto newVelocity = ball->GetVelocity() - ( _gameConfig->BallVelocityIncrement * _clock->GetFrameSeconds() );
-      ball->SetVelocity( max( newVelocity, _gameConfig->MinimumBallVelocity ) );
+      _eventAggregator->PushEvent( { GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( -_gameConfig->BallVelocityIncrement ) ) } );
    }
 }
