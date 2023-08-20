@@ -28,12 +28,12 @@ public:
 
 private:
    void HandleEvents();
-   void UpdateBallPosition() const;
-   void ClipBall() const;
-
    void OnChangeGameState( std::shared_ptr<IGameEventArgs> args ) const;
    void OnTurnBall( std::shared_ptr<IGameEventArgs> args ) const;
    void OnPushBall( std::shared_ptr<IGameEventArgs> args ) const;
+
+   void UpdateBallPosition() const;
+   void ClipBall() const;
 
 private:
    std::shared_ptr<GameConfig> _gameConfig;

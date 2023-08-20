@@ -70,6 +70,33 @@ void GameLogic::HandleEvents()
    }
 }
 
+void GameLogic::OnChangeGameState( shared_ptr<IGameEventArgs> args ) const
+{
+   // TODO: make sure this new state is possible
+   auto stateArgs = (ChangeGameStateArgs*)( args.get() );
+   _gameData->SetGameState( stateArgs->GetNewState() );
+}
+
+void GameLogic::OnTurnBall( shared_ptr<IGameEventArgs> args ) const
+{
+   auto ball = _gameData->GetBall();
+   auto turnArgs = (TurnBallArgs*)( args.get() );
+
+   auto newAngle = ball->GetAngle() + ( turnArgs->GetIncrement() * _clock->GetFrameSeconds() );
+   NORMALIZE_ANGLE( newAngle );
+
+   ball->SetAngle( newAngle );
+}
+
+void GameLogic::OnPushBall( shared_ptr<IGameEventArgs> args ) const
+{
+   auto ball = _gameData->GetBall();
+   auto pushArgs = (PushBallArgs*)( args.get() );
+
+   auto newVelocity = ball->GetVelocity() + ( pushArgs->GetIncrement() * _clock->GetFrameSeconds() );
+   ball->SetVelocity( min( newVelocity, _gameConfig->MaximumBallVelocity ) );
+}
+
 void GameLogic::UpdateBallPosition() const
 {
    auto ball = _gameData->GetBall();
@@ -124,31 +151,4 @@ void GameLogic::ClipBall() const
       NORMALIZE_ANGLE( newAngle );
       ball->SetAngle( newAngle );
    }
-}
-
-void GameLogic::OnChangeGameState( shared_ptr<IGameEventArgs> args ) const
-{
-   // TODO: make sure this new state is possible
-   auto stateArgs = (ChangeGameStateArgs*)( args.get() );
-   _gameData->SetGameState( stateArgs->GetNewState() );
-}
-
-void GameLogic::OnTurnBall( shared_ptr<IGameEventArgs> args ) const
-{
-   auto ball = _gameData->GetBall();
-   auto turnArgs = (TurnBallArgs*)( args.get() );
-
-   auto newAngle = ball->GetAngle() + ( turnArgs->GetIncrement() * _clock->GetFrameSeconds() );
-   NORMALIZE_ANGLE( newAngle );
-
-   ball->SetAngle( newAngle );
-}
-
-void GameLogic::OnPushBall( shared_ptr<IGameEventArgs> args ) const
-{
-   auto ball = _gameData->GetBall();
-   auto pushArgs = (PushBallArgs*)( args.get() );
-
-   auto newVelocity = ball->GetVelocity() + ( pushArgs->GetIncrement() * _clock->GetFrameSeconds() );
-   ball->SetVelocity( min( newVelocity, _gameConfig->MaximumBallVelocity ) );
 }
