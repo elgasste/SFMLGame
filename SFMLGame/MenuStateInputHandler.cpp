@@ -1,6 +1,5 @@
 #include "MenuStateInputHandler.h"
 #include "InputReader.h"
-#include "GameData.h"
 #include "EventQueue.h"
 #include "Menu.h"
 #include "ChangeGameStateArgs.h"
@@ -9,11 +8,9 @@ using namespace NAMESPACE;
 using namespace std;
 
 MenuStateInputHandler::MenuStateInputHandler( shared_ptr<InputReader> inputReader,
-                                              shared_ptr<GameData> gameData,
                                               shared_ptr<EventQueue> eventQueue,
                                               shared_ptr<Menu> menu ) :
    _inputReader( inputReader ),
-   _gameData( gameData ),
    _eventQueue( eventQueue ),
    _menu( menu )
 {
