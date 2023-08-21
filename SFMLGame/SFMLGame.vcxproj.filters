@@ -227,9 +227,6 @@
     <ClInclude Include="StringTable.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="ChangeGameStateArgs.h">
-      <Filter>Header Files\Events</Filter>
-    </ClInclude>
     <ClInclude Include="EventQueue.h">
       <Filter>Header Files\Events</Filter>
     </ClInclude>

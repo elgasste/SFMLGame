@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "GameRunningTracker.h"
+#include "GameState.h"
 
 NAMESPACE_BEGIN
 
@@ -28,7 +29,8 @@ public:
 
 private:
    void HandleEvents();
-   void OnChangeGameState( std::shared_ptr<IGameEventArgs> args ) const;
+   void OnOpenMenu() const;
+   void OnCloseMenu() const;
    void OnTurnBall( std::shared_ptr<IGameEventArgs> args ) const;
    void OnPushBall( std::shared_ptr<IGameEventArgs> args ) const;
 
