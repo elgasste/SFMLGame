@@ -51,25 +51,20 @@ void GameLogic::HandleEvents()
 
       switch ( event.type )
       {
-         case GameEventType::Quit:
-            // TODO: whatever needs to be done to clean up (saving the game, etc)
-            _eventQueue->Flush();
-            _gameRunningTracker->isRunning = false;
-            break;
-         case GameEventType::OpenMenu:
-            OnOpenMenu();
-            break;
-         case GameEventType::CloseMenu:
-            OnCloseMenu();
-            break;
-         case GameEventType::TurnBall:
-            OnTurnBall( event.args );
-            break;
-         case GameEventType::PushBall:
-            OnPushBall( event.args );
-            break;
+         case GameEventType::Quit:        OnQuit();                  break;
+         case GameEventType::OpenMenu:    OnOpenMenu();              break;
+         case GameEventType::CloseMenu:   OnCloseMenu();             break;
+         case GameEventType::TurnBall:    OnTurnBall( event.args );  break;
+         case GameEventType::PushBall:    OnPushBall( event.args );  break;
       }
    }
+}
+
+void GameLogic::OnQuit() const
+{
+   // TODO: whatever needs to be done to clean up (saving the game, etc)
+   _gameRunningTracker->isRunning = false;
+   _eventQueue->Flush();
 }
 
 void GameLogic::OnOpenMenu() const
