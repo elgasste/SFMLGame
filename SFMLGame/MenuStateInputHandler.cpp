@@ -2,7 +2,6 @@
 #include "InputReader.h"
 #include "EventQueue.h"
 #include "Menu.h"
-#include "ChangeGameStateArgs.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -20,7 +19,7 @@ void MenuStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
-      _eventQueue->Push( { GameEventType::ChangeGameState, shared_ptr<ChangeGameStateArgs>( new ChangeGameStateArgs( GameState::Playing ) ) } );
+      _eventQueue->Push( { GameEventType::CloseMenu } );
    }
    else if ( _inputReader->WasButtonPressed( Button::Up ) )
    {

@@ -7,7 +7,8 @@ NAMESPACE_BEGIN
 enum class GameEventType
 {
    Quit = 0,
-   ChangeGameState,
+   OpenMenu,
+   CloseMenu,
    TurnBall,
    PushBall
 };

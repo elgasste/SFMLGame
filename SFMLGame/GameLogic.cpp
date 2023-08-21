@@ -8,7 +8,6 @@
 #include "GameRunningTracker.h"
 #include "Entity.h"
 #include "Geometry.h"
-#include "ChangeGameStateArgs.h"
 #include "TurnBallArgs.h"
 #include "PushBallArgs.h"
 
@@ -52,29 +51,38 @@ void GameLogic::HandleEvents()
 
       switch ( event.type )
       {
-         case GameEventType::Quit:
-            // TODO: whatever needs to be done to clean up (saving the game, etc)
-            _eventQueue->Flush();
-            _gameRunningTracker->isRunning = false;
-            break;
-         case GameEventType::ChangeGameState:
-            OnChangeGameState( event.args );
-            break;
-         case GameEventType::TurnBall:
-            OnTurnBall( event.args );
-            break;
-         case GameEventType::PushBall:
-            OnPushBall( event.args );
-            break;
+         case GameEventType::Quit:        OnQuit();                  break;
+         case GameEventType::OpenMenu:    OnOpenMenu();              break;
+         case GameEventType::CloseMenu:   OnCloseMenu();             break;
+         case GameEventType::TurnBall:    OnTurnBall( event.args );  break;
+         case GameEventType::PushBall:    OnPushBall( event.args );  break;
       }
    }
 }
 
-void GameLogic::OnChangeGameState( shared_ptr<IGameEventArgs> args ) const
+void GameLogic::OnQuit() const
 {
-   // TODO: make sure this new state is possible
-   auto stateArgs = (ChangeGameStateArgs*)( args.get() );
-   _gameData->SetGameState( stateArgs->GetNewState() );
+   // TODO: whatever needs to be done to clean up (saving the game, etc)
+   _gameRunningTracker->isRunning = false;
+   _eventQueue->Flush();
+}
+
+void GameLogic::OnOpenMenu() const
+{
+   if ( _gameData->GetGameState() == GameState::Playing )
+   {
+      _gameData->SetGameState( GameState::Menu );
+      _eventQueue->Flush();
+   }
+}
+
+void GameLogic::OnCloseMenu() const
+{
+   if ( _gameData->GetGameState() == GameState::Menu )
+   {
+      _gameData->SetGameState( GameState::Playing );
+      _eventQueue->Flush();
+   }
 }
 
 void GameLogic::OnTurnBall( shared_ptr<IGameEventArgs> args ) const

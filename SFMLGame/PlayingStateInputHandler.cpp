@@ -4,7 +4,6 @@
 #include "EventQueue.h"
 #include "Entity.h"
 #include "Geometry.h"
-#include "ChangeGameStateArgs.h"
 #include "TurnBallArgs.h"
 #include "PushBallArgs.h"
 
@@ -24,7 +23,7 @@ void PlayingStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
-      _eventQueue->Push( { GameEventType::ChangeGameState, shared_ptr<ChangeGameStateArgs>( new ChangeGameStateArgs( GameState::Menu ) ) } );
+      _eventQueue->Push( { GameEventType::OpenMenu } );
       return;
    }
 
