@@ -18,6 +18,9 @@
 #define IDS_BallAngle               "Ball Angle:         {}"
 #define IDS_BallVelocity            "Ball Velocity:      {}"
 
+// title screen state
+#define IDS_TitleStateMessage       "Press any key"
+
 // playing state
 #define IDS_PlayStateMessage        "Press ESC for menu, or F12 to toggle diagnostics"
 

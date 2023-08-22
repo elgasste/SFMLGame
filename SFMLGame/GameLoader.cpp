@@ -56,7 +56,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, gameInputHandler, eventQueue, clock, gameRunningTracker, gameStateTracker ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, clock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameData, clock, window ) );
-   auto titleScreenStateRenderer = make_shared<TitleScreenStateRenderer>();
+   auto titleScreenStateRenderer = shared_ptr<TitleScreenStateRenderer>( new TitleScreenStateRenderer( renderConfig, window ) );
    auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, clock, titleMenu ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );
    auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( renderConfig, window, clock, mainMenu ) );

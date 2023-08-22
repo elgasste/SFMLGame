@@ -27,13 +27,17 @@ RenderConfig::RenderConfig()
 
    ArenaBackgroundColor = Color( 64, 64, 64 );
 
+   TitleMessageFont = "Resources/Fonts/Rubber-Duck.ttf";
+   TitleMessageCharSize = 32;
+   TitleMessageTextColor = Color::White;
+
    TitleMenuFont = "Resources/Fonts/Rubber-Duck.ttf";
    TitleMenuCharSize = 96;
    TitleMenuTextColor = Color::White;
 
-   MessageFont = "Resources/Fonts/Consolas.ttf";
-   MessageCharSize = 32;
-   MessageTextColor = Color::White;
+   PlayingMessageFont = "Resources/Fonts/Consolas.ttf";
+   PlayingMessageCharSize = 32;
+   PlayingMessageTextColor = Color::White;
 
    MainMenuFont = "Resources/Fonts/Consolas.ttf";
    MainMenuCharSize = 32;
