@@ -7,6 +7,7 @@
 #include "EventQueue.h"
 #include "GameClock.h"
 #include "InputReader.h"
+#include "TitleMenu.h"
 #include "MainMenu.h"
 #include "TitleScreenStateInputHandler.h"
 #include "TitleMenuStateInputHandler.h"
@@ -40,9 +41,10 @@ shared_ptr<Game> GameLoader::Load() const
    auto eventQueue = make_shared<EventQueue>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
+   auto titleMenu = shared_ptr<TitleMenu>( new TitleMenu( eventQueue ) );
    auto mainMenu = shared_ptr<MainMenu>( new MainMenu( eventQueue ) );
    auto titleScreenStateInputHandler = shared_ptr<TitleScreenStateInputHandler>( new TitleScreenStateInputHandler( inputReader, eventQueue ) );
-   auto titleMenuStateInputHandler = shared_ptr<TitleMenuStateInputHandler>( new TitleMenuStateInputHandler( inputReader, eventQueue ) );
+   auto titleMenuStateInputHandler = shared_ptr<TitleMenuStateInputHandler>( new TitleMenuStateInputHandler( inputReader, eventQueue, titleMenu ) );
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, gameConfig, eventQueue ) );
    auto mainMenuStateInputHandler = shared_ptr<MainMenuStateInputHandler>( new MainMenuStateInputHandler( inputReader, eventQueue, mainMenu ) );
    auto closingStateInputHandler = make_shared<ClosingStateInputHandler>();

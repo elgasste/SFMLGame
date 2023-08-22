@@ -177,11 +177,13 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MainMenuStateInputHandler.cpp" />
     <ClCompile Include="MainMenuStateRenderer.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="PlayingStateInputHandler.cpp" />
     <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="RenderConfig.cpp" />
     <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
+    <ClCompile Include="TitleMenu.cpp" />
     <ClCompile Include="TitleMenuStateInputHandler.cpp" />
     <ClCompile Include="TitleMenuStateRenderer.cpp" />
     <ClCompile Include="TitleScreenStateInputHandler.cpp" />
@@ -215,6 +217,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuOption.h" />
     <ClInclude Include="MainMenuStateInputHandler.h" />
     <ClInclude Include="MainMenuStateRenderer.h" />
@@ -226,6 +229,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="RenderData.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="StringTable.h" />
+    <ClInclude Include="TitleMenu.h" />
     <ClInclude Include="TitleMenuStateInputHandler.h" />
     <ClInclude Include="TitleMenuStateRenderer.h" />
     <ClInclude Include="TitleScreenStateInputHandler.h" />
