@@ -19,7 +19,7 @@ void MenuStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
-      _eventQueue->Push( { GameEventType::CloseMenu } );
+      _eventQueue->Push( GameEventType::CloseMenu );
    }
    else if ( _inputReader->WasButtonPressed( Button::Up ) )
    {

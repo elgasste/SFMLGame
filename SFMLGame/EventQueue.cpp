@@ -3,9 +3,14 @@
 using namespace NAMESPACE;
 using namespace std;
 
-void EventQueue::Push( GameEvent event )
+void EventQueue::Push( GameEventType type, std::shared_ptr<IGameEventArgs> args )
 {
-   _eventQueue.push( event );
+   _eventQueue.push( { type, args } );
+}
+
+void EventQueue::Push( GameEventType type )
+{
+   Push( type, nullptr );
 }
 
 GameEvent EventQueue::GetNext()

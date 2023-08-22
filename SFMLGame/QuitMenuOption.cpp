@@ -12,5 +12,5 @@ QuitMenuOption::QuitMenuOption( shared_ptr<EventQueue> eventQueue ) :
 
 void QuitMenuOption::Select()
 {
-   _eventQueue->Push( { GameEventType::Quit } );
+   _eventQueue->Push( GameEventType::Quit );
 }

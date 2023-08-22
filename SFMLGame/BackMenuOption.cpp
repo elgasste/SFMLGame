@@ -12,5 +12,5 @@ BackMenuOption::BackMenuOption( shared_ptr<EventQueue> eventQueue ) :
 
 void BackMenuOption::Select()
 {
-   _eventQueue->Push( { GameEventType::CloseMenu } );
+   _eventQueue->Push( GameEventType::CloseMenu );
 }
