@@ -64,6 +64,7 @@ void GameLogic::OnQuit() const
 {
    // TODO: whatever needs to be done to clean up (saving the game, etc)
    _gameRunningTracker->isRunning = false;
+   _gameData->SetGameState( GameState::Closing );
    _eventQueue->Flush();
 }
 
