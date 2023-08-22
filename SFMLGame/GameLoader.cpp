@@ -37,7 +37,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto eventQueue = make_shared<EventQueue>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
-   auto backMenuOption = shared_ptr<BackMenuOption>( new BackMenuOption( gameData ) );
+   auto backMenuOption = shared_ptr<BackMenuOption>( new BackMenuOption( eventQueue ) );
    auto quitMenuOption = shared_ptr<QuitMenuOption>( new QuitMenuOption( eventQueue ) );
    auto menu = make_shared<Menu>();
    menu->AddOption( backMenuOption );

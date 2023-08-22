@@ -1,16 +1,16 @@
 #include "BackMenuOption.h"
-#include "GameData.h"
+#include "EventQueue.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-BackMenuOption::BackMenuOption( shared_ptr<GameData> gameData ) :
-   _gameData( gameData ),
+BackMenuOption::BackMenuOption( shared_ptr<EventQueue> eventQueue ) :
+   _eventQueue( eventQueue ),
    _text( IDS_MenuOptionBack )
 {
 }
 
 void BackMenuOption::Select()
 {
-   _gameData->SetGameState( GameState::Playing );
+   _eventQueue->Push( { GameEventType::CloseMenu } );
 }

@@ -5,19 +5,19 @@
 
 NAMESPACE_BEGIN
 
-class GameData;
+class EventQueue;
 
 class BackMenuOption : public IMenuOption
 {
 public:
-   BackMenuOption( std::shared_ptr<GameData> gameData );
+   BackMenuOption( std::shared_ptr<EventQueue> eventQueue );
 
    // IMenuOption
    std::string GetText() const override { return _text; }
    void Select() override;
 
 private:
-   std::shared_ptr<GameData> _gameData;
+   std::shared_ptr<EventQueue> _eventQueue;
 
    std::string _text;
 };
