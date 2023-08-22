@@ -248,5 +248,8 @@
     <ClInclude Include="GameStateTracker.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
+    <ClInclude Include="ClosingStateRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

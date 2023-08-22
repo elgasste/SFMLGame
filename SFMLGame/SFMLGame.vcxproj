@@ -220,6 +220,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="PushBallArgs.h" />
     <ClInclude Include="QuitMenuOption.h" />
+    <ClInclude Include="ClosingStateRenderer.h" />
     <ClInclude Include="RenderConfig.h" />
     <ClInclude Include="RenderData.h" />
     <ClInclude Include="SFMLWindow.h" />

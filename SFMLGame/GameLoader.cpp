@@ -17,6 +17,7 @@
 #include "DiagnosticsRenderer.h"
 #include "PlayingStateRenderer.h"
 #include "MenuStateRenderer.h"
+#include "ClosingStateRenderer.h"
 #include "SFMLWindow.h"
 #include "GameRenderer.h"
 #include "Game.h"
@@ -50,9 +51,11 @@ shared_ptr<Game> GameLoader::Load() const
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameData, clock, window ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );
    auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( renderConfig, window, clock, menu ) );
+   auto closingStateRenderer = make_shared<ClosingStateRenderer>();
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderData, gameConfig, gameData, window, diagnosticRenderer ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Menu, menuStateRenderer );
+   gameRenderer->AddStateRenderer( GameState::Closing, closingStateRenderer );
    auto game = shared_ptr<Game>( new Game( gameData, clock, inputReader, gameLogic, gameRenderer, gameRunningTracker ) );
 
    return game;
