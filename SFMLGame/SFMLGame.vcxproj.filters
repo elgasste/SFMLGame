@@ -245,5 +245,8 @@
     <ClInclude Include="TurnBallArgs.h">
       <Filter>Header Files\Events</Filter>
     </ClInclude>
+    <ClInclude Include="GameStateTracker.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
