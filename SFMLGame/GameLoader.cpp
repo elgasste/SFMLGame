@@ -12,6 +12,7 @@
 #include "Menu.h"
 #include "PlayingStateInputHandler.h"
 #include "MenuStateInputHandler.h"
+#include "ClosingStateInputHandler.h"
 #include "GameInputHandler.h"
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
@@ -43,9 +44,11 @@ shared_ptr<Game> GameLoader::Load() const
    menu->AddOption( quitMenuOption );
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, gameConfig, eventQueue ) );
    auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, menu ) );
+   auto closingStateInputHandler = make_shared<ClosingStateInputHandler>();
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( gameConfig, gameData, inputReader ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
+   gameInputHandler->AddStateInputHandler( GameState::Closing, closingStateInputHandler );
    auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, gameInputHandler, eventQueue, clock, gameRunningTracker ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, clock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameData, clock, window ) );

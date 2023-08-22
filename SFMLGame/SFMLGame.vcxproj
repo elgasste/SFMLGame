@@ -189,6 +189,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="BackMenuOption.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
+    <ClInclude Include="ClosingStateInputHandler.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EventQueue.h" />

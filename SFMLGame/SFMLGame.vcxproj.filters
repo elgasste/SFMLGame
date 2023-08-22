@@ -251,5 +251,8 @@
     <ClInclude Include="ClosingStateRenderer.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="ClosingStateInputHandler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
