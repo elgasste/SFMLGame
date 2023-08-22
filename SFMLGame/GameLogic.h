@@ -30,7 +30,9 @@ public:
 
 private:
    void HandleEvents();
+
    void OnQuit() const;
+   void OnExitToTitle() const;
    void OnOpenMenu() const;
    void OnCloseMenu() const;
    void OnStartGame() const;

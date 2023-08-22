@@ -7,6 +7,7 @@ NAMESPACE_BEGIN
 enum class GameEventType
 {
    Quit = 0,
+   ExitToTitle,
    OpenMenu,
    CloseMenu,
    StartGame,

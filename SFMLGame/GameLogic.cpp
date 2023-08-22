@@ -55,6 +55,7 @@ void GameLogic::HandleEvents()
       switch ( event.type )
       {
          case GameEventType::Quit:        OnQuit();                  break;
+         case GameEventType::ExitToTitle: OnExitToTitle();           break;
          case GameEventType::OpenMenu:    OnOpenMenu();              break;
          case GameEventType::CloseMenu:   OnCloseMenu();             break;
          case GameEventType::StartGame:   OnStartGame();             break;
@@ -69,6 +70,13 @@ void GameLogic::OnQuit() const
    // TODO: whatever needs to be done to clean up (saving the game, etc)
    _gameRunningTracker->isRunning = false;
    _gameStateTracker->gameState = GameState::Closing;
+   _eventQueue->Flush();
+}
+
+void GameLogic::OnExitToTitle() const
+{
+   // TODO: similar to OnQuit, probably save the game and reset everything
+   _gameStateTracker->gameState = GameState::TitleMenu;
    _eventQueue->Flush();
 }
 
