@@ -57,6 +57,7 @@ void GameLogic::HandleEvents()
          case GameEventType::Quit:        OnQuit();                  break;
          case GameEventType::OpenMenu:    OnOpenMenu();              break;
          case GameEventType::CloseMenu:   OnCloseMenu();             break;
+         case GameEventType::StartGame:   OnStartGame();             break;
          case GameEventType::TurnBall:    OnTurnBall( event.args );  break;
          case GameEventType::PushBall:    OnPushBall( event.args );  break;
       }
@@ -98,6 +99,12 @@ void GameLogic::OnCloseMenu() const
          break;
    }
 
+   _eventQueue->Flush();
+}
+
+void GameLogic::OnStartGame() const
+{
+   _gameStateTracker->gameState = GameState::Playing;
    _eventQueue->Flush();
 }
 

@@ -33,6 +33,7 @@ private:
    void OnQuit() const;
    void OnOpenMenu() const;
    void OnCloseMenu() const;
+   void OnStartGame() const;
    void OnTurnBall( std::shared_ptr<IGameEventArgs> args ) const;
    void OnPushBall( std::shared_ptr<IGameEventArgs> args ) const;
 

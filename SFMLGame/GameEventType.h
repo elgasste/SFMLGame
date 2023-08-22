@@ -9,6 +9,7 @@ enum class GameEventType
    Quit = 0,
    OpenMenu,
    CloseMenu,
+   StartGame,
    TurnBall,
    PushBall
 };
