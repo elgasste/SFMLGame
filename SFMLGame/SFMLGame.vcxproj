@@ -174,7 +174,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClCompile Include="GameInputHandler.cpp" />
     <ClCompile Include="InputReader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="PlayingStateMenu.cpp" />
     <ClCompile Include="MenuStateInputHandler.cpp" />
     <ClCompile Include="MenuStateRenderer.cpp" />
     <ClCompile Include="PlayingStateInputHandler.cpp" />
@@ -210,7 +210,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="InputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="Menu.h" />
+    <ClInclude Include="PlayingStateMenu.h" />
     <ClInclude Include="MenuOption.h" />
     <ClInclude Include="MenuStateInputHandler.h" />
     <ClInclude Include="MenuStateRenderer.h" />

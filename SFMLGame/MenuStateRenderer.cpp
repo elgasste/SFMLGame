@@ -2,7 +2,7 @@
 #include "RenderConfig.h"
 #include "SFMLWindow.h"
 #include "GameClock.h"
-#include "Menu.h"
+#include "PlayingStateMenu.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -11,7 +11,7 @@ using namespace sf;
 MenuStateRenderer::MenuStateRenderer( shared_ptr<RenderConfig> renderConfig,
                                       shared_ptr<SFMLWindow> window,
                                       shared_ptr<GameClock> clock,
-                                      shared_ptr<Menu> menu ) :
+                                      shared_ptr<PlayingStateMenu> menu ) :
    _renderConfig( renderConfig ),
    _window( window ),
    _clock( clock ),

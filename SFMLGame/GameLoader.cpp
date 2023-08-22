@@ -7,7 +7,7 @@
 #include "EventQueue.h"
 #include "GameClock.h"
 #include "InputReader.h"
-#include "Menu.h"
+#include "PlayingStateMenu.h"
 #include "PlayingStateInputHandler.h"
 #include "MenuStateInputHandler.h"
 #include "ClosingStateInputHandler.h"
@@ -36,9 +36,9 @@ shared_ptr<Game> GameLoader::Load() const
    auto eventQueue = make_shared<EventQueue>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
-   auto menu = shared_ptr<Menu>( new Menu( eventQueue ) );
+   auto playingStateMenu = shared_ptr<PlayingStateMenu>( new PlayingStateMenu( eventQueue ) );
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, gameConfig, eventQueue ) );
-   auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, menu ) );
+   auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, playingStateMenu ) );
    auto closingStateInputHandler = make_shared<ClosingStateInputHandler>();
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( gameConfig, inputReader, gameStateTracker ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
@@ -48,7 +48,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, clock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameData, clock, window ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );
-   auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( renderConfig, window, clock, menu ) );
+   auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( renderConfig, window, clock, playingStateMenu ) );
    auto closingStateRenderer = make_shared<ClosingStateRenderer>();
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderData, gameConfig, window, diagnosticRenderer, gameStateTracker ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );

@@ -7,10 +7,10 @@ NAMESPACE_BEGIN
 
 class EventQueue;
 
-class Menu
+class PlayingStateMenu
 {
 public:
-   Menu( std::shared_ptr<EventQueue> eventQueue );
+   PlayingStateMenu( std::shared_ptr<EventQueue> eventQueue );
 
    int GetOptionCount() const { return (int)_options.size(); }
    const MenuOption& GetOptionByIndex( int index ) const { return _options.at( index ); }
