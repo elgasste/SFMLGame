@@ -31,6 +31,7 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
    _gameRunningTracker( gameRunningTracker ),
    _gameStateTracker( gameStateTracker )
 {
+   gameStateTracker->gameState = GameState::TitleScreen;
 }
 
 void GameLogic::Tick()
@@ -72,20 +73,32 @@ void GameLogic::OnQuit() const
 
 void GameLogic::OnOpenMenu() const
 {
-   if ( _gameStateTracker->gameState == GameState::Playing )
+   switch ( _gameStateTracker->gameState )
    {
-      _gameStateTracker->gameState = GameState::MainMenu;
-      _eventQueue->Flush();
+      case GameState::TitleScreen:
+         _gameStateTracker->gameState = GameState::TitleMenu;
+         break;
+      case GameState::Playing:
+         _gameStateTracker->gameState = GameState::MainMenu;
+         break;
    }
+
+   _eventQueue->Flush();
 }
 
 void GameLogic::OnCloseMenu() const
 {
-   if ( _gameStateTracker->gameState == GameState::MainMenu )
+   switch ( _gameStateTracker->gameState )
    {
-      _gameStateTracker->gameState = GameState::Playing;
-      _eventQueue->Flush();
+      case GameState::TitleMenu:
+         _gameStateTracker->gameState = GameState::TitleScreen;
+         break;
+      case GameState::MainMenu:
+         _gameStateTracker->gameState = GameState::Playing;
+         break;
    }
+
+   _eventQueue->Flush();
 }
 
 void GameLogic::OnTurnBall( shared_ptr<IGameEventArgs> args ) const
