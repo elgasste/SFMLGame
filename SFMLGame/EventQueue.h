@@ -5,11 +5,14 @@
 
 NAMESPACE_BEGIN
 
+class IGameEventArgs;
+
 class EventQueue
 {
 public:
    bool HasEvents() { return !_eventQueue.empty(); }
-   void Push( GameEvent event );
+   void Push( GameEventType type, std::shared_ptr<IGameEventArgs> args );
+   void Push( GameEventType type );
    GameEvent GetNext();
    void Flush();
 

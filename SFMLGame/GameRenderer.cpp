@@ -1,6 +1,5 @@
 #include "GameRenderer.h"
 #include "GameConfig.h"
-#include "GameData.h"
 #include "SFMLWindow.h"
 #include "DiagnosticsRenderer.h"
 #include "IGameStateRenderer.h"
@@ -10,14 +9,14 @@ using namespace std;
 
 GameRenderer::GameRenderer( shared_ptr<RenderData> renderData,
                             shared_ptr<GameConfig> gameConfig,
-                            shared_ptr<GameData> gameData,
                             shared_ptr<SFMLWindow> window,
-                            shared_ptr<DiagnosticsRenderer> diagnosticsRenderer ) :
+                            shared_ptr<DiagnosticsRenderer> diagnosticsRenderer,
+                            shared_ptr<GameStateTracker> gameStateTracker ) :
    _renderData( renderData ),
    _gameConfig( gameConfig ),
-   _gameData( gameData ),
    _window( window ),
-   _diagnosticsRenderer( diagnosticsRenderer )
+   _diagnosticsRenderer( diagnosticsRenderer ),
+   _gameStateTracker( gameStateTracker )
 {
 }
 
@@ -37,7 +36,7 @@ void GameRenderer::Render()
    _window->HandleEvents();
    _window->Clear();
 
-   _stateRendererMap.at( _gameData->GetGameState() )->Render();
+   _stateRendererMap.at( _gameStateTracker->gameState )->Render();
 
    if ( _gameConfig->ShowDiagnostics )
    {

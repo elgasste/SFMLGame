@@ -2,7 +2,7 @@
 
 #include "Common.h"
 #include "GameRunningTracker.h"
-#include "GameState.h"
+#include "GameStateTracker.h"
 
 NAMESPACE_BEGIN
 
@@ -23,7 +23,8 @@ public:
               std::shared_ptr<GameInputHandler> inputHandler,
               std::shared_ptr<EventQueue> eventQueue,
               std::shared_ptr<GameClock> clock,
-              std::shared_ptr<GameRunningTracker> gameRunningTracker );
+              std::shared_ptr<GameRunningTracker> gameRunningTracker,
+              std::shared_ptr<GameStateTracker> gameStateTracker );
 
    void Tick();
 
@@ -46,6 +47,7 @@ private:
    std::shared_ptr<EventQueue> _eventQueue;
    std::shared_ptr<GameClock> _clock;
    std::shared_ptr<GameRunningTracker> _gameRunningTracker;
+   std::shared_ptr<GameStateTracker> _gameStateTracker;
 };
 
 NAMESPACE_END

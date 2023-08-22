@@ -1,18 +1,17 @@
-#include "MenuStateRenderer.h"
+#include "MainMenuStateRenderer.h"
 #include "RenderConfig.h"
 #include "SFMLWindow.h"
 #include "GameClock.h"
-#include "Menu.h"
-#include "IMenuOption.h"
+#include "MainMenu.h"
 
 using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-MenuStateRenderer::MenuStateRenderer( shared_ptr<RenderConfig> renderConfig,
-                                      shared_ptr<SFMLWindow> window,
-                                      shared_ptr<GameClock> clock,
-                                      shared_ptr<Menu> menu ) :
+MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<RenderConfig> renderConfig,
+                                              shared_ptr<SFMLWindow> window,
+                                              shared_ptr<GameClock> clock,
+                                              shared_ptr<MainMenu> menu ) :
    _renderConfig( renderConfig ),
    _window( window ),
    _clock( clock ),
@@ -45,7 +44,7 @@ MenuStateRenderer::MenuStateRenderer( shared_ptr<RenderConfig> renderConfig,
          menuText += "\n";
       }
 
-      menuText += menu->GetOptionByIndex( i )->GetText();
+      menuText += menu->GetOptionByIndex( i ).menuText;
    }
 
    _text->setString( menuText );
@@ -61,7 +60,7 @@ MenuStateRenderer::MenuStateRenderer( shared_ptr<RenderConfig> renderConfig,
    _text->setPosition( _menuX + caratWidth + renderConfig->MenuCaratOffset, _menuY );
 }
 
-void MenuStateRenderer::Render()
+void MainMenuStateRenderer::Render()
 {
    _elapsedSeconds += _clock->GetFrameSeconds();
 

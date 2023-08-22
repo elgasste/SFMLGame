@@ -245,5 +245,14 @@
     <ClInclude Include="TurnBallArgs.h">
       <Filter>Header Files\Events</Filter>
     </ClInclude>
+    <ClInclude Include="GameStateTracker.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosingStateRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosingStateInputHandler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

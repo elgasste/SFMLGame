@@ -20,14 +20,16 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
                       shared_ptr<GameInputHandler> inputHandler,
                       shared_ptr<EventQueue> eventQueue,
                       shared_ptr<GameClock> clock,
-                      shared_ptr<GameRunningTracker> gameRunningTracker ) :
+                      shared_ptr<GameRunningTracker> gameRunningTracker,
+                      shared_ptr<GameStateTracker> gameStateTracker ) :
    _gameConfig( gameConfig ),
    _gameData( gameData ),
    _renderConfig( renderConfig ),
    _inputHandler( inputHandler ),
    _eventQueue( eventQueue ),
    _clock( clock ),
-   _gameRunningTracker( gameRunningTracker )
+   _gameRunningTracker( gameRunningTracker ),
+   _gameStateTracker( gameStateTracker )
 {
 }
 
@@ -36,7 +38,7 @@ void GameLogic::Tick()
    _inputHandler->HandleInput();
    HandleEvents();
 
-   if ( _gameData->GetGameState() == GameState::Playing )
+   if ( _gameStateTracker->gameState == GameState::Playing )
    {
       UpdateBallPosition();
       ClipBall();
@@ -64,23 +66,24 @@ void GameLogic::OnQuit() const
 {
    // TODO: whatever needs to be done to clean up (saving the game, etc)
    _gameRunningTracker->isRunning = false;
+   _gameStateTracker->gameState = GameState::Closing;
    _eventQueue->Flush();
 }
 
 void GameLogic::OnOpenMenu() const
 {
-   if ( _gameData->GetGameState() == GameState::Playing )
+   if ( _gameStateTracker->gameState == GameState::Playing )
    {
-      _gameData->SetGameState( GameState::Menu );
+      _gameStateTracker->gameState = GameState::MainMenu;
       _eventQueue->Flush();
    }
 }
 
 void GameLogic::OnCloseMenu() const
 {
-   if ( _gameData->GetGameState() == GameState::Menu )
+   if ( _gameStateTracker->gameState == GameState::MainMenu )
    {
-      _gameData->SetGameState( GameState::Playing );
+      _gameStateTracker->gameState = GameState::Playing;
       _eventQueue->Flush();
    }
 }

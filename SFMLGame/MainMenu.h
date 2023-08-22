@@ -1,26 +1,28 @@
 #pragma once
 
 #include "Common.h"
+#include "MenuOption.h"
 
 NAMESPACE_BEGIN
 
-class IMenuOption;
+class EventQueue;
 
-class Menu
+class MainMenu
 {
 public:
-   Menu();
+   MainMenu( std::shared_ptr<EventQueue> eventQueue );
 
-   void AddOption( std::shared_ptr<IMenuOption> option );
    int GetOptionCount() const { return (int)_options.size(); }
-   std::shared_ptr<IMenuOption> GetOptionByIndex( int index ) const { return _options[index]; }
+   const MenuOption& GetOptionByIndex( int index ) const { return _options.at( index ); }
    int GetCurrentOptionIndex() const { return _currentOptionIndex; }
    void ScrollUp();
    void ScrollDown();
    void SelectCurrentOption() const;
 
 private:
-   std::vector<std::shared_ptr<IMenuOption>> _options;
+   std::shared_ptr<EventQueue> _eventQueue;
+
+   std::vector<MenuOption> _options;
    int _currentOptionIndex;
 };
 

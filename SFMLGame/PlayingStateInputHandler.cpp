@@ -23,7 +23,7 @@ void PlayingStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
-      _eventQueue->Push( { GameEventType::OpenMenu } );
+      _eventQueue->Push( GameEventType::OpenMenu );
       return;
    }
 
@@ -32,11 +32,11 @@ void PlayingStateInputHandler::HandleInput()
 
    if ( isLeftDown && !isRightDown )
    {
-      _eventQueue->Push( { GameEventType::TurnBall, shared_ptr<TurnBallArgs>( new TurnBallArgs( _gameConfig->BallTurnAngleIncrement ) ) } );
+      _eventQueue->Push( GameEventType::TurnBall, shared_ptr<TurnBallArgs>( new TurnBallArgs( _gameConfig->BallTurnAngleIncrement ) ) );
    }
    else if ( isRightDown && !isLeftDown )
    {
-      _eventQueue->Push( { GameEventType::TurnBall, shared_ptr<TurnBallArgs>( new TurnBallArgs( -( _gameConfig->BallTurnAngleIncrement ) ) ) } );
+      _eventQueue->Push( GameEventType::TurnBall, shared_ptr<TurnBallArgs>( new TurnBallArgs( -( _gameConfig->BallTurnAngleIncrement ) ) ) );
    }
 
    bool isForwardDown = _inputReader->IsButtonDown( Button::Up );
@@ -44,10 +44,10 @@ void PlayingStateInputHandler::HandleInput()
 
    if ( isForwardDown && !isBackwardDown )
    {
-      _eventQueue->Push( { GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( _gameConfig->BallVelocityIncrement ) ) } );
+      _eventQueue->Push( GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( _gameConfig->BallVelocityIncrement ) ) );
    }
    else if ( isBackwardDown && !isForwardDown )
    {
-      _eventQueue->Push( { GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( -_gameConfig->BallVelocityIncrement ) ) } );
+      _eventQueue->Push( GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( -_gameConfig->BallVelocityIncrement ) ) );
    }
 }
