@@ -1,10 +1,10 @@
-#include "PlayingStateMenu.h"
+#include "MainMenu.h"
 #include "EventQueue.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-PlayingStateMenu::PlayingStateMenu( shared_ptr<EventQueue> eventQueue ) :
+MainMenu::MainMenu( shared_ptr<EventQueue> eventQueue ) :
    _eventQueue( eventQueue ),
    _currentOptionIndex( 0 )
 {
@@ -12,7 +12,7 @@ PlayingStateMenu::PlayingStateMenu( shared_ptr<EventQueue> eventQueue ) :
    _options.push_back( { IDS_MenuOptionQuit, GameEventType::Quit } );
 }
 
-void PlayingStateMenu::ScrollUp()
+void MainMenu::ScrollUp()
 {
    _currentOptionIndex--;
 
@@ -22,7 +22,7 @@ void PlayingStateMenu::ScrollUp()
    }
 }
 
-void PlayingStateMenu::ScrollDown()
+void MainMenu::ScrollDown()
 {
    _currentOptionIndex++;
 
@@ -32,7 +32,7 @@ void PlayingStateMenu::ScrollDown()
    }
 }
 
-void PlayingStateMenu::SelectCurrentOption() const
+void MainMenu::SelectCurrentOption() const
 {
    _eventQueue->Push( _options.at( _currentOptionIndex ).eventType );
 }

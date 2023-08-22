@@ -74,14 +74,14 @@ void GameLogic::OnOpenMenu() const
 {
    if ( _gameStateTracker->gameState == GameState::Playing )
    {
-      _gameStateTracker->gameState = GameState::Menu;
+      _gameStateTracker->gameState = GameState::MainMenu;
       _eventQueue->Flush();
    }
 }
 
 void GameLogic::OnCloseMenu() const
 {
-   if ( _gameStateTracker->gameState == GameState::Menu )
+   if ( _gameStateTracker->gameState == GameState::MainMenu )
    {
       _gameStateTracker->gameState = GameState::Playing;
       _eventQueue->Flush();

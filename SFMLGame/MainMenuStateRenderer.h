@@ -15,15 +15,15 @@ NAMESPACE_BEGIN
 class RenderConfig;
 class SFMLWindow;
 class GameClock;
-class PlayingStateMenu;
+class MainMenu;
 
-class MenuStateRenderer : public IGameStateRenderer
+class MainMenuStateRenderer : public IGameStateRenderer
 {
 public:
-   MenuStateRenderer( std::shared_ptr<RenderConfig> renderConfig,
-                      std::shared_ptr<SFMLWindow> window,
-                      std::shared_ptr<GameClock> clock,
-                      std::shared_ptr<PlayingStateMenu> menu );
+   MainMenuStateRenderer( std::shared_ptr<RenderConfig> renderConfig,
+                          std::shared_ptr<SFMLWindow> window,
+                          std::shared_ptr<GameClock> clock,
+                          std::shared_ptr<MainMenu> menu );
 
    // IGameStateRenderer
    void Render() override;
@@ -32,7 +32,7 @@ private:
    std::shared_ptr<RenderConfig> _renderConfig;
    std::shared_ptr<SFMLWindow> _window;
    std::shared_ptr<GameClock> _clock;
-   std::shared_ptr<PlayingStateMenu> _menu;
+   std::shared_ptr<MainMenu> _menu;
 
    std::shared_ptr<sf::Font> _font;
    std::shared_ptr<sf::Text> _text;

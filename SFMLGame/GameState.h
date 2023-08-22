@@ -7,7 +7,7 @@ NAMESPACE_BEGIN
 enum class GameState
 {
    Playing = 0,
-   Menu,
+   MainMenu,
    Closing
 };
 
