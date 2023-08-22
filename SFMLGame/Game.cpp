@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "GameData.h"
 #include "GameClock.h"
 #include "InputReader.h"
 #include "GameLogic.h"
@@ -8,18 +7,18 @@
 using namespace NAMESPACE;
 using namespace std;
 
-Game::Game( shared_ptr<GameData> gameData,
-            shared_ptr<GameClock> clock,
+Game::Game( shared_ptr<GameClock> clock,
             shared_ptr<InputReader> inputReader,
             shared_ptr<GameLogic> logic,
             shared_ptr<GameRenderer> renderer,
-            shared_ptr<GameRunningTracker> gameRunningTracker ) :
-   _gameData( gameData ),
+            shared_ptr<GameRunningTracker> gameRunningTracker,
+            shared_ptr<GameStateTracker> gameStateTracker ) :
    _clock( clock ),
    _inputReader( inputReader ),
    _logic( logic ),
    _renderer( renderer ),
-   _gameRunningTracker( gameRunningTracker )
+   _gameRunningTracker( gameRunningTracker ),
+   _gameStateTracker( gameStateTracker )
 {
 }
 
@@ -34,7 +33,7 @@ void Game::Run()
 
    _renderer->Initialize();
    _clock->Initialize();
-   _gameData->SetGameState( GameState::Playing );
+   _gameStateTracker->gameState = GameState::Playing;
 
    while ( _gameRunningTracker->isRunning )
    {
