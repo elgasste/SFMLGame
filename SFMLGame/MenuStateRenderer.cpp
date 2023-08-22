@@ -3,7 +3,6 @@
 #include "SFMLWindow.h"
 #include "GameClock.h"
 #include "Menu.h"
-#include "IMenuOption.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -45,7 +44,7 @@ MenuStateRenderer::MenuStateRenderer( shared_ptr<RenderConfig> renderConfig,
          menuText += "\n";
       }
 
-      menuText += menu->GetOptionByIndex( i )->GetText();
+      menuText += menu->GetOptionByIndex( i ).menuText;
    }
 
    _text->setString( menuText );

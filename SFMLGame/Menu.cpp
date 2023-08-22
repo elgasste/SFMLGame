@@ -1,17 +1,15 @@
 #include "Menu.h"
-#include "IMenuOption.h"
+#include "EventQueue.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-Menu::Menu() :
+Menu::Menu( shared_ptr<EventQueue> eventQueue ) :
+   _eventQueue( eventQueue ),
    _currentOptionIndex( 0 )
 {
-}
-
-void Menu::AddOption( shared_ptr<IMenuOption> option )
-{
-   _options.push_back( option );
+   _options.push_back( { IDS_MenuOptionBack, GameEventType::CloseMenu } );
+   _options.push_back( { IDS_MenuOptionQuit, GameEventType::Quit } );
 }
 
 void Menu::ScrollUp()
@@ -36,5 +34,5 @@ void Menu::ScrollDown()
 
 void Menu::SelectCurrentOption() const
 {
-   _options[_currentOptionIndex]->Select();
+   _eventQueue->Push( _options.at( _currentOptionIndex ).eventType );
 }

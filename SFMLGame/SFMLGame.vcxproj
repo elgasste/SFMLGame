@@ -161,7 +161,6 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BackMenuOption.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EventQueue.cpp" />
@@ -180,13 +179,11 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClCompile Include="MenuStateRenderer.cpp" />
     <ClCompile Include="PlayingStateInputHandler.cpp" />
     <ClCompile Include="PlayingStateRenderer.cpp" />
-    <ClCompile Include="QuitMenuOption.cpp" />
     <ClCompile Include="RenderConfig.cpp" />
     <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BackMenuOption.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
     <ClInclude Include="ClosingStateInputHandler.h" />
@@ -210,17 +207,16 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="IGameStateInputHandler.h" />
     <ClInclude Include="IGameStateRenderer.h" />
     <ClInclude Include="GameInputHandler.h" />
-    <ClInclude Include="IMenuOption.h" />
     <ClInclude Include="InputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="MenuOption.h" />
     <ClInclude Include="MenuStateInputHandler.h" />
     <ClInclude Include="MenuStateRenderer.h" />
     <ClInclude Include="PlayingStateInputHandler.h" />
     <ClInclude Include="PlayingStateRenderer.h" />
     <ClInclude Include="PushBallArgs.h" />
-    <ClInclude Include="QuitMenuOption.h" />
     <ClInclude Include="ClosingStateRenderer.h" />
     <ClInclude Include="RenderConfig.h" />
     <ClInclude Include="RenderData.h" />
