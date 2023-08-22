@@ -31,11 +31,11 @@ RenderConfig::RenderConfig()
    MessageCharSize = 32;
    MessageTextColor = Color::White;
 
-   MenuFont = "Resources/Fonts/Consolas.ttf";
-   MenuCharSize = 32;
-   MenuTextColor = Color::White;
-   MenuCaratOffset = 20;
-   MenuCaratBlinkRate = 0.2f;
+   MainMenuFont = "Resources/Fonts/Consolas.ttf";
+   MainMenuCharSize = 32;
+   MainMenuTextColor = Color::White;
+   MainMenuCaratOffset = 20;
+   MainMenuCaratBlinkRate = 0.2f;
 
    BallOrigin = { 290.5f, 290.5f };
 }

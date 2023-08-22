@@ -35,11 +35,11 @@ public:
    unsigned int MessageCharSize;
    sf::Color MessageTextColor;
 
-   std::string MenuFont;
-   unsigned int MenuCharSize;
-   sf::Color MenuTextColor;
-   float MenuCaratOffset;
-   float MenuCaratBlinkRate;
+   std::string MainMenuFont;
+   unsigned int MainMenuCharSize;
+   sf::Color MainMenuTextColor;
+   float MainMenuCaratOffset;
+   float MainMenuCaratBlinkRate;
 
    sf::Vector2f BallOrigin;
 };
