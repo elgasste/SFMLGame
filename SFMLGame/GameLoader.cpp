@@ -10,9 +10,8 @@
 #include "TitleMenu.h"
 #include "MainMenu.h"
 #include "TitleScreenStateInputHandler.h"
-#include "TitleMenuStateInputHandler.h"
+#include "MenuStateInputHandler.h"
 #include "PlayingStateInputHandler.h"
-#include "MainMenuStateInputHandler.h"
 #include "ClosingStateInputHandler.h"
 #include "GameInputHandler.h"
 #include "GameLogic.h"
@@ -44,9 +43,9 @@ shared_ptr<Game> GameLoader::Load() const
    auto titleMenu = shared_ptr<TitleMenu>( new TitleMenu( eventQueue ) );
    auto mainMenu = shared_ptr<MainMenu>( new MainMenu( eventQueue ) );
    auto titleScreenStateInputHandler = shared_ptr<TitleScreenStateInputHandler>( new TitleScreenStateInputHandler( inputReader, eventQueue ) );
-   auto titleMenuStateInputHandler = shared_ptr<TitleMenuStateInputHandler>( new TitleMenuStateInputHandler( inputReader, eventQueue, titleMenu ) );
+   auto titleMenuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, titleMenu ) );
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, gameConfig, eventQueue ) );
-   auto mainMenuStateInputHandler = shared_ptr<MainMenuStateInputHandler>( new MainMenuStateInputHandler( inputReader, eventQueue, mainMenu ) );
+   auto mainMenuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, mainMenu ) );
    auto closingStateInputHandler = make_shared<ClosingStateInputHandler>();
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( gameConfig, inputReader, gameStateTracker ) );
    gameInputHandler->AddStateInputHandler( GameState::TitleScreen, titleScreenStateInputHandler );

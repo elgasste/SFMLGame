@@ -7,14 +7,14 @@ NAMESPACE_BEGIN
 
 class InputReader;
 class EventQueue;
-class MainMenu;
+class Menu;
 
-class MainMenuStateInputHandler : public IGameStateInputHandler
+class MenuStateInputHandler : public IGameStateInputHandler
 {
 public:
-   MainMenuStateInputHandler( std::shared_ptr<InputReader> inputReader,
+   MenuStateInputHandler( std::shared_ptr<InputReader> inputReader,
                               std::shared_ptr<EventQueue> eventQueue,
-                              std::shared_ptr<MainMenu> menu );
+                              std::shared_ptr<Menu> menu );
 
    // IGameStateInputHandler
    void HandleInput() override;
@@ -22,7 +22,7 @@ public:
 private:
    std::shared_ptr<InputReader> _inputReader;
    std::shared_ptr<EventQueue> _eventQueue;
-   std::shared_ptr<MainMenu> _menu;
+   std::shared_ptr<Menu> _menu;
 };
 
 NAMESPACE_END

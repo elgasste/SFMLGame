@@ -1,21 +1,21 @@
-#include "MainMenuStateInputHandler.h"
+#include "MenuStateInputHandler.h"
 #include "InputReader.h"
 #include "EventQueue.h"
-#include "MainMenu.h"
+#include "Menu.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-MainMenuStateInputHandler::MainMenuStateInputHandler( shared_ptr<InputReader> inputReader,
-                                                      shared_ptr<EventQueue> eventQueue,
-                                                      shared_ptr<MainMenu> menu ) :
+MenuStateInputHandler::MenuStateInputHandler( shared_ptr<InputReader> inputReader,
+                                              shared_ptr<EventQueue> eventQueue,
+                                              shared_ptr<Menu> menu ) :
    _inputReader( inputReader ),
    _eventQueue( eventQueue ),
    _menu( menu )
 {
 }
 
-void MainMenuStateInputHandler::HandleInput()
+void MenuStateInputHandler::HandleInput()
 {
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {

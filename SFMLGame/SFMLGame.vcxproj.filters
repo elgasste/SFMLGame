@@ -114,7 +114,7 @@
     <ClCompile Include="MainMenu.cpp">
       <Filter>Source Files\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="MainMenuStateInputHandler.cpp">
+    <ClCompile Include="MenuStateInputHandler.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="MainMenuStateRenderer.cpp">
@@ -125,9 +125,6 @@
     </ClCompile>
     <ClCompile Include="TitleScreenStateRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleMenuStateInputHandler.cpp">
-      <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="TitleMenuStateRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -251,7 +248,7 @@
     <ClInclude Include="MainMenu.h">
       <Filter>Header Files\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="MainMenuStateInputHandler.h">
+    <ClInclude Include="MenuStateInputHandler.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="MainMenuStateRenderer.h">
@@ -265,9 +262,6 @@
     </ClInclude>
     <ClInclude Include="TitleScreenStateRenderer.h">
       <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleMenuStateInputHandler.h">
-      <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="TitleMenuStateRenderer.h">
       <Filter>Header Files\Rendering</Filter>
