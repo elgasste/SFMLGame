@@ -41,7 +41,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
    auto mainMenu = shared_ptr<MainMenu>( new MainMenu( eventQueue ) );
-   auto titleScreenStateInputHandler = make_shared<TitleScreenStateInputHandler>();
+   auto titleScreenStateInputHandler = shared_ptr<TitleScreenStateInputHandler>( new TitleScreenStateInputHandler( inputReader, eventQueue ) );
    auto titleMenuStateInputHandler = make_shared<TitleMenuStateInputHandler>();
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, gameConfig, eventQueue ) );
    auto mainMenuStateInputHandler = shared_ptr<MainMenuStateInputHandler>( new MainMenuStateInputHandler( inputReader, eventQueue, mainMenu ) );
