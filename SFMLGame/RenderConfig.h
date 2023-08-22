@@ -31,6 +31,10 @@ public:
 
    sf::Color ArenaBackgroundColor;
 
+   std::string TitleMenuFont;
+   unsigned int TitleMenuCharSize;
+   sf::Color TitleMenuTextColor;
+
    std::string MessageFont;
    unsigned int MessageCharSize;
    sf::Color MessageTextColor;
