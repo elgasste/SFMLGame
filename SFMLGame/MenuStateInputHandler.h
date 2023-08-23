@@ -13,8 +13,8 @@ class MenuStateInputHandler : public IGameStateInputHandler
 {
 public:
    MenuStateInputHandler( std::shared_ptr<InputReader> inputReader,
-                              std::shared_ptr<EventQueue> eventQueue,
-                              std::shared_ptr<Menu> menu );
+                          std::shared_ptr<EventQueue> eventQueue,
+                          std::shared_ptr<Menu> menu );
 
    // IGameStateInputHandler
    void HandleInput() override;
