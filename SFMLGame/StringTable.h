@@ -27,5 +27,5 @@
 // menu
 #define IDS_MenuOptionStartGame     "Start Game"
 #define IDS_MenuOptionBack          "Back"
-#define IDS_MenuOptionExitToTitle   "Return to Title Screen"
+#define IDS_MenuOptionExitToTitle   "Title Screen"
 #define IDS_MenuOptionQuit          "Quit"

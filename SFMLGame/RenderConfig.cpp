@@ -35,15 +35,15 @@ RenderConfig::RenderConfig()
    TitleMenuCharSize = 96;
    TitleMenuTextColor = Color::White;
 
-   PlayingMessageFont = "Resources/Fonts/Consolas.ttf";
+   PlayingMessageFont = "Resources/Fonts/Rubber-Duck.ttf";
    PlayingMessageCharSize = 32;
    PlayingMessageTextColor = Color::White;
 
-   MainMenuFont = "Resources/Fonts/Consolas.ttf";
-   MainMenuCharSize = 32;
+   MainMenuFont = "Resources/Fonts/Rubber-Duck.ttf";
+   MainMenuCharSize = 96;
    MainMenuTextColor = Color::White;
    MainMenuCaratOffset = 20;
-   MainMenuCaratBlinkRate = 0.2f;
+   MainMenuCaratBlinkRate = 0.25f;
 
    BallOrigin = { 290.5f, 290.5f };
 }
