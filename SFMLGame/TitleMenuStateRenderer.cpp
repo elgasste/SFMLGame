@@ -34,7 +34,7 @@ TitleMenuStateRenderer::TitleMenuStateRenderer( shared_ptr<RenderConfig> renderC
    _carat->setFont( *_font );
    _carat->setCharacterSize( renderConfig->TitleMenuCharSize );
    _carat->setFillColor( renderConfig->TitleMenuTextColor );
-   _carat->setString( "+" );
+   _carat->setString( ">" );
 
    _lineSpacing = _font->getLineSpacing( _text->getCharacterSize() );
 
