@@ -99,9 +99,6 @@ void GameLogic::OnCloseMenu() const
 {
    switch ( _gameStateTracker->gameState )
    {
-      case GameState::TitleMenu:
-         _gameStateTracker->gameState = GameState::TitleScreen;
-         break;
       case GameState::MainMenu:
          _gameStateTracker->gameState = GameState::Playing;
          break;
