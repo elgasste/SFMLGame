@@ -52,6 +52,7 @@ public:
    sf::Color MainMenuTextColor;
    float MainMenuCaratOffset;
    float MainMenuCaratBlinkRate;
+   sf::Color MainMenuBallDimmer;
 
    sf::Vector2f BallOrigin;
 };

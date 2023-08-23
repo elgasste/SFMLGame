@@ -44,6 +44,7 @@ RenderConfig::RenderConfig()
    MainMenuTextColor = Color( 200, 200, 200 );
    MainMenuCaratOffset = 30;
    MainMenuCaratBlinkRate = 0.25f;
+   MainMenuBallDimmer = Color( 128, 128, 128 );
 
    BallOrigin = { 290.5f, 290.5f };
 }

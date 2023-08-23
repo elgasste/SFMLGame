@@ -1,17 +1,25 @@
 #include "MainMenuStateRenderer.h"
+#include "GameConfig.h"
+#include "GameData.h"
 #include "RenderConfig.h"
+#include "RenderData.h"
 #include "SFMLWindow.h"
 #include "GameClock.h"
 #include "MainMenu.h"
+#include "Entity.h"
 
 using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<RenderConfig> renderConfig,
+MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<GameConfig> gameConfig,
+                                              shared_ptr<GameData> gameData,
+                                              shared_ptr<RenderConfig> renderConfig,
+                                              shared_ptr<RenderData> renderData,
                                               shared_ptr<SFMLWindow> window,
                                               shared_ptr<GameClock> clock,
                                               shared_ptr<MainMenu> menu ) :
+   _gameData( gameData ),
    _renderConfig( renderConfig ),
    _window( window ),
    _clock( clock ),
@@ -61,11 +69,20 @@ MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<RenderConfig> renderCon
    _menuY = ( (float)renderConfig->ScreenHeight / 2 ) - ( menuHeight / 2 );
 
    _text->setPosition( _menuX + caratWidth + renderConfig->MainMenuCaratOffset, _menuY );
+
+   _ballSprite = Sprite( *( renderData->GetBallTexture() ) );
+   _ballSprite.setOrigin( renderConfig->BallOrigin );
+   auto scalar = gameConfig->BallDiameter / renderData->GetBallTexture()->getSize().x;
+   _ballSprite.setScale( scalar, scalar );
+   _ballSprite.setColor( renderConfig->MainMenuBallDimmer );
 }
 
 void MainMenuStateRenderer::Render()
 {
    _window->Draw( _backgroundRect );
+
+   _ballSprite.setPosition( _gameData->GetBall()->GetPosition() );
+   _window->Draw( _ballSprite );
 
    _elapsedSeconds += _clock->GetFrameSeconds();
 

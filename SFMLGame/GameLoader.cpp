@@ -54,7 +54,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameData, clock, window ) );
    auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, clock, titleMenu ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );
-   auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( renderConfig, window, clock, mainMenu ) );
+   auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( gameConfig, gameData, renderConfig, renderData, window, clock, mainMenu ) );
    auto closingStateRenderer = make_shared<ClosingStateRenderer>();
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderData, gameConfig, window, diagnosticRenderer, gameStateTracker ) );
    gameRenderer->AddStateRenderer( GameState::TitleMenu, titleMenuStateRenderer );
