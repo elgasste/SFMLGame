@@ -27,21 +27,21 @@ RenderConfig::RenderConfig()
 
    ArenaBackgroundColor = Color( 48, 48, 48 );
 
-   TitleMenuBackgroundColor = Color( 48, 48, 48, 128 );
+   TitleMenuBackgroundColor = Color::Black;
    TitleMenuFont = "Resources/Fonts/Rubber-Duck.ttf";
-   TitleMenuCharSize = 96;
-   TitleMenuTextColor = Color( 200, 200, 200 );
-   TitleMenuCaratOffset = 30;
+   TitleMenuCharSize = 128;
+   TitleMenuTextColor = Color( 200, 200, 255 );
+   TitleMenuCaratOffset = 40;
    TitleMenuCaratBlinkRate = 0.25f;
 
    PlayingMessageFont = "Resources/Fonts/Rubber-Duck.ttf";
    PlayingMessageCharSize = 32;
-   PlayingMessageTextColor = Color( 200, 200, 200 );
+   PlayingMessageTextColor = Color( 200, 200, 255 );
 
    MainMenuBackgroundColor = Color( 48, 48, 48, 128 );
    MainMenuFont = "Resources/Fonts/Rubber-Duck.ttf";
    MainMenuCharSize = 96;
-   MainMenuTextColor = Color( 200, 200, 200 );
+   MainMenuTextColor = Color( 200, 200, 255 );
    MainMenuCaratOffset = 30;
    MainMenuCaratBlinkRate = 0.25f;
    MainMenuBallDimmer = Color( 128, 128, 128 );
