@@ -7,10 +7,10 @@ NAMESPACE_BEGIN
 
 class EventQueue;
 
-class MainMenu : public Menu
+class TitleMenu : public Menu
 {
 public:
-   MainMenu( std::shared_ptr<EventQueue> eventQueue );
+   TitleMenu( std::shared_ptr<EventQueue> eventQueue );
 };
 
 NAMESPACE_END

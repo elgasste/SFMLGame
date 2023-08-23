@@ -19,8 +19,10 @@
 #define IDS_BallVelocity            "Ball Velocity:      {}"
 
 // playing state
-#define IDS_PlayStateMessage        "Press ESC for menu, or F12 to toggle diagnostics"
+#define IDS_PlayStateMessage        "Press ESC for menu, F12 for diagnostics, or maybe try the arrow keys?"
 
 // menu
+#define IDS_MenuOptionStartGame     "Start Game"
 #define IDS_MenuOptionBack          "Back"
+#define IDS_MenuOptionExitToTitle   "Title Screen"
 #define IDS_MenuOptionQuit          "Quit"

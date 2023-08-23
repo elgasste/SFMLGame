@@ -31,6 +31,7 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
    _gameRunningTracker( gameRunningTracker ),
    _gameStateTracker( gameStateTracker )
 {
+   gameStateTracker->gameState = GameState::TitleMenu;
 }
 
 void GameLogic::Tick()
@@ -45,6 +46,15 @@ void GameLogic::Tick()
    }
 }
 
+void GameLogic::ResetBall()
+{
+   auto ball = _gameData->GetBall();
+
+   ball->SetPosition( _gameConfig->DefaultBallPosition.x, _gameConfig->DefaultBallPosition.y );
+   ball->SetAngle( _gameConfig->DefaultBallAngle );
+   ball->SetVelocity( _gameConfig->DefaultBallVelocity );
+}
+
 void GameLogic::HandleEvents()
 {
    while ( _eventQueue->HasEvents() )
@@ -54,8 +64,10 @@ void GameLogic::HandleEvents()
       switch ( event.type )
       {
          case GameEventType::Quit:        OnQuit();                  break;
+         case GameEventType::ExitToTitle: OnExitToTitle();           break;
          case GameEventType::OpenMenu:    OnOpenMenu();              break;
          case GameEventType::CloseMenu:   OnCloseMenu();             break;
+         case GameEventType::StartGame:   OnStartGame();             break;
          case GameEventType::TurnBall:    OnTurnBall( event.args );  break;
          case GameEventType::PushBall:    OnPushBall( event.args );  break;
       }
@@ -70,6 +82,12 @@ void GameLogic::OnQuit() const
    _eventQueue->Flush();
 }
 
+void GameLogic::OnExitToTitle() const
+{
+   _gameStateTracker->gameState = GameState::TitleMenu;
+   _eventQueue->Flush();
+}
+
 void GameLogic::OnOpenMenu() const
 {
    if ( _gameStateTracker->gameState == GameState::Playing )
@@ -81,11 +99,23 @@ void GameLogic::OnOpenMenu() const
 
 void GameLogic::OnCloseMenu() const
 {
-   if ( _gameStateTracker->gameState == GameState::MainMenu )
+   switch ( _gameStateTracker->gameState )
    {
-      _gameStateTracker->gameState = GameState::Playing;
-      _eventQueue->Flush();
+      case GameState::MainMenu:
+         _gameStateTracker->gameState = GameState::Playing;
+         _eventQueue->Flush();
+         break;
+      case GameState::TitleMenu:
+         OnQuit();
+         break;
    }
+}
+
+void GameLogic::OnStartGame()
+{
+   ResetBall();
+   _gameStateTracker->gameState = GameState::Playing;
+   _eventQueue->Flush();
 }
 
 void GameLogic::OnTurnBall( shared_ptr<IGameEventArgs> args ) const

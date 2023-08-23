@@ -87,26 +87,11 @@
     <ClCompile Include="GameInputHandler.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="MenuStateInputHandler.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
     <ClCompile Include="PlayingStateInputHandler.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="PlayingStateRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="MenuStateRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="QuitMenuOption.cpp">
-      <Filter>Source Files\Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>Source Files\Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="BackMenuOption.cpp">
-      <Filter>Source Files\Menu</Filter>
     </ClCompile>
     <ClCompile Include="GameData.cpp">
       <Filter>Source Files\Game</Filter>
@@ -125,6 +110,24 @@
     </ClCompile>
     <ClCompile Include="EventQueue.cpp">
       <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuStateInputHandler.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuStateRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleMenuStateRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleMenu.cpp">
+      <Filter>Source Files\Menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,29 +185,11 @@
     <ClInclude Include="IGameStateRenderer.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="MenuStateInputHandler.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
     <ClInclude Include="PlayingStateInputHandler.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="PlayingStateRenderer.h">
       <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuStateRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="IMenuOption.h">
-      <Filter>Header Files\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="QuitMenuOption.h">
-      <Filter>Header Files\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>Header Files\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="BackMenuOption.h">
-      <Filter>Header Files\Menu</Filter>
     </ClInclude>
     <ClInclude Include="InputReader.h">
       <Filter>Header Files\Input</Filter>
@@ -253,6 +238,27 @@
     </ClInclude>
     <ClInclude Include="ClosingStateInputHandler.h">
       <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuStateInputHandler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuStateRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuOption.h">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleMenuStateRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleMenu.h">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Header Files\Menu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

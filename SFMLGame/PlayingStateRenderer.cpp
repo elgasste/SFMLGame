@@ -22,12 +22,12 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
    _backgroundRect.setFillColor( renderConfig->ArenaBackgroundColor );
 
    _font = make_shared<Font>();
-   _font->loadFromFile( renderConfig->MessageFont );
+   _font->loadFromFile( renderConfig->PlayingMessageFont );
 
    _text = make_shared<Text>();
    _text->setFont( *_font );
-   _text->setCharacterSize( renderConfig->MessageCharSize );
-   _text->setFillColor( renderConfig->MessageTextColor );
+   _text->setCharacterSize( renderConfig->PlayingMessageCharSize );
+   _text->setFillColor( renderConfig->PlayingMessageTextColor );
    _text->setString( IDS_PlayStateMessage );
 
    _text->setPosition( ( (float)renderConfig->ScreenWidth / 2 ) - ( _text->getGlobalBounds().width / 2 ),

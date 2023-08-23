@@ -33,7 +33,6 @@ void Game::Run()
 
    _renderer->Initialize();
    _clock->Initialize();
-   _gameStateTracker->gameState = GameState::Playing;
 
    while ( _gameRunningTracker->isRunning )
    {

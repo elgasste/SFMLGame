@@ -31,15 +31,28 @@ public:
 
    sf::Color ArenaBackgroundColor;
 
-   std::string MessageFont;
-   unsigned int MessageCharSize;
-   sf::Color MessageTextColor;
+   sf::Color TitleMenuBackgroundColor;
+   std::string TitleMessageFont;
+   unsigned int TitleMessageCharSize;
+   sf::Color TitleMessageTextColor;
+   float TitleMenuCaratOffset;
+   float TitleMenuCaratBlinkRate;
 
-   std::string MenuFont;
-   unsigned int MenuCharSize;
-   sf::Color MenuTextColor;
-   float MenuCaratOffset;
-   float MenuCaratBlinkRate;
+   std::string TitleMenuFont;
+   unsigned int TitleMenuCharSize;
+   sf::Color TitleMenuTextColor;
+
+   std::string PlayingMessageFont;
+   unsigned int PlayingMessageCharSize;
+   sf::Color PlayingMessageTextColor;
+
+   sf::Color MainMenuBackgroundColor;
+   std::string MainMenuFont;
+   unsigned int MainMenuCharSize;
+   sf::Color MainMenuTextColor;
+   float MainMenuCaratOffset;
+   float MainMenuCaratBlinkRate;
+   sf::Color MainMenuBallDimmer;
 
    sf::Vector2f BallOrigin;
 };
