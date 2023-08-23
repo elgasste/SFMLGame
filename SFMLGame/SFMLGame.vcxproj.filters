@@ -120,12 +120,6 @@
     <ClCompile Include="MainMenuStateRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="TitleScreenStateInputHandler.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleScreenStateRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="TitleMenuStateRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -256,12 +250,6 @@
     </ClInclude>
     <ClInclude Include="MenuOption.h">
       <Filter>Header Files\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleScreenStateInputHandler.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleScreenStateRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="TitleMenuStateRenderer.h">
       <Filter>Header Files\Rendering</Filter>

@@ -6,8 +6,7 @@ NAMESPACE_BEGIN
 
 enum class GameState
 {
-   TitleScreen = 0,
-   TitleMenu,
+   TitleMenu = 0,
    Playing,
    MainMenu,
    Closing

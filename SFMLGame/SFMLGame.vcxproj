@@ -185,8 +185,6 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClCompile Include="SFMLWindow.cpp" />
     <ClCompile Include="TitleMenu.cpp" />
     <ClCompile Include="TitleMenuStateRenderer.cpp" />
-    <ClCompile Include="TitleScreenStateInputHandler.cpp" />
-    <ClCompile Include="TitleScreenStateRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
@@ -230,8 +228,6 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="StringTable.h" />
     <ClInclude Include="TitleMenu.h" />
     <ClInclude Include="TitleMenuStateRenderer.h" />
-    <ClInclude Include="TitleScreenStateInputHandler.h" />
-    <ClInclude Include="TitleScreenStateRenderer.h" />
     <ClInclude Include="TurnBallArgs.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>

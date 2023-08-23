@@ -31,7 +31,7 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
    _gameRunningTracker( gameRunningTracker ),
    _gameStateTracker( gameStateTracker )
 {
-   gameStateTracker->gameState = GameState::TitleScreen;
+   gameStateTracker->gameState = GameState::TitleMenu;
 }
 
 void GameLogic::Tick()
@@ -82,17 +82,11 @@ void GameLogic::OnExitToTitle() const
 
 void GameLogic::OnOpenMenu() const
 {
-   switch ( _gameStateTracker->gameState )
+   if ( _gameStateTracker->gameState == GameState::Playing )
    {
-      case GameState::TitleScreen:
-         _gameStateTracker->gameState = GameState::TitleMenu;
-         break;
-      case GameState::Playing:
-         _gameStateTracker->gameState = GameState::MainMenu;
-         break;
+      _gameStateTracker->gameState = GameState::MainMenu;
+      _eventQueue->Flush();
    }
-
-   _eventQueue->Flush();
 }
 
 void GameLogic::OnCloseMenu() const
@@ -101,10 +95,12 @@ void GameLogic::OnCloseMenu() const
    {
       case GameState::MainMenu:
          _gameStateTracker->gameState = GameState::Playing;
+         _eventQueue->Flush();
+         break;
+      case GameState::TitleMenu:
+         OnQuit();
          break;
    }
-
-   _eventQueue->Flush();
 }
 
 void GameLogic::OnStartGame() const
