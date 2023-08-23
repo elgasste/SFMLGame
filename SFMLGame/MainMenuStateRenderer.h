@@ -34,6 +34,8 @@ private:
    std::shared_ptr<GameClock> _clock;
    std::shared_ptr<MainMenu> _menu;
 
+   sf::RectangleShape _backgroundRect;
+
    std::shared_ptr<sf::Font> _font;
    std::shared_ptr<sf::Text> _text;
    std::shared_ptr<sf::Text> _carat;

@@ -19,6 +19,9 @@ MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<RenderConfig> renderCon
    _elapsedSeconds( 0 ),
    _showCarat( true )
 {
+   _backgroundRect = RectangleShape( { (float)renderConfig->ScreenWidth, (float)renderConfig->ScreenHeight } );
+   _backgroundRect.setFillColor( renderConfig->MainMenuBackgroundColor );
+
    _font = make_shared<Font>();
    _font->loadFromFile( renderConfig->MainMenuFont );
 
@@ -62,6 +65,8 @@ MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<RenderConfig> renderCon
 
 void MainMenuStateRenderer::Render()
 {
+   _window->Draw( _backgroundRect );
+
    _elapsedSeconds += _clock->GetFrameSeconds();
 
    if ( _elapsedSeconds >= _renderConfig->MainMenuCaratBlinkRate )

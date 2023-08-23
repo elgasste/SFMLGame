@@ -25,24 +25,24 @@ RenderConfig::RenderConfig()
    DiagnosticsTextColor = Color::White;
    DiagnosticsBackgroundColor = Color::Blue;
 
-   ArenaBackgroundColor = Color( 64, 64, 64 );
+   ArenaBackgroundColor = Color( 48, 48, 48 );
 
-   TitleMessageFont = "Resources/Fonts/Rubber-Duck.ttf";
-   TitleMessageCharSize = 32;
-   TitleMessageTextColor = Color::White;
-
+   TitleMenuBackgroundColor = Color( 48, 48, 48, 128 );
    TitleMenuFont = "Resources/Fonts/Rubber-Duck.ttf";
    TitleMenuCharSize = 96;
-   TitleMenuTextColor = Color::White;
+   TitleMenuTextColor = Color( 200, 200, 200 );
+   TitleMenuCaratOffset = 30;
+   TitleMenuCaratBlinkRate = 0.25f;
 
    PlayingMessageFont = "Resources/Fonts/Rubber-Duck.ttf";
    PlayingMessageCharSize = 32;
-   PlayingMessageTextColor = Color::White;
+   PlayingMessageTextColor = Color( 200, 200, 200 );
 
+   MainMenuBackgroundColor = Color( 48, 48, 48, 128 );
    MainMenuFont = "Resources/Fonts/Rubber-Duck.ttf";
    MainMenuCharSize = 96;
-   MainMenuTextColor = Color::White;
-   MainMenuCaratOffset = 20;
+   MainMenuTextColor = Color( 200, 200, 200 );
+   MainMenuCaratOffset = 30;
    MainMenuCaratBlinkRate = 0.25f;
 
    BallOrigin = { 290.5f, 290.5f };

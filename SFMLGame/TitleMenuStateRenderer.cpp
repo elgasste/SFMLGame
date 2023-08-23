@@ -19,6 +19,9 @@ TitleMenuStateRenderer::TitleMenuStateRenderer( shared_ptr<RenderConfig> renderC
    _elapsedSeconds( 0 ),
    _showCarat( true )
 {
+   _backgroundRect = RectangleShape( { (float)renderConfig->ScreenWidth, (float)renderConfig->ScreenHeight } );
+   _backgroundRect.setFillColor( renderConfig->TitleMenuBackgroundColor );
+
    _font = make_shared<Font>();
    _font->loadFromFile( renderConfig->TitleMenuFont );
 
@@ -51,20 +54,22 @@ TitleMenuStateRenderer::TitleMenuStateRenderer( shared_ptr<RenderConfig> renderC
 
    auto textWidth = _text->getGlobalBounds().width;
    auto caratWidth = _carat->getGlobalBounds().width;
-   auto menuWidth = textWidth + caratWidth + renderConfig->MainMenuCaratOffset;
+   auto menuWidth = textWidth + caratWidth + renderConfig->TitleMenuCaratOffset;
    auto menuHeight = menu->GetOptionCount() * _lineSpacing;
 
    _menuX = ( (float)renderConfig->ScreenWidth / 2 ) - ( menuWidth / 2 );
    _menuY = ( (float)renderConfig->ScreenHeight / 2 ) - ( menuHeight / 2 );
 
-   _text->setPosition( _menuX + caratWidth + renderConfig->MainMenuCaratOffset, _menuY );
+   _text->setPosition( _menuX + caratWidth + renderConfig->TitleMenuCaratOffset, _menuY );
 }
 
 void TitleMenuStateRenderer::Render()
 {
+   _window->Draw( _backgroundRect );
+
    _elapsedSeconds += _clock->GetFrameSeconds();
 
-   if ( _elapsedSeconds >= _renderConfig->MainMenuCaratBlinkRate )
+   if ( _elapsedSeconds >= _renderConfig->TitleMenuCaratBlinkRate )
    {
       _elapsedSeconds = 0;
       _showCarat = !_showCarat;
