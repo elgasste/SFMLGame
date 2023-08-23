@@ -29,13 +29,14 @@ public:
    void Tick();
 
 private:
+   void ResetBall();
    void HandleEvents();
 
    void OnQuit() const;
    void OnExitToTitle() const;
    void OnOpenMenu() const;
    void OnCloseMenu() const;
-   void OnStartGame() const;
+   void OnStartGame();
    void OnTurnBall( std::shared_ptr<IGameEventArgs> args ) const;
    void OnPushBall( std::shared_ptr<IGameEventArgs> args ) const;
 

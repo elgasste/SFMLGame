@@ -70,9 +70,6 @@ shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig
 {
    auto ball = make_shared<Entity>();
    ball->SetHitBoxDimensions( gameConfig->BallDiameter, gameConfig->BallDiameter );
-   ball->SetPosition( gameConfig->DefaultBallPosition.x, gameConfig->DefaultBallPosition.y );
-   ball->SetAngle( gameConfig->DefaultBallAngle );
-   ball->SetVelocity( gameConfig->DefaultBallVelocity );
 
    auto gameData = shared_ptr<GameData>( new GameData( ball ) );
 

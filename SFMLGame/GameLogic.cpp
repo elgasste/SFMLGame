@@ -46,6 +46,15 @@ void GameLogic::Tick()
    }
 }
 
+void GameLogic::ResetBall()
+{
+   auto ball = _gameData->GetBall();
+
+   ball->SetPosition( _gameConfig->DefaultBallPosition.x, _gameConfig->DefaultBallPosition.y );
+   ball->SetAngle( _gameConfig->DefaultBallAngle );
+   ball->SetVelocity( _gameConfig->DefaultBallVelocity );
+}
+
 void GameLogic::HandleEvents()
 {
    while ( _eventQueue->HasEvents() )
@@ -75,7 +84,6 @@ void GameLogic::OnQuit() const
 
 void GameLogic::OnExitToTitle() const
 {
-   // TODO: similar to OnQuit, probably save the game and reset everything
    _gameStateTracker->gameState = GameState::TitleMenu;
    _eventQueue->Flush();
 }
@@ -103,8 +111,9 @@ void GameLogic::OnCloseMenu() const
    }
 }
 
-void GameLogic::OnStartGame() const
+void GameLogic::OnStartGame()
 {
+   ResetBall();
    _gameStateTracker->gameState = GameState::Playing;
    _eventQueue->Flush();
 }
