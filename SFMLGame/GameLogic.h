@@ -24,7 +24,6 @@ public:
 
 private:
    void MovePlayer() const;
-   bool EntityCollidedWithWall( std::shared_ptr<Entity> entity, float xDest, float yDest ) const;
    void DeceleratePlayer( std::shared_ptr<Entity> player, bool collidedWithWall ) const;
 
 private:

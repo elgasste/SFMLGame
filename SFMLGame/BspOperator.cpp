@@ -53,7 +53,7 @@ void BspOperator::DeleteTreeRecursive( BspNode* node )
    }
 }
 
-const Subsector& BspOperator::GetOccupyingSubsector( shared_ptr<Entity> entity )
+const Subsector& BspOperator::GetOccupyingSubsector( shared_ptr<Entity> entity ) const
 {
    BspNode* node = _rootNode;
    auto& origin = entity->GetPosition();
@@ -194,4 +194,45 @@ void BspOperator::RenderLeaf( BspNode* leaf )
          }
       }
    }
+}
+
+bool BspOperator::CheckWallCollision( float startX, float startY, float endX, float endY ) const
+{
+   return CheckWallNodeCollisionRecursive( _rootNode, startX, startY, endX, endY );
+}
+
+bool BspOperator::CheckWallNodeCollisionRecursive( BspNode* node, float startX, float startY, float endX, float endY ) const
+{
+   if ( node->isLeaf )
+   {
+      for ( auto& lineseg : node->subsector->linesegs )
+      {
+         // MUFFINS: send up the lineseg and the intersection point
+         if ( Geometry::LinesIntersect( startX, startY, endX, endY, lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y, nullptr ) )
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   auto startIsOnRight = Geometry::IsPointOnRightSide( startX, startY, node->linedef->start.x, node->linedef->start.y, node->linedef->end.x, node->linedef->end.y );
+   auto endIsOnRight = Geometry::IsPointOnRightSide( endX, endY, node->linedef->start.x, node->linedef->start.y, node->linedef->end.x, node->linedef->end.y );
+
+   auto nextNode = startIsOnRight ? node->rightChild : node->leftChild;
+
+   if ( startIsOnRight == endIsOnRight )
+   {
+      return CheckWallNodeCollisionRecursive( nextNode, startX, startY, endX, endY );
+   }
+
+   if ( CheckWallNodeCollisionRecursive( nextNode, startX, startY, endX, endY ) )
+   {
+      return true;
+   }
+
+   nextNode = startIsOnRight ? node->leftChild : node->rightChild;
+
+   return CheckWallNodeCollisionRecursive( nextNode, startX, startY, endX, endY );
 }

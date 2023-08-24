@@ -23,13 +23,15 @@ public:
                 BspNode* rootNode );
    ~BspOperator();
 
-   const Subsector& GetOccupyingSubsector( std::shared_ptr<Entity> entity );
+   const Subsector& GetOccupyingSubsector( std::shared_ptr<Entity> entity ) const;
    void RenderWorld( std::shared_ptr<Entity> viewingEntity );
+   bool CheckWallCollision( float startX, float startY, float endX, float endY ) const;
 
 private:
    void DeleteTreeRecursive( BspNode* node );
    void RenderNodeRecursive( BspNode* node );
    void RenderLeaf( BspNode* leaf );
+   bool CheckWallNodeCollisionRecursive( BspNode* node, float startX, float startY, float endX, float endY ) const;
 
 private:
    std::shared_ptr<GameConfig> _gameConfig;

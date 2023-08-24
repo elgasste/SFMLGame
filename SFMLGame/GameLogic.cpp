@@ -62,7 +62,9 @@ void GameLogic::MovePlayer() const
    newPositionY += dy;
 
    // check for wall collision
-   auto collidedWithWall = EntityCollidedWithWall( player, newPositionX, newPositionY );
+   //
+   // MUFFINS: try to "hug" the wall if this happens
+   auto collidedWithWall = _bspOperator->CheckWallCollision( position.x, position.y, newPositionX, newPositionY );
 
    if ( !collidedWithWall )
    {
@@ -71,31 +73,6 @@ void GameLogic::MovePlayer() const
 
    // finally, decelerate
    DeceleratePlayer( player, collidedWithWall );
-}
-
-bool GameLogic::EntityCollidedWithWall( std::shared_ptr<Entity> entity, float xDest, float yDest ) const
-{
-   auto& position = entity->GetPosition();
-   auto& subsector = _bspOperator->GetOccupyingSubsector( entity );
-
-   // MUFFINS: take the entity's hit box into consideration. but HOW?? I think using a radius would be
-   // pretty neat, and would solve some issues of how to clip to a wall, but it's tough when the
-   // hit box might span several subsectors. I think there's a way to use the BSP tree to do it, but
-   // I'm not really sure how? guess I'll have to do some research. Doom uses "blockmaps", I'm not
-   // even sure how those work.
-   for ( const auto& lineseg : subsector.linesegs )
-   {
-      // MUFFINS: if there's a collision, we should try "hugging" the wall and moving along it
-      if ( Geometry::LinesIntersect( position.x, position.y, xDest, yDest,
-                                     lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y,
-                                     nullptr ) )
-      {
-         return true;
-         break;
-      }
-   }
-
-   return false;
 }
 
 void GameLogic::DeceleratePlayer( shared_ptr<Entity> player, bool collidedWithWall ) const
