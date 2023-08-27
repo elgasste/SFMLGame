@@ -106,7 +106,7 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
       auto& sprite = _renderData->GetSpriteById( lineseg.linedef->textureId );
 
       // this uses the formula ProjectedWallHeight = ( ActualWallHeight / DistanceToWall ) * DistanceToProjectionPlane
-      auto rayLength = Geometry::Raycast( playerPosition, pIntersect, playerAngle );
+      auto rayLength = Geometry::Raycast( playerPosition, pIntersect, playerAngle, drawAngle );
       auto projectedWallHeight = ( ( _renderConfig->WallHeight / rayLength ) * _renderConfig->ProjectionPlaneDelta );
 
       _spritePosition.x = (float)i;

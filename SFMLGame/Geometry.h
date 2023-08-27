@@ -37,7 +37,7 @@ public:
                              bool& isLineStartInView,
                              bool& isLineEndInView,
                              bool useBackfaceCulling );
-   static float Raycast( const sf::Vector2f& origin, const sf::Vector2f& point, float angle );
+   static float Raycast( const sf::Vector2f& origin, const sf::Vector2f& point, float playerAngle, float rayAngle );
 };
 
 NAMESPACE_END

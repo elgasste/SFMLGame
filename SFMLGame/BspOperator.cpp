@@ -196,20 +196,21 @@ void BspOperator::RenderLeaf( BspNode* leaf )
    }
 }
 
-bool BspOperator::CheckWallCollision( float startX, float startY, float endX, float endY ) const
+bool BspOperator::CheckWallCollision( float startX, float startY, float endX, float endY, Lineseg& collidingLineseg ) const
 {
-   return CheckWallNodeCollisionRecursive( _rootNode, startX, startY, endX, endY );
+   return CheckWallNodeCollisionRecursive( _rootNode, startX, startY, endX, endY, collidingLineseg );
 }
 
-bool BspOperator::CheckWallNodeCollisionRecursive( BspNode* node, float startX, float startY, float endX, float endY ) const
+bool BspOperator::CheckWallNodeCollisionRecursive( BspNode* node, float startX, float startY, float endX, float endY, Lineseg& collidingLineseg ) const
 {
    if ( node->isLeaf )
    {
       for ( auto& lineseg : node->subsector->linesegs )
       {
-         // MUFFINS: send up the lineseg and the intersection point
+         // MUFFINS: send up the intersection point?
          if ( Geometry::LinesIntersect( startX, startY, endX, endY, lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y, nullptr ) )
          {
+            collidingLineseg = lineseg;
             return true;
          }
       }
@@ -224,15 +225,15 @@ bool BspOperator::CheckWallNodeCollisionRecursive( BspNode* node, float startX, 
 
    if ( startIsOnRight == endIsOnRight )
    {
-      return CheckWallNodeCollisionRecursive( nextNode, startX, startY, endX, endY );
+      return CheckWallNodeCollisionRecursive( nextNode, startX, startY, endX, endY, collidingLineseg );
    }
 
-   if ( CheckWallNodeCollisionRecursive( nextNode, startX, startY, endX, endY ) )
+   if ( CheckWallNodeCollisionRecursive( nextNode, startX, startY, endX, endY, collidingLineseg ) )
    {
       return true;
    }
 
    nextNode = startIsOnRight ? node->leftChild : node->rightChild;
 
-   return CheckWallNodeCollisionRecursive( nextNode, startX, startY, endX, endY );
+   return CheckWallNodeCollisionRecursive( nextNode, startX, startY, endX, endY, collidingLineseg );
 }

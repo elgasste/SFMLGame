@@ -145,8 +145,14 @@ bool Geometry::IsLineInView( const Vector2f& origin,
    }
 }
 
-float Geometry::Raycast( const sf::Vector2f& origin, const sf::Vector2f& point, float angle )
+float Geometry::Raycast( const sf::Vector2f& origin, const sf::Vector2f& point, float playerAngle, float rayAngle )
 {
-   // from the Wolfenstein 3D book. it's supposed to fix fish-eye, but sometimes it seems to cause reverse-fish-eye?
-   return ( ( point.x - origin.x ) * cosf( angle ) ) - ( ( point.y - origin.y ) * sinf( angle ) );
+   // this is from the Wolfenstein 3D book. it's supposed to fix fish-eye, but sometimes it seems to cause reverse-fish-eye?
+   //return ( ( point.x - origin.x ) * cosf( playerAngle ) ) - ( ( point.y - origin.y ) * sinf( playerAngle ) );
+
+   // I can't really tell if this method works better (it's from a YouTube video), it might even do the same thing.
+   auto rayDistance = sqrtf( powf( point.x - origin.x, 2 ) + powf( point.y - origin.y, 2 ) );
+   auto angleDelta = playerAngle - rayAngle;
+   NORMALIZE_ANGLE( angleDelta );
+   return rayDistance * cosf( angleDelta );
 }

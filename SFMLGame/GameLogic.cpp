@@ -44,6 +44,7 @@ void GameLogic::MovePlayer() const
       return;
    }
 
+   // MUFFINS: we need to figure out the angle to the new position
    auto& position = player->GetPosition();
    auto forwardAngle = player->GetAngle();
    auto sidewaysAngle = forwardAngle + RAD_90;
@@ -64,12 +65,27 @@ void GameLogic::MovePlayer() const
    // check for wall collision
    //
    // MUFFINS: try to "hug" the wall if this happens
-   auto collidedWithWall = _bspOperator->CheckWallCollision( position.x, position.y, newPositionX, newPositionY );
+   static Lineseg collidingLineseg;
+   auto collidedWithWall = _bspOperator->CheckWallCollision( position.x, position.y, newPositionX, newPositionY, collidingLineseg );
 
    if ( !collidedWithWall )
    {
       player->SetPosition( newPositionX, newPositionY );
    }
+   //else
+   //{
+   //   // MUFFINS: this is all super convoluted, think I might want to start over with it.
+   //   auto preMovementAngle = atan2f( newPositionY - position.y, newPositionX - position.x );
+   //   auto movementAngle = RAD_360 - preMovementAngle;
+   //   NORMALIZE_ANGLE( movementAngle );
+   //   auto linesegAngle = atan2f( collidingLineseg.end.y - collidingLineseg.start.y, collidingLineseg.start.x - collidingLineseg.end.x );
+   //   NORMALIZE_ANGLE( linesegAngle );
+   //   auto angleToLineseg = RAD_180 - ( movementAngle + linesegAngle );
+   //   NORMALIZE_ANGLE( angleToLineseg );
+
+   //   // MUFFINS: for testing purposes
+   //   player->SetAngle( angleToLineseg );
+   //}
 
    // finally, decelerate
    DeceleratePlayer( player, collidedWithWall );
