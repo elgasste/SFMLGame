@@ -44,7 +44,6 @@ void GameLogic::MovePlayer() const
       return;
    }
 
-   // MUFFINS: we need to figure out the angle to the new position
    auto& position = player->GetPosition();
    auto forwardAngle = player->GetAngle();
    auto sidewaysAngle = forwardAngle + RAD_90;

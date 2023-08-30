@@ -16,6 +16,7 @@
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
 #include "RaycastRenderer.h"
+#include "TopDownRenderer.h"
 #include "ColumnTracker.h"
 #include "GameData.h"
 #include "Subsector.h"
@@ -46,7 +47,7 @@ shared_ptr<Game> GameLoader::Load() const
    menu->AddOption( backMenuOption );
    menu->AddOption( quitMenuOption );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( gameConfig, eventAggregator, clock ) );
-   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( gameConfig, gameData, clock, inputReader, stateController ) );
+   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( gameConfig, gameData, renderConfig, clock, inputReader, stateController ) );
    auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, stateController, menu ) );
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( renderConfig, inputReader, stateController ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
@@ -56,7 +57,8 @@ shared_ptr<Game> GameLoader::Load() const
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, clock, window ) );
    auto columnTracker = make_shared<ColumnTracker>();
    auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, gameData, renderConfig, renderData, window, columnTracker ) );
-   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, window, raycastRenderer ) );
+   auto topDownRenderer = shared_ptr<TopDownRenderer>( new TopDownRenderer( gameConfig, gameData, renderConfig, window, columnTracker ) );
+   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, window, raycastRenderer, topDownRenderer ) );
    auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( gameConfig, renderConfig, window, clock, menu ) );
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderConfig, window, diagnosticRenderer, stateController ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
@@ -101,7 +103,7 @@ shared_ptr<vector<Sector>> GameLoader::LoadSectors() const
    sectors->at( 0 ).linedefs.push_back( { Vector2f( 190, 155 ), Vector2f( 190, 230 ), 1 } );
    sectors->at( 0 ).linedefs.push_back( { Vector2f( 190, 230 ), Vector2f( 250, 230 ), 1 } );
    sectors->at( 0 ).linedefs.push_back( { Vector2f( 250, 230 ), Vector2f( 250, 150 ), 1 } );
-   sectors->at( 0 ).linedefs.push_back( { Vector2f( 250, 150 ), Vector2f( 300, 10 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 250, 150 ), Vector2f( 300, 100 ), 1 } );
    sectors->at( 0 ).linedefs.push_back( { Vector2f( 300, 100 ), Vector2f( 310, 100 ), 1 } );
    sectors->at( 0 ).linedefs.push_back( { Vector2f( 310, 100 ), Vector2f( 310, 80 ), 1 } );
    sectors->at( 0 ).linedefs.push_back( { Vector2f( 310, 80 ), Vector2f( 260, 80 ), 1 } );

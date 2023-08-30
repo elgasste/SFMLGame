@@ -3,6 +3,7 @@
 #include "PlayingStateInputHandler.h"
 #include "GameConfig.h"
 #include "GameData.h"
+#include "RenderConfig.h"
 #include "GameClock.h"
 #include "InputReader.h"
 #include "GameStateController.h"
@@ -14,11 +15,13 @@ using namespace sf;
 
 PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<GameConfig> gameConfig,
                                                     shared_ptr<GameData> gameData,
+                                                    shared_ptr<RenderConfig> renderConfig,
                                                     shared_ptr<GameClock> clock,
                                                     shared_ptr<InputReader> inputReader,
                                                     shared_ptr<GameStateController> stateController ) :
    _gameConfig( gameConfig ),
    _gameData( gameData ),
+   _renderConfig( renderConfig ),
    _clock( clock ),
    _inputReader( inputReader ),
    _stateController( stateController )
@@ -30,6 +33,11 @@ void PlayingStateInputHandler::HandleInput()
    if ( _inputReader->WasButtonPressed( Button::Back ) )
    {
       _stateController->SetState( GameState::Menu );
+      return;
+   }
+   else if ( _inputReader->WasButtonPressed( Button::AutoMapToggle ) )
+   {
+      _renderConfig->ShowTopDownView = !_renderConfig->ShowTopDownView;
       return;
    }
 

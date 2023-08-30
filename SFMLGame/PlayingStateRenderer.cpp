@@ -4,6 +4,7 @@
 #include "RenderConfig.h"
 #include "SFMLWindow.h"
 #include "RaycastRenderer.h"
+#include "TopDownRenderer.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -11,9 +12,12 @@ using namespace sf;
 
 PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfig,
                                             shared_ptr<SFMLWindow> window,
-                                            shared_ptr<RaycastRenderer> raycastRenderer ) :
+                                            shared_ptr<RaycastRenderer> raycastRenderer,
+                                            shared_ptr<TopDownRenderer> topDownRenderer ) :
+   _renderConfig( renderConfig ),
    _window( window ),
-   _raycastRenderer( raycastRenderer )
+   _raycastRenderer( raycastRenderer ),
+   _topDownRenderer( topDownRenderer )
 {
    _font = make_shared<Font>();
    _font->loadFromFile( renderConfig->MessageFont );
@@ -29,6 +33,14 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
 
 void PlayingStateRenderer::Render()
 {
-   _raycastRenderer->Render();
+   if ( _renderConfig->ShowTopDownView )
+   {
+      _topDownRenderer->Render();
+   }
+   else
+   {
+      _raycastRenderer->Render();
+   }
+
    _window->Draw( _text );
 }

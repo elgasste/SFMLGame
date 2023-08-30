@@ -27,6 +27,7 @@ GameConfig::GameConfig()
       { KeyCode::S, Button::Backward },
       { KeyCode::A, Button::StrafeLeft },
       { KeyCode::D, Button::StrafeRight },
+      { KeyCode::Tab, Button::AutoMapToggle },
       { KeyCode::F12, Button::Diagnostics }
    };
 

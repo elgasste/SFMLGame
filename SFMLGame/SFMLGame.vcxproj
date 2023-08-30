@@ -189,6 +189,7 @@ xcopy "$(SolutionDir)SFMLGame\Consolas.ttf" "$(OutDir)" /Y</Command>
     <ClCompile Include="RenderConfig.cpp" />
     <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
+    <ClCompile Include="TopDownRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackMenuOption.h" />
@@ -234,6 +235,7 @@ xcopy "$(SolutionDir)SFMLGame\Consolas.ttf" "$(OutDir)" /Y</Command>
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Subsector.h" />
+    <ClInclude Include="TopDownRenderer.h" />
     <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

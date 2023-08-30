@@ -21,6 +21,7 @@ RenderConfig::RenderConfig( shared_ptr<GameConfig> gameConfig )
    SkySpriteId = 4;
 
    ShowDiagnostics = false;
+   ShowTopDownView = false;
 
    DiagnosticsWidth = 450;
    DiagnosticsHeight = 180;

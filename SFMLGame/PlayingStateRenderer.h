@@ -15,20 +15,24 @@ NAMESPACE_BEGIN
 class RenderConfig;
 class SFMLWindow;
 class RaycastRenderer;
+class TopDownRenderer;
 
 class PlayingStateRenderer : public IGameStateRenderer
 {
 public:
    PlayingStateRenderer( std::shared_ptr<RenderConfig> renderConfig,
                          std::shared_ptr<SFMLWindow> window,
-                         std::shared_ptr<RaycastRenderer> raycastRenderer );
+                         std::shared_ptr<RaycastRenderer> raycastRenderer,
+                         std::shared_ptr<TopDownRenderer> topDownRenderer );
 
    // IGameStateRenderer
    void Render() override;
 
 private:
+   std::shared_ptr<RenderConfig> _renderConfig;
    std::shared_ptr<SFMLWindow> _window;
    std::shared_ptr<RaycastRenderer> _raycastRenderer;
+   std::shared_ptr<TopDownRenderer> _topDownRenderer;
 
    std::shared_ptr<sf::Font> _font;
    std::shared_ptr<sf::Text> _text;

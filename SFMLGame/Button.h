@@ -19,6 +19,8 @@ enum class Button
    StrafeLeft,
    StrafeRight,
 
+   AutoMapToggle,
+
    Diagnostics,
 
    ButtonCount

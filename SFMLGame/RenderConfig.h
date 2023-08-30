@@ -29,6 +29,7 @@ public:
    int SkySpriteId;
 
    bool ShowDiagnostics;
+   bool ShowTopDownView;
 
    float DiagnosticsXPosition;
    float DiagnosticsYPosition;

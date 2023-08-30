@@ -1,14 +1,12 @@
-#include <math.h>
-#include <cassert>
 #include <SFML/Graphics.hpp>
 
-#include "RaycastRenderer.h"
+#include "TopDownRenderer.h"
 #include "GameConfig.h"
-#include "RenderConfig.h"
 #include "GameData.h"
-#include "RenderData.h"
+#include "RenderConfig.h"
 #include "SFMLWindow.h"
 #include "ColumnTracker.h"
+#include "Sector.h"
 #include "Entity.h"
 #include "Geometry.h"
 
@@ -16,76 +14,61 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
+TopDownRenderer::TopDownRenderer( shared_ptr<GameConfig> gameConfig,
                                   shared_ptr<GameData> gameData,
                                   shared_ptr<RenderConfig> renderConfig,
-                                  shared_ptr<RenderData> renderData,
                                   shared_ptr<SFMLWindow> window,
                                   shared_ptr<ColumnTracker> columnTracker ) :
    _gameConfig( gameConfig ),
    _gameData( gameData ),
    _renderConfig( renderConfig ),
-   _renderData( renderData ),
    _window( window ),
    _columnTracker( columnTracker ),
    _leftFovAngle( 0 )
 {
-   _renderColumns = (sf::Vertex*)malloc( sizeof( sf::Vertex ) * gameConfig->ScreenWidth * 2 );
+   _linesegDrawer = VertexArray( LineStrip, 2 );
+   _linesegDrawer[0].color = Color::White;
+   _linesegDrawer[1].color = Color::White;
 
-   auto screenWidth = (float)gameConfig->ScreenWidth;
-   auto screenHeight = (float)gameConfig->ScreenHeight;
+   _playerDrawer.setRadius( 3 );
+   _playerDrawer.setOrigin( { 3, 3 } );
+   _playerDrawer.setFillColor( Color::Red );
 
-   _floorRenderRect[0] = Vertex( Vector2f( 0, screenHeight / 2.0f ), Color::Black );
-   _floorRenderRect[1] = Vertex( Vector2f( screenWidth, screenHeight / 2.0f ), Color::Black );
-   _floorRenderRect[2] = Vertex( Vector2f( screenWidth, screenHeight ), Color( 22, 59, 8 ) );
-   _floorRenderRect[3] = Vertex( Vector2f( 0, screenHeight ), Color( 22, 59, 8 ) );
-
-   _skyPosition = Vector2f( 0, 0 );
-   _skyTextureRect = IntRect( 0, 0, gameConfig->ScreenWidth, gameConfig->ScreenHeight );
-   _skyTextureScalar = (float)_renderData->GetTextureById( _renderConfig->SkySpriteId ).getSize().x / RAD_360;
-
-   _spriteTextureRect.top = 0;
-   _spriteTextureRect.width = 1;
-   _spriteTextureRect.height = 1080;
-
-   _spriteVerticalScale.x = 1;
+   _playerFovDrawer = VertexArray( LineStrip, 2 );
+   _playerFovDrawer[0].color = Color::Green;
+   _playerFovDrawer[1].color = Color::Green;
 }
 
-RaycastRenderer::~RaycastRenderer()
-{
-   delete _renderColumns;
-   _renderColumns = nullptr;
-}
-
-void RaycastRenderer::Render()
+void TopDownRenderer::Render()
 {
    _columnTracker->Reset( 0, _gameConfig->ScreenWidth - 1 );
+
+   RenderFovRecursive( _gameData->GetBspRootNode() );
+
+   RenderSectors();
 
    auto player = _gameData->GetPlayer();
    _viewOrigin = player->GetPosition();
    _leftFovAngle = player->GetAngle() + ( _renderConfig->FovAngle / 2.0f );
-   NORMALIZE_ANGLE( _leftFovAngle );
 
-   RenderCeilingAndFloor();
-   RenderNodeRecursive( _gameData->GetBspRootNode() );
-
-   assert( _columnTracker->IsFullyTracked() );
+   _playerDrawer.setPosition( player->GetPosition() );
+   _window->Draw( _playerDrawer );
 }
 
-void RaycastRenderer::RenderCeilingAndFloor()
+void TopDownRenderer::RenderSectors()
 {
-   auto playerAngle = _gameData->GetPlayer()->GetAngle();
-   _skyTextureRect.left = -(int)( playerAngle * _skyTextureScalar );
-
-   auto& skySprite = _renderData->GetSpriteById( _renderConfig->SkySpriteId );
-   skySprite.setPosition( _skyPosition );
-   skySprite.setTextureRect( _skyTextureRect );
-   _window->Draw( skySprite );
-
-   _window->Draw( _floorRenderRect, 4, Quads );
+   for ( auto& sector : *_gameData->GetSectors() )
+   {
+      for ( auto& linedef : sector.linedefs )
+      {
+         _linesegDrawer[0].position = linedef.start;
+         _linesegDrawer[1].position = linedef.end;
+         _window->Draw( _linesegDrawer );
+      }
+   }
 }
 
-void RaycastRenderer::RenderNodeRecursive( BspNode* node )
+void TopDownRenderer::RenderFovRecursive( BspNode* node )
 {
    if ( node == nullptr )
    {
@@ -105,25 +88,25 @@ void RaycastRenderer::RenderNodeRecursive( BspNode* node )
                                       node->linedef->end.x,
                                       node->linedef->end.y ) )
    {
-      RenderNodeRecursive( node->rightChild );
+      RenderFovRecursive( node->rightChild );
 
       if ( !_columnTracker->IsFullyTracked() )
       {
-         RenderNodeRecursive( node->leftChild );
+         RenderFovRecursive( node->leftChild );
       }
    }
    else
    {
-      RenderNodeRecursive( node->leftChild );
+      RenderFovRecursive( node->leftChild );
 
       if ( !_columnTracker->IsFullyTracked() )
       {
-         RenderNodeRecursive( node->rightChild );
+         RenderFovRecursive( node->rightChild );
       }
    }
 }
 
-void RaycastRenderer::RenderLeaf( BspNode* leaf )
+void TopDownRenderer::RenderLeaf( BspNode* leaf )
 {
    for ( const auto& lineseg : leaf->subsector->linesegs )
    {
@@ -199,14 +182,14 @@ void RaycastRenderer::RenderLeaf( BspNode* leaf )
    }
 }
 
-void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
+void TopDownRenderer::RenderLineseg( const Lineseg& lineseg,
                                      float drawStartAngle,
                                      int startColumn,
                                      int endColumn )
 {
-   auto player = _gameData->GetPlayer();
-   auto& playerPosition = player->GetPosition();
-   auto playerAngle = player->GetAngle();
+   auto& playerPosition = _gameData->GetPlayer()->GetPosition();
+   _playerFovDrawer[0].position = playerPosition;
+
    static Vector2f pIntersect;
 
    for ( int i = startColumn, j = 0; i <= endColumn; i++, j++ )
@@ -236,29 +219,7 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
          }
       }
 
-      auto& sprite = _renderData->GetSpriteById( lineseg.linedef->textureId );
-
-      // this uses the formula ProjectedWallHeight = ( ActualWallHeight / DistanceToWall ) * DistanceToProjectionPlane
-      auto rayLength = Geometry::Raycast( playerPosition, pIntersect, playerAngle, drawAngle );
-      auto projectedWallHeight = ( ( _renderConfig->WallHeight / rayLength ) * _renderConfig->ProjectionPlaneDelta );
-
-      _spritePosition.x = (float)i;
-      _spritePosition.y = ( (float)_gameConfig->ScreenHeight - projectedWallHeight ) / 2.0f;
-      sprite.setPosition( _spritePosition );
-
-      _spriteTextureRect.left = (int)( sqrtf(
-         powf( pIntersect.x - lineseg.linedef->start.x, 2 ) +
-         powf( pIntersect.y - lineseg.linedef->start.y, 2 ) ) *
-         _renderConfig->SpriteOffsetScalar );
-      sprite.setTextureRect( _spriteTextureRect );
-
-      _spriteVerticalScale.y = projectedWallHeight / (float)_gameConfig->ScreenHeight;
-      sprite.setScale( _spriteVerticalScale );
-
-      auto lightAdjustment = ( rayLength == 0.0f ) ? 0.0f : min( rayLength / _renderConfig->LightingScalar, 255.0f );
-      auto lightValue = (Uint8)max( _renderConfig->LightingMinimum, (int)( 255.0f - lightAdjustment ) );
-      sprite.setColor( Color( lightValue, lightValue, lightValue ) );
-
-      _window->Draw( sprite );
+      _playerFovDrawer[1].position = pIntersect;
+      _window->Draw( _playerFovDrawer );
    }
 }
