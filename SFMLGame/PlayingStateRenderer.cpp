@@ -1,24 +1,19 @@
 #include <SFML/Graphics.hpp>
 
 #include "PlayingStateRenderer.h"
-#include "GameConfig.h"
 #include "RenderConfig.h"
-#include "GameData.h"
 #include "SFMLWindow.h"
-#include "BspOperator.h"
+#include "RaycastRenderer.h"
 
 using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> gameConfig,
-                                            shared_ptr<RenderConfig> renderConfig,
-                                            shared_ptr<GameData> gameData,
+PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfig,
                                             shared_ptr<SFMLWindow> window,
-                                            shared_ptr<BspOperator> bspOperator ) :
-   _gameData( gameData ),
+                                            shared_ptr<RaycastRenderer> raycastRenderer ) :
    _window( window ),
-   _bspOperator( bspOperator )
+   _raycastRenderer( raycastRenderer )
 {
    _font = make_shared<Font>();
    _font->loadFromFile( renderConfig->MessageFont );
@@ -34,6 +29,6 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<GameConfig> gameConfig,
 
 void PlayingStateRenderer::Render()
 {
-   _bspOperator->RenderWorld( _gameData->GetPlayer() );
+   _raycastRenderer->Render();
    _window->Draw( _text );
 }

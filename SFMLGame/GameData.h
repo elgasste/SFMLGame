@@ -4,6 +4,7 @@
 
 #include "Common.h"
 #include "Sector.h"
+#include "BspNode.h"
 
 NAMESPACE_BEGIN
 
@@ -12,14 +13,21 @@ class Entity;
 class GameData
 {
 public:
-   GameData( std::vector<Sector> sectors,
+   GameData( std::shared_ptr<std::vector<Sector>> sectors,
+             BspNode* bspRootNode,
              std::shared_ptr<Entity> player );
+   ~GameData();
 
-   std::vector<Sector>& GetSectors() { return _sectors; }
+   std::shared_ptr<std::vector<Sector>> GetSectors() { return _sectors; }
+   BspNode* GetBspRootNode() { return _bspRootNode; }
    std::shared_ptr<Entity> GetPlayer() { return _player; }
 
 private:
-   std::vector<Sector> _sectors;
+   void DeleteBspTreeRecursive( BspNode* node );
+
+private:
+   std::shared_ptr<std::vector<Sector>> _sectors;
+   BspNode* _bspRootNode;
    std::shared_ptr<Entity> _player;
 };
 

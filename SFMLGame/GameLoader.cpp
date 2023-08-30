@@ -12,13 +12,13 @@
 #include "PlayingStateInputHandler.h"
 #include "MenuStateInputHandler.h"
 #include "GameInputHandler.h"
+#include "CollisionDetector.h"
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
 #include "RaycastRenderer.h"
 #include "ColumnTracker.h"
 #include "GameData.h"
 #include "Subsector.h"
-#include "BspOperator.h"
 #include "RenderData.h"
 #include "PlayingStateRenderer.h"
 #include "MenuStateRenderer.h"
@@ -35,7 +35,6 @@ shared_ptr<Game> GameLoader::Load() const
    auto gameConfig = make_shared<GameConfig>();
    auto renderConfig = shared_ptr<RenderConfig>( new RenderConfig( gameConfig ) );
    auto gameData = LoadGameData( gameConfig );
-   auto bspRootNode = LoadBspTree( gameData->GetSectors() );
    auto renderData = LoadRenderData();
    auto eventAggregator = make_shared<EventAggregator>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
@@ -47,17 +46,17 @@ shared_ptr<Game> GameLoader::Load() const
    menu->AddOption( backMenuOption );
    menu->AddOption( quitMenuOption );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( gameConfig, eventAggregator, clock ) );
-   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, renderConfig, gameData, renderData, window ) );
-   auto columnTracker = make_shared<ColumnTracker>();
-   auto bspOperator = shared_ptr<BspOperator>( new BspOperator( gameConfig, renderConfig, raycastRenderer, columnTracker, bspRootNode ) );
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( gameConfig, gameData, clock, inputReader, stateController ) );
    auto menuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, stateController, menu ) );
    auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( renderConfig, inputReader, stateController ) );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Menu, menuStateInputHandler );
-   auto logic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, clock, gameInputHandler, bspOperator ) );
+   auto collisionDetector = shared_ptr<CollisionDetector>( new CollisionDetector( gameData ) );
+   auto logic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, clock, gameInputHandler, collisionDetector ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, clock, window ) );
-   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( gameConfig, renderConfig, gameData, window, bspOperator ) );
+   auto columnTracker = make_shared<ColumnTracker>();
+   auto raycastRenderer = shared_ptr<RaycastRenderer>( new RaycastRenderer( gameConfig, gameData, renderConfig, renderData, window, columnTracker ) );
+   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, window, raycastRenderer ) );
    auto menuStateRenderer = shared_ptr<MenuStateRenderer>( new MenuStateRenderer( gameConfig, renderConfig, window, clock, menu ) );
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderConfig, window, diagnosticRenderer, stateController ) );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
@@ -65,7 +64,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto game = shared_ptr<Game>( new Game( gameData, eventAggregator, clock, inputReader, logic, gameRenderer ) );
 
    // MUFFINS: for testing
-   ScaleUnits( gameData->GetSectors(), bspRootNode, gameData->GetPlayer(), 2.5f );
+   ScaleMap( gameData, 2.5f);
 
    return game;
 }
@@ -74,137 +73,139 @@ shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig
 {
    auto player = make_shared<Entity>();
    auto position = gameConfig->DefaultPlayerPosition;
-   auto hitBox = gameConfig->DefaultPlayerHitBox;
-
    player->SetPosition( position.x, position.y );
-   player->SetHitBox( hitBox.left, hitBox.top, hitBox.width, hitBox.height );
    player->SetAngle( gameConfig->DefaultPlayerAngle );
-   auto gameData = shared_ptr<GameData>( new GameData( LoadSectors(), player ) );
+
+   auto sectors = LoadSectors();
+   auto bspRootNode = LoadBspTree( sectors );
+
+   auto gameData = shared_ptr<GameData>( new GameData( sectors, bspRootNode, player ) );
+
    return gameData;
 }
 
-vector<Sector> GameLoader::LoadSectors() const
+shared_ptr<vector<Sector>> GameLoader::LoadSectors() const
 {
-   vector<Sector> sectors;
+   auto sectors = make_shared<vector<Sector>>();
 
    // outer walls (marble)
-   sectors.push_back( Sector() );
-   sectors[0].linedefs.push_back( { Vector2f( 70, 30 ), Vector2f( 110, 30 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 110, 30 ), Vector2f( 110, 50 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 110, 50 ), Vector2f( 95, 50 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 95, 50 ), Vector2f( 95, 90 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 95, 90 ), Vector2f( 110, 90 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 110, 90 ), Vector2f( 130, 110 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 130, 110 ), Vector2f( 130, 155 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 130, 155 ), Vector2f( 190, 155 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 190, 155 ), Vector2f( 190, 230 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 190, 230 ), Vector2f( 250, 230 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 250, 230 ), Vector2f( 250, 150 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 250, 150 ), Vector2f( 300, 10 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 300, 100 ), Vector2f( 310, 100 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 310, 100 ), Vector2f( 310, 80 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 310, 80 ), Vector2f( 260, 80 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 260, 80 ), Vector2f( 260, 30 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 260, 30 ), Vector2f( 400, 30 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 400, 30 ), Vector2f( 400, 80 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 400, 80 ), Vector2f( 320, 80 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 320, 80 ), Vector2f( 320, 100 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 320, 100 ), Vector2f( 350, 100 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 350, 100 ), Vector2f( 390, 140 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 390, 140 ), Vector2f( 390, 240 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 390, 240 ), Vector2f( 350, 280 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 350, 280 ), Vector2f( 280, 280 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 280, 280 ), Vector2f( 250, 250 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 250, 250 ), Vector2f( 170, 250 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 170, 250 ), Vector2f( 170, 175 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 170, 175 ), Vector2f( 130, 175 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 130, 175 ), Vector2f( 130, 210 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 130, 210 ), Vector2f( 90, 210 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 90, 210 ), Vector2f( 75, 195 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 75, 195 ), Vector2f( 40, 230 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 40, 230 ), Vector2f( 60, 230 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 60, 230 ), Vector2f( 60, 290 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 60, 290 ), Vector2f( 10, 290 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 10, 290 ), Vector2f( 10, 220 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 10, 220 ), Vector2f( 30, 220 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 30, 220 ), Vector2f( 65, 185 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 65, 185 ), Vector2f( 50, 170 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 50, 170 ), Vector2f( 50, 110 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 50, 110 ), Vector2f( 70, 90 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 70, 90 ), Vector2f( 85, 90 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 85, 90 ), Vector2f( 85, 50 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 85, 50 ), Vector2f( 70, 50 ), 1 } );
-   sectors[0].linedefs.push_back( { Vector2f( 70, 50 ), Vector2f( 70, 30 ), 1 } );
+   sectors->push_back( Sector() );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 70, 30 ), Vector2f( 110, 30 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 110, 30 ), Vector2f( 110, 50 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 110, 50 ), Vector2f( 95, 50 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 95, 50 ), Vector2f( 95, 90 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 95, 90 ), Vector2f( 110, 90 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 110, 90 ), Vector2f( 130, 110 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 130, 110 ), Vector2f( 130, 155 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 130, 155 ), Vector2f( 190, 155 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 190, 155 ), Vector2f( 190, 230 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 190, 230 ), Vector2f( 250, 230 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 250, 230 ), Vector2f( 250, 150 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 250, 150 ), Vector2f( 300, 10 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 300, 100 ), Vector2f( 310, 100 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 310, 100 ), Vector2f( 310, 80 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 310, 80 ), Vector2f( 260, 80 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 260, 80 ), Vector2f( 260, 30 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 260, 30 ), Vector2f( 400, 30 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 400, 30 ), Vector2f( 400, 80 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 400, 80 ), Vector2f( 320, 80 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 320, 80 ), Vector2f( 320, 100 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 320, 100 ), Vector2f( 350, 100 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 350, 100 ), Vector2f( 390, 140 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 390, 140 ), Vector2f( 390, 240 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 390, 240 ), Vector2f( 350, 280 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 350, 280 ), Vector2f( 280, 280 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 280, 280 ), Vector2f( 250, 250 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 250, 250 ), Vector2f( 170, 250 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 170, 250 ), Vector2f( 170, 175 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 170, 175 ), Vector2f( 130, 175 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 130, 175 ), Vector2f( 130, 210 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 130, 210 ), Vector2f( 90, 210 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 90, 210 ), Vector2f( 75, 195 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 75, 195 ), Vector2f( 40, 230 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 40, 230 ), Vector2f( 60, 230 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 60, 230 ), Vector2f( 60, 290 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 60, 290 ), Vector2f( 10, 290 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 10, 290 ), Vector2f( 10, 220 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 10, 220 ), Vector2f( 30, 220 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 30, 220 ), Vector2f( 65, 185 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 65, 185 ), Vector2f( 50, 170 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 50, 170 ), Vector2f( 50, 110 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 50, 110 ), Vector2f( 70, 90 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 70, 90 ), Vector2f( 85, 90 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 85, 90 ), Vector2f( 85, 50 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 85, 50 ), Vector2f( 70, 50 ), 1 } );
+   sectors->at( 0 ).linedefs.push_back( { Vector2f( 70, 50 ), Vector2f( 70, 30 ), 1 } );
 
    // southwest column (skinface)
-   sectors.push_back( Sector() );
-   sectors[1].linedefs.push_back( { Vector2f( 30, 260 ), Vector2f( 30, 270 ), 0 } );
-   sectors[1].linedefs.push_back( { Vector2f( 30, 270 ), Vector2f( 40, 270 ), 0 } );
-   sectors[1].linedefs.push_back( { Vector2f( 40, 270 ), Vector2f( 40, 260 ), 0 } );
-   sectors[1].linedefs.push_back( { Vector2f( 40, 260 ), Vector2f( 30, 260 ), 0 } );
+   sectors->push_back( Sector() );
+   sectors->at( 1 ).linedefs.push_back( { Vector2f( 30, 260 ), Vector2f( 30, 270 ), 0 } );
+   sectors->at( 1 ).linedefs.push_back( { Vector2f( 30, 270 ), Vector2f( 40, 270 ), 0 } );
+   sectors->at( 1 ).linedefs.push_back( { Vector2f( 40, 270 ), Vector2f( 40, 260 ), 0 } );
+   sectors->at( 1 ).linedefs.push_back( { Vector2f( 40, 260 ), Vector2f( 30, 260 ), 0 } );
 
    // west column (bricks)
-   sectors.push_back( Sector() );
-   sectors[2].linedefs.push_back( { Vector2f( 90, 120 ), Vector2f( 80, 130 ), 2 } );
-   sectors[2].linedefs.push_back( { Vector2f( 80, 130 ), Vector2f( 90, 140 ), 2 } );
-   sectors[2].linedefs.push_back( { Vector2f( 90, 140 ), Vector2f( 100, 130 ), 2 } );
-   sectors[2].linedefs.push_back( { Vector2f( 100, 130 ), Vector2f( 90, 120 ), 2 } );
+   sectors->push_back( Sector() );
+   sectors->at( 2 ).linedefs.push_back( { Vector2f( 90, 120 ), Vector2f( 80, 130 ), 2 } );
+   sectors->at( 2 ).linedefs.push_back( { Vector2f( 80, 130 ), Vector2f( 90, 140 ), 2 } );
+   sectors->at( 2 ).linedefs.push_back( { Vector2f( 90, 140 ), Vector2f( 100, 130 ), 2 } );
+   sectors->at( 2 ).linedefs.push_back( { Vector2f( 100, 130 ), Vector2f( 90, 120 ), 2 } );
 
    // east column (texture skincut)
-   sectors.push_back( Sector() );
-   sectors[3].linedefs.push_back( { Vector2f( 335, 170 ), Vector2f( 305, 170 ), 3 } );
-   sectors[3].linedefs.push_back( { Vector2f( 305, 170 ), Vector2f( 305, 200 ), 3 } );
-   sectors[3].linedefs.push_back( { Vector2f( 305, 200 ), Vector2f( 335, 200 ), 3 } );
-   sectors[3].linedefs.push_back( { Vector2f( 335, 200 ), Vector2f( 335, 170 ), 3 } );
+   sectors->push_back( Sector() );
+   sectors->at( 3 ).linedefs.push_back( { Vector2f( 335, 170 ), Vector2f( 305, 170 ), 3 } );
+   sectors->at( 3 ).linedefs.push_back( { Vector2f( 305, 170 ), Vector2f( 305, 200 ), 3 } );
+   sectors->at( 3 ).linedefs.push_back( { Vector2f( 305, 200 ), Vector2f( 335, 200 ), 3 } );
+   sectors->at( 3 ).linedefs.push_back( { Vector2f( 335, 200 ), Vector2f( 335, 170 ), 3 } );
 
    // below is data for a different map
 
    //// outer sector (blue)
    //sectors.push_back( Sector() );
-   //sectors[0].linedefs.push_back( { Vector2f( 40, 0 ), Vector2f( 300, 0 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 300, 0 ), Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), Vector2f( 260, 180 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 260, 180 ), Vector2f( 300, 200 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 300, 200 ), Vector2f( 300, 250 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 300, 250 ), Vector2f( 260, 290 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 260, 290 ), Vector2f( 90, 290 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 90, 290 ), Vector2f( 90, 230 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 90, 230 ), Vector2f( 70, 210 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 70, 210 ), Vector2f( 60, 210 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 60, 210 ), Vector2f( 60, 290 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 60, 290 ), Vector2f( 0, 290 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 0, 290 ), Vector2f( 0, 40 ), 1 } );
-   //sectors[0].linedefs.push_back( { Vector2f( 0, 40 ), Vector2f( 40, 0 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 40, 0 ), Vector2f( 300, 0 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 300, 0 ), Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), Vector2f( 260, 180 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 260, 180 ), Vector2f( 300, 200 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 300, 200 ), Vector2f( 300, 250 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 300, 250 ), Vector2f( 260, 290 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 260, 290 ), Vector2f( 90, 290 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 90, 290 ), Vector2f( 90, 230 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 90, 230 ), Vector2f( 70, 210 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 70, 210 ), Vector2f( 60, 210 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 60, 210 ), Vector2f( 60, 290 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 60, 290 ), Vector2f( 0, 290 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 0, 290 ), Vector2f( 0, 40 ), 1 } );
+   //sectors->at( 0 ).linedefs.push_back( { Vector2f( 0, 40 ), Vector2f( 40, 0 ), 1 } );
 
    //// inner sector 1 (red)
    //sectors.push_back( Sector() );
-   //sectors[1].linedefs.push_back( { Vector2f( 110, 60 ), Vector2f( 100, 60 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 100, 60 ), Vector2f( 100, 80 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 100, 80 ), Vector2f( 50, 80 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 50, 80 ), Vector2f( 20, 110 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 20, 110 ), Vector2f( 30, 120 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 30, 120 ), Vector2f( 60, 90 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 60, 90 ), Vector2f( 85, 90 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 85, 90 ), Vector2f( 85, 130 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 85, 130 ), Vector2f( 95, 130 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 95, 130 ), Vector2f( 95, 90 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 95, 90 ), Vector2f( 110, 90 ), Color::Red } );
-   //sectors[1].linedefs.push_back( { Vector2f( 110, 90 ), Vector2f( 110, 60 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 110, 60 ), Vector2f( 100, 60 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 100, 60 ), Vector2f( 100, 80 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 100, 80 ), Vector2f( 50, 80 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 50, 80 ), Vector2f( 20, 110 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 20, 110 ), Vector2f( 30, 120 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 30, 120 ), Vector2f( 60, 90 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 60, 90 ), Vector2f( 85, 90 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 85, 90 ), Vector2f( 85, 130 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 85, 130 ), Vector2f( 95, 130 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 95, 130 ), Vector2f( 95, 90 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 95, 90 ), Vector2f( 110, 90 ), Color::Red } );
+   //sectors->at( 1 ).linedefs.push_back( { Vector2f( 110, 90 ), Vector2f( 110, 60 ), Color::Red } );
 
    //// inner sector 2 (green)
    //sectors.push_back( Sector() );
-   //sectors[2].linedefs.push_back( { Vector2f( 230, 60 ), Vector2f( 170, 60 ), 1 } );
-   //sectors[2].linedefs.push_back( { Vector2f( 170, 60 ), Vector2f( 170, 70 ), 1 } );
-   //sectors[2].linedefs.push_back( { Vector2f( 170, 70 ), Vector2f( 230, 70 ), 1 } );
-   //sectors[2].linedefs.push_back( { Vector2f( 230, 70 ), Vector2f( 230, 60 ), 1 } );
+   //sectors->at( 2 ).linedefs.push_back( { Vector2f( 230, 60 ), Vector2f( 170, 60 ), 1 } );
+   //sectors->at( 2 ).linedefs.push_back( { Vector2f( 170, 60 ), Vector2f( 170, 70 ), 1 } );
+   //sectors->at( 2 ).linedefs.push_back( { Vector2f( 170, 70 ), Vector2f( 230, 70 ), 1 } );
+   //sectors->at( 2 ).linedefs.push_back( { Vector2f( 230, 70 ), Vector2f( 230, 60 ), 1 } );
 
    //// inner sector 3 (magenta)
    //sectors.push_back( Sector() );
-   //sectors[3].linedefs.push_back( { Vector2f( 260, 20 ), Vector2f( 250, 30 ), 1 } );
-   //sectors[3].linedefs.push_back( { Vector2f( 250, 30 ), Vector2f( 260, 40 ), 1 } );
-   //sectors[3].linedefs.push_back( { Vector2f( 260, 40 ), Vector2f( 270, 30 ), 1 } );
-   //sectors[3].linedefs.push_back( { Vector2f( 270, 30 ), Vector2f( 260, 20 ), 1 } );
+   //sectors->at( 3 ).linedefs.push_back( { Vector2f( 260, 20 ), Vector2f( 250, 30 ), 1 } );
+   //sectors->at( 3 ).linedefs.push_back( { Vector2f( 250, 30 ), Vector2f( 260, 40 ), 1 } );
+   //sectors->at( 3 ).linedefs.push_back( { Vector2f( 260, 40 ), Vector2f( 270, 30 ), 1 } );
+   //sectors->at( 3 ).linedefs.push_back( { Vector2f( 270, 30 ), Vector2f( 260, 20 ), 1 } );
 
    //// inner sector 4 (yellow)
    //sectors.push_back( Sector() );
@@ -228,151 +229,151 @@ vector<Sector> GameLoader::LoadSectors() const
    return sectors;
 }
 
-BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
+BspNode* GameLoader::LoadBspTree( shared_ptr<vector<Sector>> sectors ) const
 {
    // subsectors and linesegs
    auto subsector1 = new Subsector;
-   subsector1->linesegs.push_back( { &sectors[0].linedefs[7], Vector2f( 170, 155 ), Vector2f( 190, 155 ) } );
-   subsector1->linesegs.push_back( { &sectors[0].linedefs[8], Vector2f( 190, 155 ), Vector2f( 190, 230 ) } );
-   subsector1->linesegs.push_back( { &sectors[0].linedefs[26], Vector2f( 190, 250 ), Vector2f( 170, 250 ) } );
-   subsector1->linesegs.push_back( { &sectors[0].linedefs[27], Vector2f( 170, 250 ), Vector2f( 170, 175 ) } );
+   subsector1->linesegs.push_back( { &sectors->at( 0 ).linedefs[7], Vector2f( 170, 155 ), Vector2f( 190, 155 ) } );
+   subsector1->linesegs.push_back( { &sectors->at( 0 ).linedefs[8], Vector2f( 190, 155 ), Vector2f( 190, 230 ) } );
+   subsector1->linesegs.push_back( { &sectors->at( 0 ).linedefs[26], Vector2f( 190, 250 ), Vector2f( 170, 250 ) } );
+   subsector1->linesegs.push_back( { &sectors->at( 0 ).linedefs[27], Vector2f( 170, 250 ), Vector2f( 170, 175 ) } );
 
    auto subsector2 = new Subsector;
-   subsector2->linesegs.push_back( { &sectors[0].linedefs[6], Vector2f( 130, 120 ), Vector2f( 130, 155 ) } );
-   subsector2->linesegs.push_back( { &sectors[0].linedefs[29], Vector2f( 130, 175 ), Vector2f( 130, 210 ) } );
-   subsector2->linesegs.push_back( { &sectors[0].linedefs[30], Vector2f( 130, 210 ), Vector2f( 90, 210 ) } );
-   subsector2->linesegs.push_back( { &sectors[0].linedefs[31], Vector2f( 90, 210 ), Vector2f( 75, 195 ) } );
+   subsector2->linesegs.push_back( { &sectors->at( 0 ).linedefs[6], Vector2f( 130, 120 ), Vector2f( 130, 155 ) } );
+   subsector2->linesegs.push_back( { &sectors->at( 0 ).linedefs[29], Vector2f( 130, 175 ), Vector2f( 130, 210 ) } );
+   subsector2->linesegs.push_back( { &sectors->at( 0 ).linedefs[30], Vector2f( 130, 210 ), Vector2f( 90, 210 ) } );
+   subsector2->linesegs.push_back( { &sectors->at( 0 ).linedefs[31], Vector2f( 90, 210 ), Vector2f( 75, 195 ) } );
 
    auto subsector3 = new Subsector;
-   subsector3->linesegs.push_back( { &sectors[0].linedefs[7], Vector2f( 130, 155 ), Vector2f( 170, 155 ) } );
-   subsector3->linesegs.push_back( { &sectors[0].linedefs[28], Vector2f( 170, 175 ), Vector2f( 130, 175 ) } );
+   subsector3->linesegs.push_back( { &sectors->at( 0 ).linedefs[7], Vector2f( 130, 155 ), Vector2f( 170, 155 ) } );
+   subsector3->linesegs.push_back( { &sectors->at( 0 ).linedefs[28], Vector2f( 170, 175 ), Vector2f( 130, 175 ) } );
 
    auto subsector4 = new Subsector;
-   subsector4->linesegs.push_back( { &sectors[0].linedefs[33], Vector2f( 40, 230 ), Vector2f( 60, 230 ) } );
-   subsector4->linesegs.push_back( { &sectors[0].linedefs[34], Vector2f( 60, 230 ), Vector2f( 60, 260 ) } );
-   subsector4->linesegs.push_back( { &sectors[0].linedefs[36], Vector2f( 10, 260 ), Vector2f( 10, 240 ) } );
-   subsector4->linesegs.push_back( { &sectors[1].linedefs[3], Vector2f( 40, 260 ), Vector2f( 30, 260 ) } );
+   subsector4->linesegs.push_back( { &sectors->at( 0 ).linedefs[33], Vector2f( 40, 230 ), Vector2f( 60, 230 ) } );
+   subsector4->linesegs.push_back( { &sectors->at( 0 ).linedefs[34], Vector2f( 60, 230 ), Vector2f( 60, 260 ) } );
+   subsector4->linesegs.push_back( { &sectors->at( 0 ).linedefs[36], Vector2f( 10, 260 ), Vector2f( 10, 240 ) } );
+   subsector4->linesegs.push_back( { &sectors->at( 1 ).linedefs[3], Vector2f( 40, 260 ), Vector2f( 30, 260 ) } );
 
    auto subsector5 = new Subsector;
-   subsector5->linesegs.push_back( { &sectors[0].linedefs[32], Vector2f( 75, 195 ), Vector2f( 40, 230 ) } );
-   subsector5->linesegs.push_back( { &sectors[0].linedefs[38], Vector2f( 30, 220 ), Vector2f( 65, 185 ) } );
+   subsector5->linesegs.push_back( { &sectors->at( 0 ).linedefs[32], Vector2f( 75, 195 ), Vector2f( 40, 230 ) } );
+   subsector5->linesegs.push_back( { &sectors->at( 0 ).linedefs[38], Vector2f( 30, 220 ), Vector2f( 65, 185 ) } );
 
    auto subsector6 = new Subsector;
-   subsector6->linesegs.push_back( { &sectors[0].linedefs[35], Vector2f( 30, 290 ), Vector2f( 10, 290 ) } );
-   subsector6->linesegs.push_back( { &sectors[0].linedefs[36], Vector2f( 10, 290 ), Vector2f( 10, 260 ) } );
-   subsector6->linesegs.push_back( { &sectors[1].linedefs[0], Vector2f( 30, 260 ), Vector2f( 30, 270 ) } );
+   subsector6->linesegs.push_back( { &sectors->at( 0 ).linedefs[35], Vector2f( 30, 290 ), Vector2f( 10, 290 ) } );
+   subsector6->linesegs.push_back( { &sectors->at( 0 ).linedefs[36], Vector2f( 10, 290 ), Vector2f( 10, 260 ) } );
+   subsector6->linesegs.push_back( { &sectors->at( 1 ).linedefs[0], Vector2f( 30, 260 ), Vector2f( 30, 270 ) } );
 
    auto subsector7 = new Subsector;
-   subsector7->linesegs.push_back( { &sectors[0].linedefs[34], Vector2f( 60, 270 ), Vector2f( 60, 290 ) } );
-   subsector7->linesegs.push_back( { &sectors[0].linedefs[35], Vector2f( 60, 290 ), Vector2f( 30, 290 ) } );
-   subsector7->linesegs.push_back( { &sectors[1].linedefs[1], Vector2f( 30, 270 ), Vector2f( 40, 270 ) } );
+   subsector7->linesegs.push_back( { &sectors->at( 0 ).linedefs[34], Vector2f( 60, 270 ), Vector2f( 60, 290 ) } );
+   subsector7->linesegs.push_back( { &sectors->at( 0 ).linedefs[35], Vector2f( 60, 290 ), Vector2f( 30, 290 ) } );
+   subsector7->linesegs.push_back( { &sectors->at( 1 ).linedefs[1], Vector2f( 30, 270 ), Vector2f( 40, 270 ) } );
 
    auto subsector8 = new Subsector;
-   subsector8->linesegs.push_back( { &sectors[0].linedefs[34], Vector2f( 60, 260 ), Vector2f( 60, 270 ) } );
-   subsector8->linesegs.push_back( { &sectors[1].linedefs[2], Vector2f( 40, 270 ), Vector2f( 40, 260 ) } );
+   subsector8->linesegs.push_back( { &sectors->at( 0 ).linedefs[34], Vector2f( 60, 260 ), Vector2f( 60, 270 ) } );
+   subsector8->linesegs.push_back( { &sectors->at( 1 ).linedefs[2], Vector2f( 40, 270 ), Vector2f( 40, 260 ) } );
 
    auto subsector9 = new Subsector;
-   subsector9->linesegs.push_back( { &sectors[0].linedefs[41], Vector2f( 65, 95 ), Vector2f( 70, 90 ) } );
-   subsector9->linesegs.push_back( { &sectors[0].linedefs[42], Vector2f( 70, 90 ), Vector2f( 85, 90 ) } );
-   subsector9->linesegs.push_back( { &sectors[0].linedefs[4], Vector2f( 95, 90 ), Vector2f( 110, 90 ) } );
-   subsector9->linesegs.push_back( { &sectors[0].linedefs[5], Vector2f( 110, 90 ), Vector2f( 130, 110 ) } );
-   subsector9->linesegs.push_back( { &sectors[0].linedefs[6], Vector2f( 130, 110 ), Vector2f( 130, 120 ) } );
-   subsector9->linesegs.push_back( { &sectors[2].linedefs[3], Vector2f( 100, 130 ), Vector2f( 90, 120 ) } );
+   subsector9->linesegs.push_back( { &sectors->at( 0 ).linedefs[41], Vector2f( 65, 95 ), Vector2f( 70, 90 ) } );
+   subsector9->linesegs.push_back( { &sectors->at( 0 ).linedefs[42], Vector2f( 70, 90 ), Vector2f( 85, 90 ) } );
+   subsector9->linesegs.push_back( { &sectors->at( 0 ).linedefs[4], Vector2f( 95, 90 ), Vector2f( 110, 90 ) } );
+   subsector9->linesegs.push_back( { &sectors->at( 0 ).linedefs[5], Vector2f( 110, 90 ), Vector2f( 130, 110 ) } );
+   subsector9->linesegs.push_back( { &sectors->at( 0 ).linedefs[6], Vector2f( 130, 110 ), Vector2f( 130, 120 ) } );
+   subsector9->linesegs.push_back( { &sectors->at( 2 ).linedefs[3], Vector2f( 100, 130 ), Vector2f( 90, 120 ) } );
 
    auto subsector10 = new Subsector;
-   subsector10->linesegs.push_back( { &sectors[0].linedefs[44], Vector2f( 85, 50 ), Vector2f( 70, 50 ) } );
-   subsector10->linesegs.push_back( { &sectors[0].linedefs[45], Vector2f( 70, 50 ), Vector2f( 70, 30 ) } );
-   subsector10->linesegs.push_back( { &sectors[0].linedefs[0], Vector2f( 70, 30 ), Vector2f( 110, 30 ) } );
-   subsector10->linesegs.push_back( { &sectors[0].linedefs[1], Vector2f( 110, 30 ), Vector2f( 110, 50 ) } );
-   subsector10->linesegs.push_back( { &sectors[0].linedefs[2], Vector2f( 110, 50 ), Vector2f( 95, 50 ) } );
+   subsector10->linesegs.push_back( { &sectors->at( 0 ).linedefs[44], Vector2f( 85, 50 ), Vector2f( 70, 50 ) } );
+   subsector10->linesegs.push_back( { &sectors->at( 0 ).linedefs[45], Vector2f( 70, 50 ), Vector2f( 70, 30 ) } );
+   subsector10->linesegs.push_back( { &sectors->at( 0 ).linedefs[0], Vector2f( 70, 30 ), Vector2f( 110, 30 ) } );
+   subsector10->linesegs.push_back( { &sectors->at( 0 ).linedefs[1], Vector2f( 110, 30 ), Vector2f( 110, 50 ) } );
+   subsector10->linesegs.push_back( { &sectors->at( 0 ).linedefs[2], Vector2f( 110, 50 ), Vector2f( 95, 50 ) } );
 
    auto subsector11 = new Subsector;
-   subsector11->linesegs.push_back( { &sectors[0].linedefs[43], Vector2f( 85, 90 ), Vector2f( 85, 50 ) } );
-   subsector11->linesegs.push_back( { &sectors[0].linedefs[3], Vector2f( 95, 50 ), Vector2f( 95, 90 ) } );
+   subsector11->linesegs.push_back( { &sectors->at( 0 ).linedefs[43], Vector2f( 85, 90 ), Vector2f( 85, 50 ) } );
+   subsector11->linesegs.push_back( { &sectors->at( 0 ).linedefs[3], Vector2f( 95, 50 ), Vector2f( 95, 90 ) } );
 
    auto subsector12 = new Subsector;
-   subsector12->linesegs.push_back( { &sectors[0].linedefs[40], Vector2f( 50, 160 ), Vector2f( 50, 110 ) } );
-   subsector12->linesegs.push_back( { &sectors[0].linedefs[41], Vector2f( 50, 110 ), Vector2f( 65, 95 ) } );
-   subsector12->linesegs.push_back( { &sectors[2].linedefs[0], Vector2f( 90, 120 ), Vector2f( 80, 130 ) } );
+   subsector12->linesegs.push_back( { &sectors->at( 0 ).linedefs[40], Vector2f( 50, 160 ), Vector2f( 50, 110 ) } );
+   subsector12->linesegs.push_back( { &sectors->at( 0 ).linedefs[41], Vector2f( 50, 110 ), Vector2f( 65, 95 ) } );
+   subsector12->linesegs.push_back( { &sectors->at( 2 ).linedefs[0], Vector2f( 90, 120 ), Vector2f( 80, 130 ) } );
 
    auto subsector13 = new Subsector;
-   subsector13->linesegs.push_back( { &sectors[0].linedefs[39], Vector2f( 65, 185 ), Vector2f( 50, 170 ) } );
-   subsector13->linesegs.push_back( { &sectors[0].linedefs[40], Vector2f( 50, 170 ), Vector2f( 50, 160 ) } );
-   subsector13->linesegs.push_back( { &sectors[2].linedefs[1], Vector2f( 80, 130 ), Vector2f( 90, 140 ) } );
+   subsector13->linesegs.push_back( { &sectors->at( 0 ).linedefs[39], Vector2f( 65, 185 ), Vector2f( 50, 170 ) } );
+   subsector13->linesegs.push_back( { &sectors->at( 0 ).linedefs[40], Vector2f( 50, 170 ), Vector2f( 50, 160 ) } );
+   subsector13->linesegs.push_back( { &sectors->at( 2 ).linedefs[1], Vector2f( 80, 130 ), Vector2f( 90, 140 ) } );
 
    auto subsector14 = new Subsector;
-   subsector14->linesegs.push_back( { &sectors[0].linedefs[36], Vector2f( 10, 240 ), Vector2f( 10, 220 ) } );
-   subsector14->linesegs.push_back( { &sectors[0].linedefs[37], Vector2f( 10, 220 ), Vector2f( 30, 220 ) } );
+   subsector14->linesegs.push_back( { &sectors->at( 0 ).linedefs[36], Vector2f( 10, 240 ), Vector2f( 10, 220 ) } );
+   subsector14->linesegs.push_back( { &sectors->at( 0 ).linedefs[37], Vector2f( 10, 220 ), Vector2f( 30, 220 ) } );
 
    auto subsector15 = new Subsector;
-   subsector15->linesegs.push_back( { &sectors[2].linedefs[2], Vector2f( 90, 140 ), Vector2f( 100, 130 ) } );
+   subsector15->linesegs.push_back( { &sectors->at( 2 ).linedefs[2], Vector2f( 90, 140 ), Vector2f( 100, 130 ) } );
 
    auto subsector16 = new Subsector;
-   subsector16->linesegs.push_back( { &sectors[0].linedefs[10], Vector2f( 250, 170 ), Vector2f( 250, 150 ) } );
-   subsector16->linesegs.push_back( { &sectors[0].linedefs[11], Vector2f( 250, 150 ), Vector2f( 300, 100 ) } );
-   subsector16->linesegs.push_back( { &sectors[0].linedefs[12], Vector2f( 300, 100 ), Vector2f( 310, 100 ) } );
-   subsector16->linesegs.push_back( { &sectors[0].linedefs[20], Vector2f( 320, 100 ), Vector2f( 350, 100 ) } );
-   subsector16->linesegs.push_back( { &sectors[0].linedefs[21], Vector2f( 350, 100 ), Vector2f( 390, 140 ) } );
-   subsector16->linesegs.push_back( { &sectors[0].linedefs[22], Vector2f( 390, 140 ), Vector2f( 390, 170 ) } );
-   subsector16->linesegs.push_back( { &sectors[3].linedefs[0], Vector2f( 335, 170 ), Vector2f( 305, 170 ) } );
+   subsector16->linesegs.push_back( { &sectors->at( 0 ).linedefs[10], Vector2f( 250, 170 ), Vector2f( 250, 150 ) } );
+   subsector16->linesegs.push_back( { &sectors->at( 0 ).linedefs[11], Vector2f( 250, 150 ), Vector2f( 300, 100 ) } );
+   subsector16->linesegs.push_back( { &sectors->at( 0 ).linedefs[12], Vector2f( 300, 100 ), Vector2f( 310, 100 ) } );
+   subsector16->linesegs.push_back( { &sectors->at( 0 ).linedefs[20], Vector2f( 320, 100 ), Vector2f( 350, 100 ) } );
+   subsector16->linesegs.push_back( { &sectors->at( 0 ).linedefs[21], Vector2f( 350, 100 ), Vector2f( 390, 140 ) } );
+   subsector16->linesegs.push_back( { &sectors->at( 0 ).linedefs[22], Vector2f( 390, 140 ), Vector2f( 390, 170 ) } );
+   subsector16->linesegs.push_back( { &sectors->at( 3 ).linedefs[0], Vector2f( 335, 170 ), Vector2f( 305, 170 ) } );
 
    auto subsector17 = new Subsector;
-   subsector17->linesegs.push_back( { &sectors[0].linedefs[14], Vector2f( 310, 80 ), Vector2f( 260, 80 ) } );
-   subsector17->linesegs.push_back( { &sectors[0].linedefs[15], Vector2f( 260, 80 ), Vector2f( 260, 30 ) } );
-   subsector17->linesegs.push_back( { &sectors[0].linedefs[16], Vector2f( 260, 30 ), Vector2f( 400, 30 ) } );
-   subsector17->linesegs.push_back( { &sectors[0].linedefs[17], Vector2f( 400, 30 ), Vector2f( 400, 80 ) } );
-   subsector17->linesegs.push_back( { &sectors[0].linedefs[18], Vector2f( 400, 80 ), Vector2f( 320, 80 ) } );
+   subsector17->linesegs.push_back( { &sectors->at( 0 ).linedefs[14], Vector2f( 310, 80 ), Vector2f( 260, 80 ) } );
+   subsector17->linesegs.push_back( { &sectors->at( 0 ).linedefs[15], Vector2f( 260, 80 ), Vector2f( 260, 30 ) } );
+   subsector17->linesegs.push_back( { &sectors->at( 0 ).linedefs[16], Vector2f( 260, 30 ), Vector2f( 400, 30 ) } );
+   subsector17->linesegs.push_back( { &sectors->at( 0 ).linedefs[17], Vector2f( 400, 30 ), Vector2f( 400, 80 ) } );
+   subsector17->linesegs.push_back( { &sectors->at( 0 ).linedefs[18], Vector2f( 400, 80 ), Vector2f( 320, 80 ) } );
 
    auto subsector18 = new Subsector;
-   subsector18->linesegs.push_back( { &sectors[0].linedefs[13], Vector2f( 310, 100 ), Vector2f( 310, 80 ) } );
-   subsector18->linesegs.push_back( { &sectors[0].linedefs[19], Vector2f( 320, 80 ), Vector2f( 320, 100 ) } );
+   subsector18->linesegs.push_back( { &sectors->at( 0 ).linedefs[13], Vector2f( 310, 100 ), Vector2f( 310, 80 ) } );
+   subsector18->linesegs.push_back( { &sectors->at( 0 ).linedefs[19], Vector2f( 320, 80 ), Vector2f( 320, 100 ) } );
 
    auto subsector19 = new Subsector;
-   subsector19->linesegs.push_back( { &sectors[0].linedefs[10], Vector2f( 250, 230 ), Vector2f( 250, 170 ) } );
-   subsector19->linesegs.push_back( { &sectors[0].linedefs[24], Vector2f( 305, 280 ), Vector2f( 280, 280 ) } );
-   subsector19->linesegs.push_back( { &sectors[0].linedefs[25], Vector2f( 280, 280 ), Vector2f( 250, 250 ) } );
-   subsector19->linesegs.push_back( { &sectors[3].linedefs[1], Vector2f( 305, 170 ), Vector2f( 305, 200 ) } );
+   subsector19->linesegs.push_back( { &sectors->at( 0 ).linedefs[10], Vector2f( 250, 230 ), Vector2f( 250, 170 ) } );
+   subsector19->linesegs.push_back( { &sectors->at( 0 ).linedefs[24], Vector2f( 305, 280 ), Vector2f( 280, 280 ) } );
+   subsector19->linesegs.push_back( { &sectors->at( 0 ).linedefs[25], Vector2f( 280, 280 ), Vector2f( 250, 250 ) } );
+   subsector19->linesegs.push_back( { &sectors->at( 3 ).linedefs[1], Vector2f( 305, 170 ), Vector2f( 305, 200 ) } );
 
    auto subsector20 = new Subsector;
-   subsector20->linesegs.push_back( { &sectors[0].linedefs[9], Vector2f( 190, 230 ), Vector2f( 250, 230 ) } );
-   subsector20->linesegs.push_back( { &sectors[0].linedefs[26], Vector2f( 250, 250 ), Vector2f( 190, 250 ) } );
+   subsector20->linesegs.push_back( { &sectors->at( 0 ).linedefs[9], Vector2f( 190, 230 ), Vector2f( 250, 230 ) } );
+   subsector20->linesegs.push_back( { &sectors->at( 0 ).linedefs[26], Vector2f( 250, 250 ), Vector2f( 190, 250 ) } );
 
    auto subsector21 = new Subsector;
-   subsector21->linesegs.push_back( { &sectors[0].linedefs[22], Vector2f( 390, 200 ), Vector2f( 390, 240 ) } );
-   subsector21->linesegs.push_back( { &sectors[0].linedefs[23], Vector2f( 390, 240 ), Vector2f( 350, 280 ) } );
-   subsector21->linesegs.push_back( { &sectors[0].linedefs[24], Vector2f( 350, 280 ), Vector2f( 305, 280 ) } );
-   subsector21->linesegs.push_back( { &sectors[3].linedefs[2], Vector2f( 305, 200 ), Vector2f( 335, 200 ) } );
+   subsector21->linesegs.push_back( { &sectors->at( 0 ).linedefs[22], Vector2f( 390, 200 ), Vector2f( 390, 240 ) } );
+   subsector21->linesegs.push_back( { &sectors->at( 0 ).linedefs[23], Vector2f( 390, 240 ), Vector2f( 350, 280 ) } );
+   subsector21->linesegs.push_back( { &sectors->at( 0 ).linedefs[24], Vector2f( 350, 280 ), Vector2f( 305, 280 ) } );
+   subsector21->linesegs.push_back( { &sectors->at( 3 ).linedefs[2], Vector2f( 305, 200 ), Vector2f( 335, 200 ) } );
 
    auto subsector22 = new Subsector;
-   subsector22->linesegs.push_back( { &sectors[0].linedefs[22], Vector2f( 390, 170 ), Vector2f( 390, 200 ) } );
-   subsector22->linesegs.push_back( { &sectors[3].linedefs[3], Vector2f( 335, 200 ), Vector2f( 335, 170 ) } );
+   subsector22->linesegs.push_back( { &sectors->at( 0 ).linedefs[22], Vector2f( 390, 170 ), Vector2f( 390, 200 ) } );
+   subsector22->linesegs.push_back( { &sectors->at( 3 ).linedefs[3], Vector2f( 335, 200 ), Vector2f( 335, 170 ) } );
 
    // BSP tree
    auto rootNode = new BspNode;
    rootNode->isLeaf = false;
    rootNode->parent = nullptr;
-   rootNode->linedef = &sectors[0].linedefs[8]; // A9
+   rootNode->linedef = &sectors->at( 0 ).linedefs[8]; // A9
    rootNode->subsector = nullptr;
 
    auto nodeA39 = new BspNode;
    nodeA39->isLeaf = false;
    nodeA39->parent = rootNode;
    rootNode->rightChild = nodeA39;
-   nodeA39->linedef = &sectors[0].linedefs[38];
+   nodeA39->linedef = &sectors->at( 0 ).linedefs[38];
    nodeA39->subsector = nullptr;
 
    auto nodeA32 = new BspNode;
    nodeA32->isLeaf = false;
    nodeA32->parent = nodeA39;
    nodeA39->rightChild = nodeA32;
-   nodeA32->linedef = &sectors[0].linedefs[31];
+   nodeA32->linedef = &sectors->at( 0 ).linedefs[31];
    nodeA32->subsector = nullptr;
 
    auto nodeA28 = new BspNode;
    nodeA28->isLeaf = false;
    nodeA28->parent = nodeA32;
    nodeA32->rightChild = nodeA28;
-   nodeA28->linedef = &sectors[0].linedefs[27];
+   nodeA28->linedef = &sectors->at( 0 ).linedefs[27];
    nodeA28->subsector = nullptr;
 
    auto node1 = new BspNode;
@@ -388,7 +389,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeA30->isLeaf = false;
    nodeA30->parent = nodeA28;
    nodeA28->leftChild = nodeA30;
-   nodeA30->linedef = &sectors[0].linedefs[29];
+   nodeA30->linedef = &sectors->at( 0 ).linedefs[29];
    nodeA30->subsector = nullptr;
 
    auto node2 = new BspNode;
@@ -413,14 +414,14 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeB4->isLeaf = false;
    nodeB4->parent = nodeA32;
    nodeA32->leftChild = nodeB4;
-   nodeB4->linedef = &sectors[1].linedefs[3];
+   nodeB4->linedef = &sectors->at( 1 ).linedefs[3];
    nodeB4->subsector = nullptr;
 
    auto nodeA34 = new BspNode;
    nodeA34->isLeaf = false;
    nodeA34->parent = nodeB4;
    nodeB4->rightChild = nodeA34;
-   nodeA34->linedef = &sectors[0].linedefs[33];
+   nodeA34->linedef = &sectors->at( 0 ).linedefs[33];
    nodeA34->subsector = nullptr;
 
    auto node4 = new BspNode;
@@ -445,7 +446,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeB1->isLeaf = false;
    nodeB1->parent = nodeB4;
    nodeB4->leftChild = nodeB1;
-   nodeB1->linedef = &sectors[1].linedefs[0];
+   nodeB1->linedef = &sectors->at( 1 ).linedefs[0];
    nodeB1->subsector = nullptr;
 
    auto node6 = new BspNode;
@@ -461,7 +462,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeB2->isLeaf = false;
    nodeB2->parent = nodeB1;
    nodeB1->leftChild = nodeB2;
-   nodeB2->linedef = &sectors[1].linedefs[1];
+   nodeB2->linedef = &sectors->at( 1 ).linedefs[1];
    nodeB2->subsector = nullptr;
 
    auto node7 = new BspNode;
@@ -486,14 +487,14 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeC4->isLeaf = false;
    nodeC4->parent = nodeA39;
    nodeA39->leftChild = nodeC4;
-   nodeC4->linedef = &sectors[2].linedefs[3];
+   nodeC4->linedef = &sectors->at( 2 ).linedefs[3];
    nodeC4->subsector = nullptr;
 
    auto nodeA43 = new BspNode;
    nodeA43->isLeaf = false;
    nodeA43->parent = nodeC4;
    nodeC4->rightChild = nodeA43;
-   nodeA43->linedef = &sectors[0].linedefs[42];
+   nodeA43->linedef = &sectors->at( 0 ).linedefs[42];
    nodeA43->subsector = nullptr;
 
    auto node9 = new BspNode;
@@ -509,7 +510,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeA3->isLeaf = false;
    nodeA3->parent = nodeA43;
    nodeA43->leftChild = nodeA3;
-   nodeA3->linedef = &sectors[0].linedefs[2];
+   nodeA3->linedef = &sectors->at( 0 ).linedefs[2];
    nodeA3->subsector = nullptr;
 
    auto node10 = new BspNode;
@@ -534,7 +535,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeC1->isLeaf = false;
    nodeC1->parent = nodeC4;
    nodeC4->leftChild = nodeC1;
-   nodeC1->linedef = &sectors[2].linedefs[0];
+   nodeC1->linedef = &sectors->at( 2 ).linedefs[0];
    nodeC1->subsector = nullptr;
 
    auto node12 = new BspNode;
@@ -550,14 +551,14 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeC2->isLeaf = false;
    nodeC2->parent = nodeC1;
    nodeC1->leftChild = nodeC2;
-   nodeC2->linedef = &sectors[2].linedefs[1];
+   nodeC2->linedef = &sectors->at( 2 ).linedefs[1];
    nodeC2->subsector = nullptr;
 
    auto nodeA40 = new BspNode;
    nodeA40->isLeaf = false;
    nodeA40->parent = nodeC2;
    nodeC2->rightChild = nodeA40;
-   nodeA40->linedef = &sectors[0].linedefs[39];
+   nodeA40->linedef = &sectors->at( 0 ).linedefs[39];
    nodeA40->subsector = nullptr;
 
    auto node13 = new BspNode;
@@ -591,14 +592,14 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeD1->isLeaf = false;
    nodeD1->parent = rootNode;
    rootNode->leftChild = nodeD1;
-   nodeD1->linedef = &sectors[3].linedefs[0];
+   nodeD1->linedef = &sectors->at( 3 ).linedefs[0];
    nodeD1->subsector = nullptr;
 
    auto nodeA13 = new BspNode;
    nodeA13->isLeaf = false;
    nodeA13->parent = nodeD1;
    nodeD1->rightChild = nodeA13;
-   nodeA13->linedef = &sectors[0].linedefs[12];
+   nodeA13->linedef = &sectors->at( 0 ).linedefs[12];
    nodeA13->subsector = nullptr;
 
    auto node16 = new BspNode;
@@ -614,7 +615,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeA15->isLeaf = false;
    nodeA15->parent = nodeA13;
    nodeA13->leftChild = nodeA15;
-   nodeA15->linedef = &sectors[0].linedefs[14];
+   nodeA15->linedef = &sectors->at( 0 ).linedefs[14];
    nodeA15->subsector = nullptr;
 
    auto node17 = new BspNode;
@@ -639,14 +640,14 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeD2->isLeaf = false;
    nodeD2->parent = nodeD1;
    nodeD1->leftChild = nodeD2;
-   nodeD2->linedef = &sectors[3].linedefs[1];
+   nodeD2->linedef = &sectors->at( 3 ).linedefs[1];
    nodeD2->subsector = nullptr;
 
    auto nodeA11 = new BspNode;
    nodeA11->isLeaf = false;
    nodeA11->parent = nodeD2;
    nodeD2->rightChild = nodeA11;
-   nodeA11->linedef = &sectors[0].linedefs[10];
+   nodeA11->linedef = &sectors->at( 0 ).linedefs[10];
    nodeA11->subsector = nullptr;
 
    auto node19 = new BspNode;
@@ -671,7 +672,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    nodeD3->isLeaf = false;
    nodeD3->parent = nodeD2;
    nodeD2->leftChild = nodeD3;
-   nodeD3->linedef = &sectors[3].linedefs[2];
+   nodeD3->linedef = &sectors->at( 3 ).linedefs[2];
    nodeD3->subsector = nullptr;
 
    auto node21 = new BspNode;
@@ -696,67 +697,67 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
 
    //// all subsectors and linesegs
    //auto subsector1 = new Subsector;
-   //subsector1->linesegs.push_back( { &sectors[1].linedefs[5], Vector2f( 30, 120 ), Vector2f( 60, 90 ) } );
-   //subsector1->linesegs.push_back( { &sectors[0].linedefs[11], Vector2f( 60, 210 ), Vector2f( 60, 290 ) } );
-   //subsector1->linesegs.push_back( { &sectors[0].linedefs[12], Vector2f( 60, 290 ), Vector2f( 0, 290 ) } );
-   //subsector1->linesegs.push_back( { &sectors[0].linedefs[13], Vector2f( 0, 290 ), Vector2f( 0, 150 ) } );
+   //subsector1->linesegs.push_back( { &sectors->at( 1 ).linedefs[5], Vector2f( 30, 120 ), Vector2f( 60, 90 ) } );
+   //subsector1->linesegs.push_back( { &sectors->at( 0 ).linedefs[11], Vector2f( 60, 210 ), Vector2f( 60, 290 ) } );
+   //subsector1->linesegs.push_back( { &sectors->at( 0 ).linedefs[12], Vector2f( 60, 290 ), Vector2f( 0, 290 ) } );
+   //subsector1->linesegs.push_back( { &sectors->at( 0 ).linedefs[13], Vector2f( 0, 290 ), Vector2f( 0, 150 ) } );
 
    //auto subsector2 = new Subsector;
-   //subsector2->linesegs.push_back( { &sectors[1].linedefs[4], Vector2f( 20, 110 ), Vector2f( 30, 120 ) } );
-   //subsector2->linesegs.push_back( { &sectors[0].linedefs[13], Vector2f( 0, 150 ), Vector2f( 0, 90 ) } );
+   //subsector2->linesegs.push_back( { &sectors->at( 1 ).linedefs[4], Vector2f( 20, 110 ), Vector2f( 30, 120 ) } );
+   //subsector2->linesegs.push_back( { &sectors->at( 0 ).linedefs[13], Vector2f( 0, 150 ), Vector2f( 0, 90 ) } );
 
    //auto subsector3 = new Subsector;
-   //subsector3->linesegs.push_back( { &sectors[1].linedefs[3], Vector2f( 40, 90 ), Vector2f( 20, 110 ) } );
+   //subsector3->linesegs.push_back( { &sectors->at( 1 ).linedefs[3], Vector2f( 40, 90 ), Vector2f( 20, 110 ) } );
 
    //auto subsector4 = new Subsector;
-   //subsector4->linesegs.push_back( { &sectors[1].linedefs[6], Vector2f( 60, 90 ), Vector2f( 85, 90 ) } );
-   //subsector4->linesegs.push_back( { &sectors[1].linedefs[7], Vector2f( 85, 90 ), Vector2f( 85, 130 ) } );
-   //subsector4->linesegs.push_back( { &sectors[0].linedefs[10], Vector2f( 70, 210 ), Vector2f( 60, 210 ) } );
+   //subsector4->linesegs.push_back( { &sectors->at( 1 ).linedefs[6], Vector2f( 60, 90 ), Vector2f( 85, 90 ) } );
+   //subsector4->linesegs.push_back( { &sectors->at( 1 ).linedefs[7], Vector2f( 85, 90 ), Vector2f( 85, 130 ) } );
+   //subsector4->linesegs.push_back( { &sectors->at( 0 ).linedefs[10], Vector2f( 70, 210 ), Vector2f( 60, 210 ) } );
 
    //auto subsector5 = new Subsector;
-   //subsector5->linesegs.push_back( { &sectors[0].linedefs[9], Vector2f( 85, 225 ), Vector2f( 70, 210 ) } );
+   //subsector5->linesegs.push_back( { &sectors->at( 0 ).linedefs[9], Vector2f( 85, 225 ), Vector2f( 70, 210 ) } );
 
    //auto subsector6 = new Subsector;
-   //subsector6->linesegs.push_back( { &sectors[1].linedefs[8], Vector2f( 85, 130 ), Vector2f( 95, 130 ) } );
+   //subsector6->linesegs.push_back( { &sectors->at( 1 ).linedefs[8], Vector2f( 85, 130 ), Vector2f( 95, 130 ) } );
    //subsector6->linesegs.push_back( { &sectors[5].linedefs[2], Vector2f( 155, 195 ), Vector2f( 155, 205 ) } );
-   //subsector6->linesegs.push_back( { &sectors[0].linedefs[7], Vector2f( 155, 290 ), Vector2f( 150, 290 ) } );
-   //subsector6->linesegs.push_back( { &sectors[0].linedefs[9], Vector2f( 90, 230 ), Vector2f( 85, 225 ) } );
+   //subsector6->linesegs.push_back( { &sectors->at( 0 ).linedefs[7], Vector2f( 155, 290 ), Vector2f( 150, 290 ) } );
+   //subsector6->linesegs.push_back( { &sectors->at( 0 ).linedefs[9], Vector2f( 90, 230 ), Vector2f( 85, 225 ) } );
 
    //auto subsector7 = new Subsector;
-   //subsector7->linesegs.push_back( { &sectors[0].linedefs[7], Vector2f( 150, 290 ), Vector2f( 90, 290 ) } );
-   //subsector7->linesegs.push_back( { &sectors[0].linedefs[8], Vector2f( 90, 290 ), Vector2f( 90, 230 ) } );
+   //subsector7->linesegs.push_back( { &sectors->at( 0 ).linedefs[7], Vector2f( 150, 290 ), Vector2f( 90, 290 ) } );
+   //subsector7->linesegs.push_back( { &sectors->at( 0 ).linedefs[8], Vector2f( 90, 290 ), Vector2f( 90, 230 ) } );
 
    //auto subsector8 = new Subsector;
-   //subsector8->linesegs.push_back( { &sectors[1].linedefs[9], Vector2f( 95, 130 ), Vector2f( 95, 90 ) } );
-   //subsector8->linesegs.push_back( { &sectors[1].linedefs[10], Vector2f( 95, 90 ), Vector2f( 110, 90 ) } );
+   //subsector8->linesegs.push_back( { &sectors->at( 1 ).linedefs[9], Vector2f( 95, 130 ), Vector2f( 95, 90 ) } );
+   //subsector8->linesegs.push_back( { &sectors->at( 1 ).linedefs[10], Vector2f( 95, 90 ), Vector2f( 110, 90 ) } );
 
    //auto subsector9 = new Subsector;
-   //subsector9->linesegs.push_back( { &sectors[0].linedefs[13], Vector2f( 0, 90 ), Vector2f( 0, 40 ) } );
-   //subsector9->linesegs.push_back( { &sectors[0].linedefs[14], Vector2f( 0, 40 ), Vector2f( 40, 0 ) } );
-   //subsector9->linesegs.push_back( { &sectors[0].linedefs[0], Vector2f( 40, 0 ), Vector2f( 100, 0 ) } );
-   //subsector9->linesegs.push_back( { &sectors[1].linedefs[3], Vector2f( 50, 80 ), Vector2f( 40, 90 ) } );
+   //subsector9->linesegs.push_back( { &sectors->at( 0 ).linedefs[13], Vector2f( 0, 90 ), Vector2f( 0, 40 ) } );
+   //subsector9->linesegs.push_back( { &sectors->at( 0 ).linedefs[14], Vector2f( 0, 40 ), Vector2f( 40, 0 ) } );
+   //subsector9->linesegs.push_back( { &sectors->at( 0 ).linedefs[0], Vector2f( 40, 0 ), Vector2f( 100, 0 ) } );
+   //subsector9->linesegs.push_back( { &sectors->at( 1 ).linedefs[3], Vector2f( 50, 80 ), Vector2f( 40, 90 ) } );
 
    //auto subsector10 = new Subsector;
-   //subsector10->linesegs.push_back( { &sectors[1].linedefs[1], Vector2f( 100, 60 ), Vector2f( 100, 80 ) } );
-   //subsector10->linesegs.push_back( { &sectors[1].linedefs[2], Vector2f( 100, 80 ), Vector2f( 50, 80 ) } );
+   //subsector10->linesegs.push_back( { &sectors->at( 1 ).linedefs[1], Vector2f( 100, 60 ), Vector2f( 100, 80 ) } );
+   //subsector10->linesegs.push_back( { &sectors->at( 1 ).linedefs[2], Vector2f( 100, 80 ), Vector2f( 50, 80 ) } );
 
    //auto subsector11 = new Subsector;
-   //subsector11->linesegs.push_back( { &sectors[0].linedefs[0], Vector2f( 100, 0 ), Vector2f( 155, 0 ) } );
-   //subsector11->linesegs.push_back( { &sectors[1].linedefs[0], Vector2f( 110, 60 ), Vector2f( 100, 60 ) } );
+   //subsector11->linesegs.push_back( { &sectors->at( 0 ).linedefs[0], Vector2f( 100, 0 ), Vector2f( 155, 0 ) } );
+   //subsector11->linesegs.push_back( { &sectors->at( 1 ).linedefs[0], Vector2f( 110, 60 ), Vector2f( 100, 60 ) } );
 
    //auto subsector12 = new Subsector;
-   //subsector12->linesegs.push_back( { &sectors[1].linedefs[11], Vector2f( 110, 90 ), Vector2f( 110, 60 ) } );
+   //subsector12->linesegs.push_back( { &sectors->at( 1 ).linedefs[11], Vector2f( 110, 90 ), Vector2f( 110, 60 ) } );
 
    //auto subsector13 = new Subsector;
    //subsector13->linesegs.push_back( { &sectors[4].linedefs[2], Vector2f( 190, 140 ), Vector2f( 250, 160 ) } );
-   //subsector13->linesegs.push_back( { &sectors[0].linedefs[3], Vector2f( 260, 160.0f + ( 10.0f / 3.0f ) ), Vector2f( 260, 180 ) } );
-   //subsector13->linesegs.push_back( { &sectors[0].linedefs[7], Vector2f( 260, 290 ), Vector2f( 185, 290 ) } );
+   //subsector13->linesegs.push_back( { &sectors->at( 0 ).linedefs[3], Vector2f( 260, 160.0f + ( 10.0f / 3.0f ) ), Vector2f( 260, 180 ) } );
+   //subsector13->linesegs.push_back( { &sectors->at( 0 ).linedefs[7], Vector2f( 260, 290 ), Vector2f( 185, 290 ) } );
    //subsector13->linesegs.push_back( { &sectors[5].linedefs[6], Vector2f( 185, 205 ), Vector2f( 185, 195 ) } );
 
    //auto subsector14 = new Subsector;
-   //subsector14->linesegs.push_back( { &sectors[0].linedefs[4], Vector2f( 260, 180 ), Vector2f( 300, 200 ) } );
-   //subsector14->linesegs.push_back( { &sectors[0].linedefs[5], Vector2f( 300, 200 ), Vector2f( 300, 250 ) } );
-   //subsector14->linesegs.push_back( { &sectors[0].linedefs[6], Vector2f( 300, 250 ), Vector2f( 260, 290 ) } );
+   //subsector14->linesegs.push_back( { &sectors->at( 0 ).linedefs[4], Vector2f( 260, 180 ), Vector2f( 300, 200 ) } );
+   //subsector14->linesegs.push_back( { &sectors->at( 0 ).linedefs[5], Vector2f( 300, 200 ), Vector2f( 300, 250 ) } );
+   //subsector14->linesegs.push_back( { &sectors->at( 0 ).linedefs[6], Vector2f( 300, 250 ), Vector2f( 260, 290 ) } );
 
    //auto subsector15 = new Subsector;
    //subsector15->linesegs.push_back( { &sectors[5].linedefs[7], Vector2f( 185, 195 ), Vector2f( 175, 185 ) } );
@@ -769,7 +770,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
 
    //auto subsector18 = new Subsector;
    //subsector18->linesegs.push_back( { &sectors[5].linedefs[3], Vector2f( 155, 205 ), Vector2f( 165, 215 ) } );
-   //subsector18->linesegs.push_back( { &sectors[0].linedefs[7], Vector2f( 185, 290 ), Vector2f( 155, 290 ) } );
+   //subsector18->linesegs.push_back( { &sectors->at( 0 ).linedefs[7], Vector2f( 185, 290 ), Vector2f( 155, 290 ) } );
 
    //auto subsector19 = new Subsector;
    //subsector19->linesegs.push_back( { &sectors[5].linedefs[4], Vector2f( 165, 215 ), Vector2f( 175, 215 ) } );
@@ -778,29 +779,29 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //subsector20->linesegs.push_back( { &sectors[5].linedefs[5], Vector2f( 175, 215 ), Vector2f( 185, 205 ) } );
 
    //auto subsector21 = new Subsector;
-   //subsector21->linesegs.push_back( { &sectors[0].linedefs[1], Vector2f( 300, 0 ), Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ) } );
-   //subsector21->linesegs.push_back( { &sectors[0].linedefs[2], Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ) } );
+   //subsector21->linesegs.push_back( { &sectors->at( 0 ).linedefs[1], Vector2f( 300, 0 ), Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ) } );
+   //subsector21->linesegs.push_back( { &sectors->at( 0 ).linedefs[2], Vector2f( 300, 140.0f + ( 20.0f / 3.0f ) ), Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ) } );
    //subsector21->linesegs.push_back( { &sectors[4].linedefs[4], Vector2f( 250, 130 ), Vector2f( 230, 120.0f + ( 10.0f / 3.0f ) ) } );
-   //subsector21->linesegs.push_back( { &sectors[3].linedefs[2], Vector2f( 260, 40 ), Vector2f( 270, 30 ) } );
+   //subsector21->linesegs.push_back( { &sectors->at( 3 ).linedefs[2], Vector2f( 260, 40 ), Vector2f( 270, 30 ) } );
 
    //auto subsector22 = new Subsector;
-   //subsector22->linesegs.push_back( { &sectors[0].linedefs[3], Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), Vector2f( 260, 160.0f + ( 10.0f / 3.0f ) ) } );
+   //subsector22->linesegs.push_back( { &sectors->at( 0 ).linedefs[3], Vector2f( 260, 130.0f + ( 10.0f / 3.0f ) ), Vector2f( 260, 160.0f + ( 10.0f / 3.0f ) ) } );
    //subsector22->linesegs.push_back( { &sectors[4].linedefs[3], Vector2f( 250, 160 ), Vector2f( 250, 130 ) } );
 
    //auto subsector23 = new Subsector;
-   //subsector23->linesegs.push_back( { &sectors[3].linedefs[1], Vector2f( 250, 30 ), Vector2f( 260, 40 ) } );
-   //subsector23->linesegs.push_back( { &sectors[2].linedefs[3], Vector2f( 230, 70 ), Vector2f( 230, 60 ) } );
+   //subsector23->linesegs.push_back( { &sectors->at( 3 ).linedefs[1], Vector2f( 250, 30 ), Vector2f( 260, 40 ) } );
+   //subsector23->linesegs.push_back( { &sectors->at( 2 ).linedefs[3], Vector2f( 230, 70 ), Vector2f( 230, 60 ) } );
 
    //auto subsector24 = new Subsector;
-   //subsector24->linesegs.push_back( { &sectors[0].linedefs[0], Vector2f( 230, 0 ), Vector2f( 280, 0 ) } );
-   //subsector24->linesegs.push_back( { &sectors[3].linedefs[0], Vector2f( 260, 20 ), Vector2f( 250, 30 ) } );
+   //subsector24->linesegs.push_back( { &sectors->at( 0 ).linedefs[0], Vector2f( 230, 0 ), Vector2f( 280, 0 ) } );
+   //subsector24->linesegs.push_back( { &sectors->at( 3 ).linedefs[0], Vector2f( 260, 20 ), Vector2f( 250, 30 ) } );
 
    //auto subsector25 = new Subsector;
-   //subsector25->linesegs.push_back( { &sectors[0].linedefs[0], Vector2f( 280, 0 ), Vector2f( 300, 0 ) } );
-   //subsector25->linesegs.push_back( { &sectors[3].linedefs[3], Vector2f( 270, 30 ), Vector2f( 260, 20 ) } );
+   //subsector25->linesegs.push_back( { &sectors->at( 0 ).linedefs[0], Vector2f( 280, 0 ), Vector2f( 300, 0 ) } );
+   //subsector25->linesegs.push_back( { &sectors->at( 3 ).linedefs[3], Vector2f( 270, 30 ), Vector2f( 260, 20 ) } );
 
    //auto subsector26 = new Subsector;
-   //subsector26->linesegs.push_back( { &sectors[2].linedefs[2], Vector2f( 170, 70 ), Vector2f( 230, 70 ) } );
+   //subsector26->linesegs.push_back( { &sectors->at( 2 ).linedefs[2], Vector2f( 170, 70 ), Vector2f( 230, 70 ) } );
    //subsector26->linesegs.push_back( { &sectors[4].linedefs[4], Vector2f( 230, 120.0f + ( 10.0f / 3.0f ) ), Vector2f( 220, 120 ) } );
 
    //auto subsector27 = new Subsector;
@@ -810,12 +811,12 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //subsector28->linesegs.push_back( { &sectors[4].linedefs[0], Vector2f( 220, 120 ), Vector2f( 190, 130 ) } );
 
    //auto subsector29 = new Subsector;
-   //subsector29->linesegs.push_back( { &sectors[0].linedefs[0], Vector2f( 155, 0 ), Vector2f( 170, 0 ) } );
-   //subsector29->linesegs.push_back( { &sectors[2].linedefs[1], Vector2f( 170, 60 ), Vector2f( 170, 70 ) } );
+   //subsector29->linesegs.push_back( { &sectors->at( 0 ).linedefs[0], Vector2f( 155, 0 ), Vector2f( 170, 0 ) } );
+   //subsector29->linesegs.push_back( { &sectors->at( 2 ).linedefs[1], Vector2f( 170, 60 ), Vector2f( 170, 70 ) } );
 
    //auto subsector30 = new Subsector;
-   //subsector30->linesegs.push_back( { &sectors[0].linedefs[0], Vector2f( 170, 0 ), Vector2f( 230, 0 ) } );
-   //subsector30->linesegs.push_back( { &sectors[2].linedefs[0], Vector2f( 230, 60 ), Vector2f( 170, 60 ) } );
+   //subsector30->linesegs.push_back( { &sectors->at( 0 ).linedefs[0], Vector2f( 170, 0 ), Vector2f( 230, 0 ) } );
+   //subsector30->linesegs.push_back( { &sectors->at( 2 ).linedefs[0], Vector2f( 230, 60 ), Vector2f( 170, 60 ) } );
 
    //// build the tree (root node is C5)
    //auto rootNode = new BspNode;
@@ -828,28 +829,28 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeG1->isLeaf = false;
    //nodeG1->parent = rootNode;
    //rootNode->rightChild = nodeG1;
-   //nodeG1->linedef = &sectors[1].linedefs[6];
+   //nodeG1->linedef = &sectors->at( 1 ).linedefs[6];
    //nodeG1->subsector = nullptr;
 
    //auto nodeH1 = new BspNode;
    //nodeH1->isLeaf = false;
    //nodeH1->parent = nodeG1;
    //nodeG1->rightChild = nodeH1;
-   //nodeH1->linedef = &sectors[1].linedefs[7];
+   //nodeH1->linedef = &sectors->at( 1 ).linedefs[7];
    //nodeH1->subsector = nullptr;
 
    //auto nodeL0 = new BspNode;
    //nodeL0->isLeaf = false;
    //nodeL0->parent = nodeH1;
    //nodeH1->rightChild = nodeL0;
-   //nodeL0->linedef = &sectors[0].linedefs[11];
+   //nodeL0->linedef = &sectors->at( 0 ).linedefs[11];
    //nodeL0->subsector = nullptr;
 
    //auto nodeF1 = new BspNode;
    //nodeF1->isLeaf = false;
    //nodeF1->parent = nodeL0;
    //nodeL0->rightChild = nodeF1;
-   //nodeF1->linedef = &sectors[1].linedefs[5];
+   //nodeF1->linedef = &sectors->at( 1 ).linedefs[5];
    //nodeF1->subsector = nullptr;
 
    //auto node1 = new BspNode;
@@ -865,7 +866,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeE1->isLeaf = false;
    //nodeE1->parent = nodeF1;
    //nodeF1->leftChild = nodeE1;
-   //nodeE1->linedef = &sectors[1].linedefs[4];
+   //nodeE1->linedef = &sectors->at( 1 ).linedefs[4];
    //nodeE1->subsector = nullptr;
 
    //auto node2 = new BspNode;
@@ -890,7 +891,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeK0->isLeaf = false;
    //nodeK0->parent = nodeL0;
    //nodeL0->leftChild = nodeK0;
-   //nodeK0->linedef = &sectors[0].linedefs[10];
+   //nodeK0->linedef = &sectors->at( 0 ).linedefs[10];
    //nodeK0->subsector = nullptr;
 
    //auto node4 = new BspNode;
@@ -915,14 +916,14 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeI1->isLeaf = false;
    //nodeI1->parent = nodeH1;
    //nodeH1->leftChild = nodeI1;
-   //nodeI1->linedef = &sectors[1].linedefs[8];
+   //nodeI1->linedef = &sectors->at( 1 ).linedefs[8];
    //nodeI1->subsector = nullptr;
 
    //auto nodeJ0 = new BspNode;
    //nodeJ0->isLeaf = false;
    //nodeJ0->parent = nodeI1;
    //nodeI1->rightChild = nodeJ0;
-   //nodeJ0->linedef = &sectors[0].linedefs[9];
+   //nodeJ0->linedef = &sectors->at( 0 ).linedefs[9];
    //nodeJ0->subsector = nullptr;
 
    //auto node6 = new BspNode;
@@ -956,14 +957,14 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeB1->isLeaf = false;
    //nodeB1->parent = nodeG1;
    //nodeG1->leftChild = nodeB1;
-   //nodeB1->linedef = &sectors[1].linedefs[1];
+   //nodeB1->linedef = &sectors->at( 1 ).linedefs[1];
    //nodeB1->subsector = nullptr;
 
    //auto nodeD1 = new BspNode;
    //nodeD1->isLeaf = false;
    //nodeD1->parent = nodeB1;
    //nodeB1->rightChild = nodeD1;
-   //nodeD1->linedef = &sectors[1].linedefs[3];
+   //nodeD1->linedef = &sectors->at( 1 ).linedefs[3];
    //nodeD1->subsector = nullptr;
 
    //auto node9 = new BspNode;
@@ -988,7 +989,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeA1->isLeaf = false;
    //nodeA1->parent = nodeB1;
    //nodeB1->leftChild = nodeA1;
-   //nodeA1->linedef = &sectors[1].linedefs[0];
+   //nodeA1->linedef = &sectors->at( 1 ).linedefs[0];
    //nodeA1->subsector = nullptr;
 
    //auto node11 = new BspNode;
@@ -1027,7 +1028,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeD0->isLeaf = false;
    //nodeD0->parent = nodeG5;
    //nodeG5->rightChild = nodeD0;
-   //nodeD0->linedef = &sectors[0].linedefs[3];
+   //nodeD0->linedef = &sectors->at( 0 ).linedefs[3];
    //nodeD0->subsector = nullptr;
 
    //auto node13 = new BspNode;
@@ -1141,21 +1142,21 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeD2->isLeaf = false;
    //nodeD2->parent = nodeC4;
    //nodeC4->leftChild = nodeD2;
-   //nodeD2->linedef = &sectors[2].linedefs[3];
+   //nodeD2->linedef = &sectors->at( 2 ).linedefs[3];
    //nodeD2->subsector = nullptr;
 
    //auto nodeC3 = new BspNode;
    //nodeC3->isLeaf = false;
    //nodeC3->parent = nodeD2;
    //nodeD2->rightChild = nodeC3;
-   //nodeC3->linedef = &sectors[3].linedefs[2];
+   //nodeC3->linedef = &sectors->at( 3 ).linedefs[2];
    //nodeC3->subsector = nullptr;
 
    //auto nodeC0 = new BspNode;
    //nodeC0->isLeaf = false;
    //nodeC0->parent = nodeC3;
    //nodeC3->rightChild = nodeC0;
-   //nodeC0->linedef = &sectors[0].linedefs[2];
+   //nodeC0->linedef = &sectors->at( 0 ).linedefs[2];
    //nodeC0->subsector = nullptr;
 
    //auto node21 = new BspNode;
@@ -1180,7 +1181,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeB3->isLeaf = false;
    //nodeB3->parent = nodeC3;
    //nodeC3->leftChild = nodeB3;
-   //nodeB3->linedef = &sectors[3].linedefs[1];
+   //nodeB3->linedef = &sectors->at( 3 ).linedefs[1];
    //nodeB3->subsector = nullptr;
 
    //auto node23 = new BspNode;
@@ -1196,7 +1197,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeA3->isLeaf = false;
    //nodeA3->parent = nodeB3;
    //nodeB3->leftChild = nodeA3;
-   //nodeA3->linedef = &sectors[3].linedefs[0];
+   //nodeA3->linedef = &sectors->at( 3 ).linedefs[0];
    //nodeA3->subsector = nullptr;
 
    //auto node24 = new BspNode;
@@ -1221,7 +1222,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeC2->isLeaf = false;
    //nodeC2->parent = nodeD2;
    //nodeD2->leftChild = nodeC2;
-   //nodeC2->linedef = &sectors[2].linedefs[2];
+   //nodeC2->linedef = &sectors->at( 2 ).linedefs[2];
    //nodeC2->subsector = nullptr;
 
    //auto nodeE4 = new BspNode;
@@ -1269,7 +1270,7 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    //nodeB2->isLeaf = false;
    //nodeB2->parent = nodeC2;
    //nodeC2->leftChild = nodeB2;
-   //nodeB2->linedef = &sectors[2].linedefs[1];
+   //nodeB2->linedef = &sectors->at( 2 ).linedefs[1];
    //nodeB2->subsector = nullptr;
 
    //auto node29 = new BspNode;
@@ -1293,9 +1294,9 @@ BspNode* GameLoader::LoadBspTree( vector<Sector>& sectors ) const
    return rootNode;
 }
 
-void GameLoader::ScaleUnits( vector<Sector>& sectors, BspNode* bspTree, shared_ptr<Entity> player, float scalar ) const
+void GameLoader::ScaleMap( shared_ptr<GameData> gameData, float scalar ) const
 {
-   for ( auto& sector : sectors )
+   for ( auto& sector : *gameData->GetSectors() )
    {
       for ( auto& linedef : sector.linedefs )
       {
@@ -1306,8 +1307,9 @@ void GameLoader::ScaleUnits( vector<Sector>& sectors, BspNode* bspTree, shared_p
       }
    }
 
-   ScaleTreeRecursive( bspTree, scalar );
+   ScaleTreeRecursive( gameData->GetBspRootNode(), scalar );
    
+   auto player = gameData->GetPlayer();
    auto playerPosition = player->GetPosition();
    player->SetPosition( playerPosition.x * scalar, playerPosition.y * scalar );
 }

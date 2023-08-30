@@ -21,9 +21,9 @@ public:
 
 private:
    std::shared_ptr<GameData> LoadGameData( std::shared_ptr<GameConfig> gameConfig ) const;
-   std::vector<Sector> LoadSectors() const;
-   BspNode* LoadBspTree( std::vector<Sector>& sectors ) const;
-   void ScaleUnits( std::vector<Sector>& sectors, BspNode* bspTree, std::shared_ptr<Entity> player, float scalar ) const;
+   std::shared_ptr<std::vector<Sector>> LoadSectors() const;
+   BspNode* LoadBspTree( std::shared_ptr<std::vector<Sector>> sectors ) const;
+   void ScaleMap( std::shared_ptr<GameData> gameData, float scalar ) const;
    void ScaleTreeRecursive( BspNode* node, float scalar ) const;
 
    std::shared_ptr<RenderData> LoadRenderData() const;

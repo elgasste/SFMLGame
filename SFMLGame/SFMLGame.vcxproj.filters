@@ -55,12 +55,6 @@
     <Filter Include="Source Files\Menu">
       <UniqueIdentifier>{891632fd-cad5-4cbe-85ec-6304429bcddd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Bsp">
-      <UniqueIdentifier>{67d29c6f-42cd-47c3-8a69-40a5ff65d48c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Bsp">
-      <UniqueIdentifier>{5cf8f91d-e5bb-4917-a5fd-e4e3e6430d96}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\DataTypes">
       <UniqueIdentifier>{fac2720c-ec42-4857-986d-692849e6d9e3}</UniqueIdentifier>
     </Filter>
@@ -126,17 +120,11 @@
     <ClCompile Include="BackMenuOption.cpp">
       <Filter>Source Files\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="BspOperator.cpp">
-      <Filter>Source Files\Bsp</Filter>
-    </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="Geometry.cpp">
       <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="RaycastRenderer.cpp">
-      <Filter>Source Files\Bsp</Filter>
     </ClCompile>
     <ClCompile Include="GameData.cpp">
       <Filter>Source Files\Game</Filter>
@@ -147,8 +135,14 @@
     <ClCompile Include="RenderData.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="RaycastRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="ColumnTracker.cpp">
-      <Filter>Source Files\Bsp</Filter>
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionDetector.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,17 +236,11 @@
     <ClInclude Include="BackMenuOption.h">
       <Filter>Header Files\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="BspOperator.h">
-      <Filter>Header Files\Bsp</Filter>
-    </ClInclude>
     <ClInclude Include="Linedef.h">
       <Filter>Header Files\DataTypes</Filter>
     </ClInclude>
     <ClInclude Include="Lineseg.h">
       <Filter>Header Files\DataTypes</Filter>
-    </ClInclude>
-    <ClInclude Include="BspNode.h">
-      <Filter>Header Files\Bsp</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Header Files\Game</Filter>
@@ -269,9 +257,6 @@
     <ClInclude Include="Subsector.h">
       <Filter>Header Files\DataTypes</Filter>
     </ClInclude>
-    <ClInclude Include="RaycastRenderer.h">
-      <Filter>Header Files\Bsp</Filter>
-    </ClInclude>
     <ClInclude Include="GameData.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
@@ -281,8 +266,17 @@
     <ClInclude Include="RenderData.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="RaycastRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="ColumnTracker.h">
-      <Filter>Header Files\Bsp</Filter>
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionDetector.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="BspNode.h">
+      <Filter>Header Files\DataTypes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

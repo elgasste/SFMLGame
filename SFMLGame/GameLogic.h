@@ -8,7 +8,7 @@ class GameConfig;
 class GameData;
 class GameClock;
 class GameInputHandler;
-class BspOperator;
+class CollisionDetector;
 class Entity;
 
 class GameLogic
@@ -18,7 +18,7 @@ public:
               std::shared_ptr<GameData> gameData,
               std::shared_ptr<GameClock> clock,
               std::shared_ptr<GameInputHandler> inputHandler,
-              std::shared_ptr<BspOperator> bspOperator );
+              std::shared_ptr<CollisionDetector> collisionDetector );
 
    void Tick();
 
@@ -31,7 +31,7 @@ private:
    std::shared_ptr<GameData> _gameData;
    std::shared_ptr<GameClock> _clock;
    std::shared_ptr<GameInputHandler> _inputHandler;
-   std::shared_ptr<BspOperator> _bspOperator;
+   std::shared_ptr<CollisionDetector> _collisionDetector;
 };
 
 NAMESPACE_END

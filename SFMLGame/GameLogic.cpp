@@ -5,7 +5,7 @@
 #include "GameData.h"
 #include "GameClock.h"
 #include "GameInputHandler.h"
-#include "BspOperator.h"
+#include "CollisionDetector.h"
 #include "Entity.h"
 #include "Geometry.h"
 
@@ -17,12 +17,12 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
                       shared_ptr<GameData> gameData,
                       shared_ptr<GameClock> clock,
                       shared_ptr<GameInputHandler> inputHandler,
-                      shared_ptr<BspOperator> bspOperator ) :
+                      shared_ptr<CollisionDetector> collisionDetector ) :
    _gameConfig( gameConfig ),
    _gameData( gameData ),
    _clock( clock ),
    _inputHandler( inputHandler ),
-   _bspOperator( bspOperator )
+   _collisionDetector( collisionDetector )
 {
 }
 
@@ -66,7 +66,7 @@ void GameLogic::MovePlayer() const
    //
    // MUFFINS: try to "hug" the wall if this happens
    static Lineseg collidingLineseg;
-   auto collidedWithWall = _bspOperator->CheckWallCollision( position.x, position.y, newPositionX, newPositionY, collidingLineseg );
+   auto collidedWithWall = _collisionDetector->CheckWallCollision( position.x, position.y, newPositionX, newPositionY, collidingLineseg );
 
    if ( !collidedWithWall )
    {

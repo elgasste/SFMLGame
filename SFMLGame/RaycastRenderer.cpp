@@ -8,6 +8,7 @@
 #include "GameData.h"
 #include "RenderData.h"
 #include "SFMLWindow.h"
+#include "ColumnTracker.h"
 #include "Entity.h"
 #include "Geometry.h"
 
@@ -16,15 +17,18 @@ using namespace std;
 using namespace sf;
 
 RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
-                                  shared_ptr<RenderConfig> renderConfig,
                                   shared_ptr<GameData> gameData,
+                                  shared_ptr<RenderConfig> renderConfig,
                                   shared_ptr<RenderData> renderData,
-                                  shared_ptr<SFMLWindow> window ) :
+                                  shared_ptr<SFMLWindow> window,
+                                  shared_ptr<ColumnTracker> columnTracker ) :
    _gameConfig( gameConfig ),
-   _renderConfig( renderConfig ),
    _gameData( gameData ),
+   _renderConfig( renderConfig ),
    _renderData( renderData ),
-   _window( window )
+   _window( window ),
+   _columnTracker( columnTracker ),
+   _leftFovAngle( 0 )
 {
    _renderColumns = (sf::Vertex*)malloc( sizeof( sf::Vertex ) * gameConfig->ScreenWidth * 2 );
 
@@ -64,6 +68,136 @@ void RaycastRenderer::RenderCeilingAndFloor()
    _window->Draw( skySprite );
 
    _window->Draw( _floorRenderRect, 4, Quads );
+}
+
+void RaycastRenderer::Render()
+{
+   _columnTracker->Reset( 0, _gameConfig->ScreenWidth - 1 );
+
+   auto player = _gameData->GetPlayer();
+   _viewOrigin = player->GetPosition();
+   _leftFovAngle = player->GetAngle() + ( _renderConfig->FovAngle / 2.0f );
+   NORMALIZE_ANGLE( _leftFovAngle );
+
+   RenderCeilingAndFloor();
+
+   RenderNodeRecursive( _gameData->GetBspRootNode() );
+
+   assert( _columnTracker->IsFullyTracked() );
+}
+
+void RaycastRenderer::RenderNodeRecursive( BspNode* node )
+{
+   if ( node == nullptr )
+   {
+      return;
+   }
+
+   if ( node->isLeaf )
+   {
+      RenderLeaf( node );
+      return;
+   }
+
+   if ( Geometry::IsPointOnRightSide( _viewOrigin.x,
+                                      _viewOrigin.y,
+                                      node->linedef->start.x,
+                                      node->linedef->start.y,
+                                      node->linedef->end.x,
+                                      node->linedef->end.y ) )
+   {
+      RenderNodeRecursive( node->rightChild );
+
+      if ( !_columnTracker->IsFullyTracked() )
+      {
+         RenderNodeRecursive( node->leftChild );
+      }
+   }
+   else
+   {
+      RenderNodeRecursive( node->leftChild );
+
+      if ( !_columnTracker->IsFullyTracked() )
+      {
+         RenderNodeRecursive( node->rightChild );
+      }
+   }
+}
+
+void RaycastRenderer::RenderLeaf( BspNode* leaf )
+{
+   for ( const auto& lineseg : leaf->subsector->linesegs )
+   {
+      for ( int i = 0; i < _columnTracker->GetUntrackedRangeCount(); i++ )
+      {
+         auto rangeStart = _columnTracker->GetRangeStart( i );
+         auto rangeEnd = _columnTracker->GetRangeEnd( i );
+
+         auto undrawnLeftAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * rangeStart );
+         auto undrawnRightAngle = _leftFovAngle - ( _renderConfig->FovAngleIncrement * rangeEnd );
+
+         NORMALIZE_ANGLE( undrawnLeftAngle );
+         NORMALIZE_ANGLE( undrawnRightAngle );
+
+         auto isLinesegStartInView = false;
+         auto isLinesegEndInView = false;
+
+         if ( !Geometry::IsLineInView( _viewOrigin,
+                                       undrawnLeftAngle, undrawnRightAngle,
+                                       lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y,
+                                       isLinesegStartInView,
+                                       isLinesegEndInView,
+                                       true ) )
+         {
+            continue;
+         }
+
+         // calculate the range we want to draw based on whether the lineseg boundaries are in view
+         auto leftDrawAngle = undrawnLeftAngle;
+         auto rightDrawAngle = undrawnRightAngle;
+
+         if ( isLinesegStartInView )
+         {
+            leftDrawAngle = Geometry::AngleToPoint( _viewOrigin, lineseg.start );
+            NORMALIZE_ANGLE( leftDrawAngle );
+         }
+
+         if ( isLinesegEndInView )
+         {
+            rightDrawAngle = Geometry::AngleToPoint( _viewOrigin, lineseg.end );
+            NORMALIZE_ANGLE( rightDrawAngle );
+         }
+
+         // reverse the calculation on the draw angles to find the pixel range that was drawn
+         auto drawStartPixel = ( leftDrawAngle <= undrawnLeftAngle )
+            ? rangeStart + (int)( ( undrawnLeftAngle - leftDrawAngle ) / _renderConfig->FovAngleIncrement )
+            : rangeStart + (int)( ( undrawnLeftAngle + ( RAD_360 - leftDrawAngle ) ) / _renderConfig->FovAngleIncrement );
+         auto drawEndPixel = ( rightDrawAngle >= undrawnRightAngle )
+            ? rangeEnd - (int)( ( rightDrawAngle - undrawnRightAngle ) / _renderConfig->FovAngleIncrement )
+            : rangeEnd - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _renderConfig->FovAngleIncrement );
+
+         RenderLineseg( lineseg, leftDrawAngle, drawStartPixel, drawEndPixel );
+
+         auto prevRangeCount = _columnTracker->GetUntrackedRangeCount();
+         _columnTracker->TrackRange( drawStartPixel, drawEndPixel );
+         auto newRangeCount = _columnTracker->GetUntrackedRangeCount();
+
+         if ( _columnTracker->IsFullyTracked() )
+         {
+            return;
+         }
+         else if ( newRangeCount > prevRangeCount )
+         {
+            // this range was split in the middle, skip to the next range
+            i++;
+         }
+         else if ( newRangeCount < prevRangeCount )
+         {
+            // this entire range was removed, stay on the same index
+            i--;
+         }
+      }
+   }
 }
 
 void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,

@@ -31,7 +31,6 @@ GameConfig::GameConfig()
    };
 
    DefaultPlayerPosition = Vector2f( 320, 250 );
-   DefaultPlayerHitBox = FloatRect( 0, 0, 20, 8 );
    DefaultPlayerAngle = RAD_90;
 
    MaxPlayerVelocity = 180.0f;

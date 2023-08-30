@@ -162,7 +162,7 @@ xcopy "$(SolutionDir)SFMLGame\Consolas.ttf" "$(OutDir)" /Y</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BackMenuOption.cpp" />
-    <ClCompile Include="BspOperator.cpp" />
+    <ClCompile Include="CollisionDetector.cpp" />
     <ClCompile Include="ColumnTracker.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -193,9 +193,9 @@ xcopy "$(SolutionDir)SFMLGame\Consolas.ttf" "$(OutDir)" /Y</Command>
   <ItemGroup>
     <ClInclude Include="BackMenuOption.h" />
     <ClInclude Include="BspNode.h" />
-    <ClInclude Include="BspOperator.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
+    <ClInclude Include="CollisionDetector.h" />
     <ClInclude Include="ColumnTracker.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
     <ClInclude Include="Entity.h" />
