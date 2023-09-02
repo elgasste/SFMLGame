@@ -4,6 +4,7 @@
 
 #include "Common.h"
 #include "BspNode.h"
+#include "PixelColumn.h"
 
 NAMESPACE_BEGIN
 
@@ -29,12 +30,10 @@ public:
 
 private:
    void RenderCeilingAndFloor();
-   void RenderNodeRecursive( BspNode* node );
-   void RenderLeaf( BspNode* leaf );
-   void RenderLineseg( const Lineseg& lineseg,
-                       float drawStartAngle,
-                       int startColumn,
-                       int endColumn );
+   void CheckBspNodeRecursive( BspNode* node );
+   void CheckBspLeaf( BspNode* leaf );
+   void SetPixelColumnRange( const Lineseg& lineseg, float startAngle, int startPixel, int endPixel );
+   void RenderPixelColumns();
 
 private:
    std::shared_ptr<GameConfig> _gameConfig;
@@ -43,6 +42,8 @@ private:
    std::shared_ptr<RenderData> _renderData;
    std::shared_ptr<SFMLWindow> _window;
    std::shared_ptr<ColumnTracker> _columnTracker;
+
+   std::vector<PixelColumn> _pixelColumns;
 
    sf::Vector2f _viewOrigin;
    float _leftFovAngle;

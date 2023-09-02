@@ -72,13 +72,7 @@ bool Geometry::LinesIntersect( float l1StartX, float l1StartY, float l1EndX, flo
    return false;
 }
 
-bool Geometry::RayIntersectsLine( const Vector2f& origin,
-                                  float angle,
-                                  float lStartX,
-                                  float lStartY,
-                                  float lEndX,
-                                  float lEndY,
-                                  Vector2f* pIntersect )
+bool Geometry::RayIntersectsLine( const Vector2f& origin, float angle, float lStartX, float lStartY, float lEndX, float lEndY, Vector2f* pIntersect )
 {
    auto dx = cosf( angle ) * RAY_LENGTH;
    auto dy = tanf( angle ) * dx;

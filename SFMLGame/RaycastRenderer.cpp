@@ -30,6 +30,8 @@ RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
    _columnTracker( columnTracker ),
    _leftFovAngle( 0 )
 {
+   _pixelColumns = vector<PixelColumn>( gameConfig->ScreenWidth, PixelColumn() );
+
    _renderColumns = (sf::Vertex*)malloc( sizeof( sf::Vertex ) * gameConfig->ScreenWidth * 2 );
 
    auto screenWidth = (float)gameConfig->ScreenWidth;
@@ -67,7 +69,8 @@ void RaycastRenderer::Render()
    NORMALIZE_ANGLE( _leftFovAngle );
 
    RenderCeilingAndFloor();
-   RenderNodeRecursive( _gameData->GetBspRootNode() );
+   CheckBspNodeRecursive( _gameData->GetBspRootNode() );
+   RenderPixelColumns();
 
    assert( _columnTracker->IsFullyTracked() );
 }
@@ -85,7 +88,7 @@ void RaycastRenderer::RenderCeilingAndFloor()
    _window->Draw( _floorRenderRect, 4, Quads );
 }
 
-void RaycastRenderer::RenderNodeRecursive( BspNode* node )
+void RaycastRenderer::CheckBspNodeRecursive( BspNode* node )
 {
    if ( node == nullptr )
    {
@@ -94,36 +97,31 @@ void RaycastRenderer::RenderNodeRecursive( BspNode* node )
 
    if ( node->isLeaf )
    {
-      RenderLeaf( node );
+      CheckBspLeaf( node );
       return;
    }
 
-   if ( Geometry::IsPointOnRightSide( _viewOrigin.x,
-                                      _viewOrigin.y,
-                                      node->linedef->start.x,
-                                      node->linedef->start.y,
-                                      node->linedef->end.x,
-                                      node->linedef->end.y ) )
+   if ( Geometry::IsPointOnRightSide( _viewOrigin.x, _viewOrigin.y, node->linedef->start.x, node->linedef->start.y, node->linedef->end.x, node->linedef->end.y ) )
    {
-      RenderNodeRecursive( node->rightChild );
+      CheckBspNodeRecursive( node->rightChild );
 
       if ( !_columnTracker->IsFullyTracked() )
       {
-         RenderNodeRecursive( node->leftChild );
+         CheckBspNodeRecursive( node->leftChild );
       }
    }
    else
    {
-      RenderNodeRecursive( node->leftChild );
+      CheckBspNodeRecursive( node->leftChild );
 
       if ( !_columnTracker->IsFullyTracked() )
       {
-         RenderNodeRecursive( node->rightChild );
+         CheckBspNodeRecursive( node->rightChild );
       }
    }
 }
 
-void RaycastRenderer::RenderLeaf( BspNode* leaf )
+void RaycastRenderer::CheckBspLeaf( BspNode* leaf )
 {
    for ( const auto& lineseg : leaf->subsector->linesegs )
    {
@@ -168,17 +166,17 @@ void RaycastRenderer::RenderLeaf( BspNode* leaf )
          }
 
          // reverse the calculation on the draw angles to find the pixel range that was drawn
-         auto drawStartPixel = ( leftDrawAngle <= undrawnLeftAngle )
+         auto startPixel = ( leftDrawAngle <= undrawnLeftAngle )
             ? rangeStart + (int)( ( undrawnLeftAngle - leftDrawAngle ) / _renderConfig->FovAngleIncrement )
             : rangeStart + (int)( ( undrawnLeftAngle + ( RAD_360 - leftDrawAngle ) ) / _renderConfig->FovAngleIncrement );
-         auto drawEndPixel = ( rightDrawAngle >= undrawnRightAngle )
+         auto endPixel = ( rightDrawAngle >= undrawnRightAngle )
             ? rangeEnd - (int)( ( rightDrawAngle - undrawnRightAngle ) / _renderConfig->FovAngleIncrement )
             : rangeEnd - (int)( ( ( RAD_360 - undrawnRightAngle ) + rightDrawAngle ) / _renderConfig->FovAngleIncrement );
 
-         RenderLineseg( lineseg, leftDrawAngle, drawStartPixel, drawEndPixel );
+         SetPixelColumnRange( lineseg, leftDrawAngle, startPixel, endPixel );
 
          auto prevRangeCount = _columnTracker->GetUntrackedRangeCount();
-         _columnTracker->TrackRange( drawStartPixel, drawEndPixel );
+         _columnTracker->TrackRange( startPixel, endPixel );
          auto newRangeCount = _columnTracker->GetUntrackedRangeCount();
 
          if ( _columnTracker->IsFullyTracked() )
@@ -199,31 +197,28 @@ void RaycastRenderer::RenderLeaf( BspNode* leaf )
    }
 }
 
-void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
-                                     float drawStartAngle,
-                                     int startColumn,
-                                     int endColumn )
+void RaycastRenderer::SetPixelColumnRange( const Lineseg& lineseg, float startAngle, int startPixel, int endPixel )
 {
    auto player = _gameData->GetPlayer();
    auto& playerPosition = player->GetPosition();
    auto playerAngle = player->GetAngle();
    static Vector2f pIntersect;
 
-   for ( int i = startColumn, j = 0; i <= endColumn; i++, j++ )
+   for ( int i = startPixel, j = 0; i <= endPixel; i++, j++ )
    {
-      auto drawAngle = drawStartAngle - ( j * _renderConfig->FovAngleIncrement );
+      auto drawAngle = startAngle - ( j * _renderConfig->FovAngleIncrement );
       NORMALIZE_ANGLE( drawAngle );
       auto doesIntersect = Geometry::RayIntersectsLine( playerPosition, drawAngle, lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y, &pIntersect );
 
       // this often happens around the edge of a lineseg, in which case we can just draw the edge
       if ( !doesIntersect )
       {
-         if ( i == startColumn || i == startColumn + 1 )
+         if ( i == startPixel || i == startPixel + 1 )
          {
             pIntersect.x = lineseg.start.x;
             pIntersect.y = lineseg.start.y;
          }
-         else if ( i == endColumn || i == endColumn - 1 )
+         else if ( i == endPixel || i == endPixel - 1 )
          {
             pIntersect.x = lineseg.end.x;
             pIntersect.y = lineseg.end.y;
@@ -236,28 +231,37 @@ void RaycastRenderer::RenderLineseg( const Lineseg& lineseg,
          }
       }
 
-      auto& sprite = _renderData->GetSpriteById( lineseg.linedef->textureId );
-
       // this uses the formula ProjectedWallHeight = ( ActualWallHeight / DistanceToWall ) * DistanceToProjectionPlane
       auto rayLength = Geometry::Raycast( playerPosition, pIntersect, playerAngle, drawAngle );
       auto projectedWallHeight = ( ( _renderConfig->WallHeight / rayLength ) * _renderConfig->ProjectionPlaneDelta );
+      auto lightAdjustment = ( rayLength == 0.0f ) ? 0.0f : min( rayLength / _renderConfig->LightingScalar, 255.0f );
+
+      _pixelColumns[i].textureId = lineseg.linedef->textureId;
+      _pixelColumns[i].yOffset = ( (float)_gameConfig->ScreenHeight - projectedWallHeight ) / 2.0f;
+      _pixelColumns[i].textureOffsetX = (int)( sqrtf( powf( pIntersect.x - lineseg.linedef->start.x, 2 ) + powf( pIntersect.y - lineseg.linedef->start.y, 2 ) ) * _renderConfig->SpriteOffsetScalar );
+      _pixelColumns[i].textureScaleY = projectedWallHeight / (float)_gameConfig->ScreenHeight;
+      _pixelColumns[i].lightValue = (Uint8)max( _renderConfig->LightingMinimum, (int)( 255.0f - lightAdjustment ) );
+   }
+}
+
+void RaycastRenderer::RenderPixelColumns()
+{
+   for ( int i = 0; i <= _gameConfig->ScreenWidth - 1; i++ )
+   {
+      auto& pixelColumn = _pixelColumns[i];
+      auto& sprite = _renderData->GetSpriteById( pixelColumn.textureId );
 
       _spritePosition.x = (float)i;
-      _spritePosition.y = ( (float)_gameConfig->ScreenHeight - projectedWallHeight ) / 2.0f;
+      _spritePosition.y = pixelColumn.yOffset;
       sprite.setPosition( _spritePosition );
 
-      _spriteTextureRect.left = (int)( sqrtf(
-         powf( pIntersect.x - lineseg.linedef->start.x, 2 ) +
-         powf( pIntersect.y - lineseg.linedef->start.y, 2 ) ) *
-         _renderConfig->SpriteOffsetScalar );
+      _spriteTextureRect.left = pixelColumn.textureOffsetX;
       sprite.setTextureRect( _spriteTextureRect );
 
-      _spriteVerticalScale.y = projectedWallHeight / (float)_gameConfig->ScreenHeight;
+      _spriteVerticalScale.y = pixelColumn.textureScaleY;
       sprite.setScale( _spriteVerticalScale );
 
-      auto lightAdjustment = ( rayLength == 0.0f ) ? 0.0f : min( rayLength / _renderConfig->LightingScalar, 255.0f );
-      auto lightValue = (Uint8)max( _renderConfig->LightingMinimum, (int)( 255.0f - lightAdjustment ) );
-      sprite.setColor( Color( lightValue, lightValue, lightValue ) );
+      sprite.setColor( Color( pixelColumn.lightValue, pixelColumn.lightValue, pixelColumn.lightValue ) );
 
       _window->Draw( sprite );
    }
