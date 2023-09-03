@@ -32,8 +32,6 @@ RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
 {
    _pixelColumns = vector<PixelColumn>( gameConfig->ScreenWidth, PixelColumn() );
 
-   _renderColumns = (sf::Vertex*)malloc( sizeof( sf::Vertex ) * gameConfig->ScreenWidth * 2 );
-
    auto screenWidth = (float)gameConfig->ScreenWidth;
    auto screenHeight = (float)gameConfig->ScreenHeight;
 
@@ -51,12 +49,6 @@ RaycastRenderer::RaycastRenderer( shared_ptr<GameConfig> gameConfig,
    _spriteTextureRect.height = 1080;
 
    _spriteVerticalScale.x = 1;
-}
-
-RaycastRenderer::~RaycastRenderer()
-{
-   delete _renderColumns;
-   _renderColumns = nullptr;
 }
 
 void RaycastRenderer::Render()

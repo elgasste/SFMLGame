@@ -24,7 +24,6 @@ public:
                     std::shared_ptr<RenderData> renderData,
                     std::shared_ptr<SFMLWindow> window,
                     std::shared_ptr<ColumnTracker> columnTracker );
-   ~RaycastRenderer();
 
    void Render();
 
@@ -48,7 +47,6 @@ private:
    sf::Vector2f _viewOrigin;
    float _leftFovAngle;
 
-   sf::Vertex* _renderColumns;
    sf::Vertex _floorRenderRect[4];
 
    sf::Vector2f _skyPosition;
