@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.h"
+#include "Direction.h"
 
 NAMESPACE_BEGIN
 
@@ -11,18 +12,18 @@ public:
 
    const sf::FloatRect& GetHitBox() const { return _hitBox; }
    const sf::Vector2f& GetPosition() const { return _position; }
-   float GetAngle() const { return _angle; }
+   Direction GetDirection() const { return _direction; }
    float GetVelocity() const { return _velocity; }
 
    void SetHitBoxDimensions( float width, float height );
    void SetPosition( float x, float y );
-   void SetAngle( float angle ) { _angle = angle; }
+   void SetDirection( Direction direction ) { _direction = direction; }
    void SetVelocity( float velocity ) { _velocity = velocity; }
 
 private:
    sf::FloatRect _hitBox;
    sf::Vector2f _position;
-   float _angle;
+   Direction _direction;
    float _velocity;
 };
 

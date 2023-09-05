@@ -52,9 +52,12 @@ public:
    sf::Color MainMenuTextColor;
    float MainMenuCaratOffset;
    float MainMenuCaratBlinkRate;
-   sf::Color MainMenuBallDimmer;
+   sf::Color MainMenuBackdropDimmer;
 
-   sf::Vector2f BallOrigin;
+   float SpriteScalar;
+
+   sf::Vector2i PlayerSpriteSize;
+   sf::Vector2f PlayerSpriteOrigin;
 };
 
 NAMESPACE_END

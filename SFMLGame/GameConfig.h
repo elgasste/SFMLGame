@@ -3,6 +3,7 @@
 #include "Common.h"
 #include "KeyCode.h"
 #include "Button.h"
+#include "Direction.h"
 
 NAMESPACE_BEGIN
 
@@ -16,15 +17,12 @@ public:
 
    bool ShowDiagnostics;
 
-   sf::Vector2f DefaultBallPosition;
-   float DefaultBallAngle;
-   float DefaultBallVelocity;
-   float MinimumBallVelocity;
-   float MaximumBallVelocity;
-   float BallDiameter;
-
-   float BallTurnAngleIncrement;
-   float BallVelocityIncrement;
+   sf::Vector2f DefaultPlayerPosition;
+   Direction DefaultPlayerDirection;
+   float MaximumPlayerVelocity;
+   float PlayerHitBoxWidth;
+   float PlayerHitBoxHeight;
+   float PlayerVelocityIncrement;
 };
 
 NAMESPACE_END

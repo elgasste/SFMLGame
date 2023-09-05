@@ -19,13 +19,10 @@ GameConfig::GameConfig()
 
    ShowDiagnostics = false;
 
-   DefaultBallPosition = { 960, 540 };
-   DefaultBallAngle = RAD_45;
-   DefaultBallVelocity = 600;
-   MinimumBallVelocity = 60;
-   MaximumBallVelocity = 5000;
-   BallDiameter = 100;
-
-   BallTurnAngleIncrement = 3;
-   BallVelocityIncrement = 400;
+   DefaultPlayerPosition = { 960, 540 };
+   DefaultPlayerDirection = Direction::Down;
+   MaximumPlayerVelocity = 5000;
+   PlayerHitBoxWidth = 60;
+   PlayerHitBoxHeight = 92;
+   PlayerVelocityIncrement = 400;
 }

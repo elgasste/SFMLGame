@@ -11,8 +11,7 @@ enum class GameEventType
    OpenMenu,
    CloseMenu,
    StartGame,
-   TurnBall,
-   PushBall
+   MovePlayer
 };
 
 NAMESPACE_END

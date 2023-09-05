@@ -3,7 +3,7 @@
 using namespace NAMESPACE;
 using namespace std;
 
-GameData::GameData( shared_ptr<Entity> ball ) :
-   _ball( ball )
+GameData::GameData( shared_ptr<Entity> player ) :
+   _player( player )
 {
 }

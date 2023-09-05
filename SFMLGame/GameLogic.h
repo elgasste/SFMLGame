@@ -29,7 +29,7 @@ public:
    void Tick();
 
 private:
-   void ResetBall();
+   void ResetPlayer();
    void HandleEvents();
 
    void OnQuit() const;
@@ -37,11 +37,9 @@ private:
    void OnOpenMenu() const;
    void OnCloseMenu() const;
    void OnStartGame();
-   void OnTurnBall( std::shared_ptr<IGameEventArgs> args ) const;
-   void OnPushBall( std::shared_ptr<IGameEventArgs> args ) const;
+   void OnMovePlayer( std::shared_ptr<IGameEventArgs> args ) const;
 
-   void UpdateBallPosition() const;
-   void ClipBall() const;
+   void ClipPlayer() const;
 
 private:
    std::shared_ptr<GameConfig> _gameConfig;

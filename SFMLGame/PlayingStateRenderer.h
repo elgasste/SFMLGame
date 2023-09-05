@@ -32,7 +32,7 @@ private:
    std::shared_ptr<sf::Font> _font;
    std::shared_ptr<sf::Text> _text;
 
-   sf::Sprite _ballSprite;
+   sf::Sprite _playerSprite;
 };
 
 NAMESPACE_END

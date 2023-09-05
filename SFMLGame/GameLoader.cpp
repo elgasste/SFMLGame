@@ -51,10 +51,10 @@ shared_ptr<Game> GameLoader::Load() const
    gameInputHandler->AddStateInputHandler( GameState::Closing, closingStateInputHandler );
    auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, gameInputHandler, eventQueue, clock, gameRunningTracker, gameStateTracker ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, clock ) );
-   auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameData, clock, window ) );
+   auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, clock, window ) );
    auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, clock, titleMenu ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );
-   auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( gameConfig, gameData, renderConfig, renderData, window, clock, mainMenu ) );
+   auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( renderConfig, window, clock, mainMenu ) );
    auto closingStateRenderer = make_shared<ClosingStateRenderer>();
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderData, gameConfig, window, diagnosticRenderer, gameStateTracker ) );
    gameRenderer->AddStateRenderer( GameState::TitleMenu, titleMenuStateRenderer );
@@ -68,20 +68,20 @@ shared_ptr<Game> GameLoader::Load() const
 
 shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig ) const
 {
-   auto ball = make_shared<Entity>();
-   ball->SetHitBoxDimensions( gameConfig->BallDiameter, gameConfig->BallDiameter );
+   auto player = make_shared<Entity>();
+   player->SetHitBoxDimensions( gameConfig->PlayerHitBoxWidth, gameConfig->PlayerHitBoxHeight );
 
-   auto gameData = shared_ptr<GameData>( new GameData( ball ) );
+   auto gameData = shared_ptr<GameData>( new GameData( player ) );
 
    return gameData;
 }
 
 shared_ptr<RenderData> GameLoader::LoadRenderData() const
 {
-   auto ballTexture = shared_ptr<Texture>( new Texture() );
-   ballTexture->loadFromFile( "Resources/Textures/ball.png" );
+   auto playerSpriteTexture = shared_ptr<Texture>( new Texture() );
+   playerSpriteTexture->loadFromFile( "Resources/Textures/BODY_male.png" );
 
-   auto renderData = shared_ptr<RenderData>( new RenderData( ballTexture ) );
+   auto renderData = shared_ptr<RenderData>( new RenderData( playerSpriteTexture ) );
 
    return renderData;
 }

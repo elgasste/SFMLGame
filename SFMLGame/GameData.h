@@ -9,12 +9,12 @@ class Entity;
 class GameData
 {
 public:
-   GameData( std::shared_ptr<Entity> ball );
+   GameData( std::shared_ptr<Entity> player );
 
-   std::shared_ptr<Entity> GetBall() const { return _ball; }
+   std::shared_ptr<Entity> GetPlayer() const { return _player; }
 
 private:
-   std::shared_ptr<Entity> _ball;
+   std::shared_ptr<Entity> _player;
 };
 
 NAMESPACE_END

@@ -4,8 +4,7 @@
 #include "EventQueue.h"
 #include "Entity.h"
 #include "Geometry.h"
-#include "TurnBallArgs.h"
-#include "PushBallArgs.h"
+#include "MovePlayerArgs.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -32,22 +31,22 @@ void PlayingStateInputHandler::HandleInput()
 
    if ( isLeftDown && !isRightDown )
    {
-      _eventQueue->Push( GameEventType::TurnBall, shared_ptr<TurnBallArgs>( new TurnBallArgs( _gameConfig->BallTurnAngleIncrement ) ) );
+      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Left ) ) );
    }
    else if ( isRightDown && !isLeftDown )
    {
-      _eventQueue->Push( GameEventType::TurnBall, shared_ptr<TurnBallArgs>( new TurnBallArgs( -( _gameConfig->BallTurnAngleIncrement ) ) ) );
+      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Right ) ) );
    }
 
-   bool isForwardDown = _inputReader->IsButtonDown( Button::Up );
-   bool isBackwardDown = _inputReader->IsButtonDown( Button::Down );
+   bool isUpDown = _inputReader->IsButtonDown( Button::Up );
+   bool isDownDown = _inputReader->IsButtonDown( Button::Down );
 
-   if ( isForwardDown && !isBackwardDown )
+   if ( isUpDown && !isDownDown )
    {
-      _eventQueue->Push( GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( _gameConfig->BallVelocityIncrement ) ) );
+      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Up ) ) );
    }
-   else if ( isBackwardDown && !isForwardDown )
+   else if ( isDownDown && !isUpDown )
    {
-      _eventQueue->Push( GameEventType::PushBall, shared_ptr<PushBallArgs>( new PushBallArgs( -_gameConfig->BallVelocityIncrement ) ) );
+      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Down ) ) );
    }
 }

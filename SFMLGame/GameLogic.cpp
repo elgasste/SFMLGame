@@ -8,8 +8,7 @@
 #include "GameRunningTracker.h"
 #include "Entity.h"
 #include "Geometry.h"
-#include "TurnBallArgs.h"
-#include "PushBallArgs.h"
+#include "MovePlayerArgs.h"
 
 using namespace NAMESPACE;
 using namespace std;
@@ -38,21 +37,15 @@ void GameLogic::Tick()
 {
    _inputHandler->HandleInput();
    HandleEvents();
-
-   if ( _gameStateTracker->gameState == GameState::Playing )
-   {
-      UpdateBallPosition();
-      ClipBall();
-   }
 }
 
-void GameLogic::ResetBall()
+void GameLogic::ResetPlayer()
 {
-   auto ball = _gameData->GetBall();
+   auto player = _gameData->GetPlayer();
 
-   ball->SetPosition( _gameConfig->DefaultBallPosition.x, _gameConfig->DefaultBallPosition.y );
-   ball->SetAngle( _gameConfig->DefaultBallAngle );
-   ball->SetVelocity( _gameConfig->DefaultBallVelocity );
+   player->SetPosition( _gameConfig->DefaultPlayerPosition.x, _gameConfig->DefaultPlayerPosition.y );
+   player->SetDirection( _gameConfig->DefaultPlayerDirection );
+   player->SetVelocity( 0 );
 }
 
 void GameLogic::HandleEvents()
@@ -63,13 +56,12 @@ void GameLogic::HandleEvents()
 
       switch ( event.type )
       {
-         case GameEventType::Quit:        OnQuit();                  break;
-         case GameEventType::ExitToTitle: OnExitToTitle();           break;
-         case GameEventType::OpenMenu:    OnOpenMenu();              break;
-         case GameEventType::CloseMenu:   OnCloseMenu();             break;
-         case GameEventType::StartGame:   OnStartGame();             break;
-         case GameEventType::TurnBall:    OnTurnBall( event.args );  break;
-         case GameEventType::PushBall:    OnPushBall( event.args );  break;
+         case GameEventType::Quit:        OnQuit();                    break;
+         case GameEventType::ExitToTitle: OnExitToTitle();             break;
+         case GameEventType::OpenMenu:    OnOpenMenu();                break;
+         case GameEventType::CloseMenu:   OnCloseMenu();               break;
+         case GameEventType::StartGame:   OnStartGame();               break;
+         case GameEventType::MovePlayer:  OnMovePlayer( event.args );  break;
       }
    }
 }
@@ -113,83 +105,67 @@ void GameLogic::OnCloseMenu() const
 
 void GameLogic::OnStartGame()
 {
-   ResetBall();
+   ResetPlayer();
    _gameStateTracker->gameState = GameState::Playing;
    _eventQueue->Flush();
 }
 
-void GameLogic::OnTurnBall( shared_ptr<IGameEventArgs> args ) const
+void GameLogic::OnMovePlayer( shared_ptr<IGameEventArgs> args ) const
 {
-   auto ball = _gameData->GetBall();
-   auto turnArgs = (TurnBallArgs*)( args.get() );
+   auto player = _gameData->GetPlayer();
+   auto moveArgs = (MovePlayerArgs*)( args.get() );
 
-   auto newAngle = ball->GetAngle() + ( turnArgs->GetIncrement() * _clock->GetFrameSeconds() );
-   NORMALIZE_ANGLE( newAngle );
+   auto direction = moveArgs->GetDirection();
+   auto& currentPosition = player->GetPosition();
+   player->SetDirection( direction );
 
-   ball->SetAngle( newAngle );
+   // MUFFINS: this will "favor" the direction of the last move command, need to figure that out somehow,
+   // maybe based on the last keypress or something? maybe the command should be split up into two:
+   // - "face at direction"
+   // - "move in direction"
+   switch ( direction )
+   {
+      case Direction::Left:
+         player->SetPosition( currentPosition.x - ( _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() ), currentPosition.y );
+         break;
+      case Direction::Up:
+         player->SetPosition( currentPosition.x, currentPosition.y - ( _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() ) );
+         break;
+      case Direction::Right:
+         player->SetPosition( currentPosition.x + ( _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() ), currentPosition.y );
+         break;
+      case Direction::Down:
+         player->SetPosition( currentPosition.x, currentPosition.y + ( _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() ) );
+         break;
+   }
+
+   ClipPlayer();
 }
 
-void GameLogic::OnPushBall( shared_ptr<IGameEventArgs> args ) const
+void GameLogic::ClipPlayer() const
 {
-   auto ball = _gameData->GetBall();
-   auto pushArgs = (PushBallArgs*)( args.get() );
-
-   auto newVelocity = ball->GetVelocity() + ( pushArgs->GetIncrement() * _clock->GetFrameSeconds() );
-   ball->SetVelocity( min( newVelocity, _gameConfig->MaximumBallVelocity ) );
-}
-
-void GameLogic::UpdateBallPosition() const
-{
-   auto ball = _gameData->GetBall();
-   auto& position = ball->GetPosition();
-   auto angle = ball->GetAngle();
-   auto velocity = ball->GetVelocity();
-
-   auto dx = cosf( angle ) * ( velocity * _clock->GetFrameSeconds() );
-   auto dy = tanf( angle ) * dx;
-
-   auto newPositionX = position.x + dx;
-   auto newPositionY = position.y - dy;
-
-   ball->SetPosition( newPositionX, newPositionY );
-}
-
-void GameLogic::ClipBall() const
-{
-   auto ball = _gameData->GetBall();
-   auto& hitBox = ball->GetHitBox();
+   auto player = _gameData->GetPlayer();
+   auto& hitBox = player->GetHitBox();
 
    if ( hitBox.top < 0 )
    {
       // hit the top edge of the arena
-      ball->SetPosition( ball->GetPosition().x, ( hitBox.height / 2.0f ) );
-      auto newAngle = RAD_360 - ball->GetAngle();
-      NORMALIZE_ANGLE( newAngle );
-      ball->SetAngle( newAngle );
+      player->SetPosition( player->GetPosition().x, ( hitBox.height / 2.0f ) );
    }
    else if ( ( hitBox.top + hitBox.height ) >= ( _renderConfig->ScreenHeight - 1 ) )
    {
       // hit the bottom edge of the arena
-      ball->SetPosition( ball->GetPosition().x, ( _renderConfig->ScreenHeight - 1 ) - ( hitBox.height / 2.0f ) );
-      auto newAngle = RAD_360 - ball->GetAngle();
-      NORMALIZE_ANGLE( newAngle );
-      ball->SetAngle( newAngle );
+      player->SetPosition( player->GetPosition().x, ( _renderConfig->ScreenHeight - 1 ) - ( hitBox.height / 2.0f ) );
    }
 
    if ( hitBox.left < 0 )
    {
       // hit the left edge of the arena
-      ball->SetPosition( ( hitBox.width / 2.0f ), ball->GetPosition().y );
-      auto newAngle = RAD_180 - ball->GetAngle();
-      NORMALIZE_ANGLE( newAngle );
-      ball->SetAngle( newAngle );
+      player->SetPosition( ( hitBox.width / 2.0f ), player->GetPosition().y );
    }
    else if ( ( hitBox.left + hitBox.width ) >= ( _renderConfig->ScreenWidth - 1 ) )
    {
       // hit the right edge of the arena
-      ball->SetPosition( ( _renderConfig->ScreenWidth - 1 ) - ( hitBox.width / 2.0f ), ball->GetPosition().y );
-      auto newAngle = RAD_180 - ball->GetAngle();
-      NORMALIZE_ANGLE( newAngle );
-      ball->SetAngle( newAngle );
+      player->SetPosition( ( _renderConfig->ScreenWidth - 1 ) - ( hitBox.width / 2.0f ), player->GetPosition().y );
    }
 }

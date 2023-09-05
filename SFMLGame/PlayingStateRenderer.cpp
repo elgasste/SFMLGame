@@ -33,18 +33,18 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
    _text->setPosition( ( (float)renderConfig->ScreenWidth / 2 ) - ( _text->getGlobalBounds().width / 2 ),
                        ( (float)renderConfig->ScreenHeight / 2 ) - ( _text->getGlobalBounds().height / 2 ) );
 
-   _ballSprite = Sprite( *( renderData->GetBallTexture() ) );
-   _ballSprite.setOrigin( renderConfig->BallOrigin );
-   auto scalar = gameConfig->BallDiameter / renderData->GetBallTexture()->getSize().x;
-   _ballSprite.setScale( scalar, scalar );
+   _playerSprite = Sprite( *( renderData->GetPlayerSpriteTexture() ) );
+   _playerSprite.setTextureRect( { 0, 0, renderConfig->PlayerSpriteSize.x, renderConfig->PlayerSpriteSize.y } );
+   _playerSprite.setScale( renderConfig->SpriteScalar, renderConfig->SpriteScalar );
+   _playerSprite.setOrigin( renderConfig->PlayerSpriteOrigin );
 }
 
 void PlayingStateRenderer::Render()
 {
    _window->Draw( _backgroundRect );
 
-   _ballSprite.setPosition( _gameData->GetBall()->GetPosition() );
-   _window->Draw( _ballSprite );
+   _playerSprite.setPosition( _gameData->GetPlayer()->GetPosition() );
+   _window->Draw( _playerSprite );
 
    _window->Draw( _text );
 }

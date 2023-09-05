@@ -44,7 +44,10 @@ RenderConfig::RenderConfig()
    MainMenuTextColor = Color( 200, 200, 255 );
    MainMenuCaratOffset = 30;
    MainMenuCaratBlinkRate = 0.25f;
-   MainMenuBallDimmer = Color( 128, 128, 128 );
+   MainMenuBackdropDimmer = Color( 128, 128, 128 );
 
-   BallOrigin = { 290.5f, 290.5f };
+   SpriteScalar = 2;
+
+   PlayerSpriteSize = { 64, 64 };
+   PlayerSpriteOrigin = { 32, 37 };
 }
