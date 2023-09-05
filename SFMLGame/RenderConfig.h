@@ -42,10 +42,6 @@ public:
    unsigned int TitleMenuCharSize;
    sf::Color TitleMenuTextColor;
 
-   std::string PlayingMessageFont;
-   unsigned int PlayingMessageCharSize;
-   sf::Color PlayingMessageTextColor;
-
    sf::Color MainMenuBackgroundColor;
    std::string MainMenuFont;
    unsigned int MainMenuCharSize;
@@ -58,6 +54,8 @@ public:
 
    sf::Vector2i PlayerSpriteSize;
    sf::Vector2f PlayerSpriteOrigin;
+   int PlayerSpriteMovementFrames;
+   float PlayerSpriteFrameIncrement;
 };
 
 NAMESPACE_END

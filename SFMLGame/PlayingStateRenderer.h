@@ -24,15 +24,11 @@ public:
    void Render() override;
 
 private:
+   std::shared_ptr<RenderData> _renderData;
    std::shared_ptr<GameData> _gameData;
    std::shared_ptr<SFMLWindow> _window;
 
    sf::RectangleShape _backgroundRect;
-
-   std::shared_ptr<sf::Font> _font;
-   std::shared_ptr<sf::Text> _text;
-
-   sf::Sprite _playerSprite;
 };
 
 NAMESPACE_END

@@ -163,6 +163,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
   <ItemGroup>
     <ClCompile Include="DiagnosticsRenderer.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EntitySprite.cpp" />
     <ClCompile Include="EventQueue.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
@@ -181,7 +182,6 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClCompile Include="PlayingStateInputHandler.cpp" />
     <ClCompile Include="PlayingStateRenderer.cpp" />
     <ClCompile Include="RenderConfig.cpp" />
-    <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="SFMLWindow.cpp" />
     <ClCompile Include="TitleMenu.cpp" />
     <ClCompile Include="TitleMenuStateRenderer.cpp" />
@@ -193,6 +193,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="DiagnosticsRenderer.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntitySprite.h" />
     <ClInclude Include="EventQueue.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />

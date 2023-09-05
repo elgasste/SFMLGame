@@ -6,7 +6,7 @@ Entity::Entity() :
    _hitBox( { 0, 0, 0, 0 } ),
    _position( { 0, 0 } ),
    _direction( (Direction)0 ),
-   _velocity( 0 )
+   _isMoving( false )
 {
 }
 

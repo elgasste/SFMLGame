@@ -35,6 +35,8 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
 
 void GameLogic::Tick()
 {
+   _gameData->GetPlayer()->SetIsMoving( false );
+
    _inputHandler->HandleInput();
    HandleEvents();
 }
@@ -45,7 +47,6 @@ void GameLogic::ResetPlayer()
 
    player->SetPosition( _gameConfig->DefaultPlayerPosition.x, _gameConfig->DefaultPlayerPosition.y );
    player->SetDirection( _gameConfig->DefaultPlayerDirection );
-   player->SetVelocity( 0 );
 }
 
 void GameLogic::HandleEvents()
@@ -118,6 +119,7 @@ void GameLogic::OnMovePlayer( shared_ptr<IGameEventArgs> args ) const
    auto direction = moveArgs->GetDirection();
    auto& currentPosition = player->GetPosition();
    player->SetDirection( direction );
+   player->SetIsMoving( true );
 
    // MUFFINS: this will "favor" the direction of the last move command, need to figure that out somehow,
    // maybe based on the last keypress or something? maybe the command should be split up into two:

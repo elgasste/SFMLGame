@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "GameData.h"
 #include "RenderConfig.h"
+#include "EntitySprite.h"
 #include "RenderData.h"
 #include "EventQueue.h"
 #include "GameClock.h"
@@ -32,11 +33,11 @@ shared_ptr<Game> GameLoader::Load() const
    auto gameConfig = make_shared<GameConfig>();
    auto gameData = LoadGameData( gameConfig );
    auto renderConfig = make_shared<RenderConfig>();
-   auto renderData = LoadRenderData();
+   auto gameClock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
+   auto renderData = LoadRenderData( renderConfig, gameData, gameClock );
    auto gameRunningTracker = make_shared<GameRunningTracker>();
    auto gameStateTracker = make_shared<GameStateTracker>();
    auto eventQueue = make_shared<EventQueue>();
-   auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
    auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
    auto titleMenu = shared_ptr<TitleMenu>( new TitleMenu( eventQueue ) );
    auto mainMenu = shared_ptr<MainMenu>( new MainMenu( eventQueue ) );
@@ -49,19 +50,19 @@ shared_ptr<Game> GameLoader::Load() const
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::MainMenu, mainMenuStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Closing, closingStateInputHandler );
-   auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, gameInputHandler, eventQueue, clock, gameRunningTracker, gameStateTracker ) );
-   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, clock ) );
-   auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, clock, window ) );
-   auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, clock, titleMenu ) );
+   auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, gameInputHandler, eventQueue, gameClock, gameRunningTracker, gameStateTracker ) );
+   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, gameClock ) );
+   auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameClock, window ) );
+   auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, gameClock, titleMenu ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );
-   auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( renderConfig, window, clock, mainMenu ) );
+   auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( renderConfig, window, gameClock, mainMenu ) );
    auto closingStateRenderer = make_shared<ClosingStateRenderer>();
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderData, gameConfig, window, diagnosticRenderer, gameStateTracker ) );
    gameRenderer->AddStateRenderer( GameState::TitleMenu, titleMenuStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
    gameRenderer->AddStateRenderer( GameState::MainMenu, mainMenuStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Closing, closingStateRenderer );
-   auto game = shared_ptr<Game>( new Game( clock, inputReader, gameLogic, gameRenderer, gameRunningTracker, gameStateTracker ) );
+   auto game = shared_ptr<Game>( new Game( gameClock, inputReader, gameLogic, gameRenderer, gameRunningTracker, gameStateTracker ) );
 
    return game;
 }
@@ -76,12 +77,24 @@ shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig
    return gameData;
 }
 
-shared_ptr<RenderData> GameLoader::LoadRenderData() const
+shared_ptr<RenderData> GameLoader::LoadRenderData( shared_ptr<RenderConfig> renderConfig,
+                                                   shared_ptr<GameData> gameData,
+                                                   shared_ptr<GameClock> gameClock ) const
 {
    auto playerSpriteTexture = shared_ptr<Texture>( new Texture() );
    playerSpriteTexture->loadFromFile( "Resources/Textures/BODY_male.png" );
 
-   auto renderData = shared_ptr<RenderData>( new RenderData( playerSpriteTexture ) );
+   auto playerSprite = shared_ptr<EntitySprite>( new EntitySprite( renderConfig,
+                                                                   gameClock,
+                                                                   gameData->GetPlayer(),
+                                                                   playerSpriteTexture,
+                                                                   renderConfig->PlayerSpriteSize,
+                                                                   renderConfig->PlayerSpriteOrigin,
+                                                                   renderConfig->PlayerSpriteMovementFrames ) );
+
+   auto renderData = make_shared<RenderData>();
+   renderData->SetPlayerSpriteTexture( playerSpriteTexture );
+   renderData->SetPlayerSprite( playerSprite );
 
    return renderData;
 }

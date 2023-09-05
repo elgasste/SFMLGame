@@ -34,10 +34,6 @@ RenderConfig::RenderConfig()
    TitleMenuCaratOffset = 40;
    TitleMenuCaratBlinkRate = 0.25f;
 
-   PlayingMessageFont = "Resources/Fonts/Rubber-Duck.ttf";
-   PlayingMessageCharSize = 32;
-   PlayingMessageTextColor = Color( 200, 200, 255 );
-
    MainMenuBackgroundColor = Color( 48, 48, 48, 128 );
    MainMenuFont = "Resources/Fonts/Rubber-Duck.ttf";
    MainMenuCharSize = 96;
@@ -50,4 +46,6 @@ RenderConfig::RenderConfig()
 
    PlayerSpriteSize = { 64, 64 };
    PlayerSpriteOrigin = { 32, 37 };
+   PlayerSpriteMovementFrames = 9;
+   PlayerSpriteFrameIncrement = 0.05f;
 }
