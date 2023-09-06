@@ -42,7 +42,7 @@ RenderConfig::RenderConfig()
    MainMenuCaratBlinkRate = 0.25f;
    MainMenuBackdropDimmer = Color( 128, 128, 128 );
 
-   SpriteScalar = 2;
+   SpriteScalar = 2.5f;
 
    PlayerSpriteSize = { 64, 64 };
    PlayerSpriteOrigin = { 32, 37 };

@@ -22,7 +22,7 @@ GameConfig::GameConfig()
    DefaultPlayerPosition = { 960, 540 };
    DefaultPlayerDirection = Direction::Down;
    MaximumPlayerVelocity = 5000;
-   PlayerHitBoxWidth = 60;
-   PlayerHitBoxHeight = 92;
-   PlayerVelocityIncrement = 400;
+   PlayerHitBoxWidth = 75;    // should match SpriteScalar
+   PlayerHitBoxHeight = 115;  // should match SpriteScalar
+   PlayerVelocityIncrement = 250;
 }

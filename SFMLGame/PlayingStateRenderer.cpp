@@ -28,7 +28,6 @@ void PlayingStateRenderer::Render()
 {
    _window->Draw( _backgroundRect );
 
-   // MUFFINS: should the new positioning happen elsewhere? or is this the place to put it?
    auto playerSprite = _renderData->GetPlayerSprite();
    playerSprite->SetPosition( _gameData->GetPlayer()->GetPosition() );
 
