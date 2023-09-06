@@ -16,7 +16,7 @@ RenderConfig::RenderConfig()
    WindowStyle = Style::Titlebar | Style::Close;
 
    DiagnosticsWidth = 450;
-   DiagnosticsHeight = 265;
+   DiagnosticsHeight = 186;
    DiagnosticsXPosition = ScreenWidth - DiagnosticsWidth;
    DiagnosticsYPosition = 0;
    DiagnosticsTextMargin = 20;
@@ -25,17 +25,17 @@ RenderConfig::RenderConfig()
    DiagnosticsTextColor = Color::White;
    DiagnosticsBackgroundColor = Color::Blue;
 
-   ArenaBackgroundColor = Color( 48, 48, 48 );
+   ArenaBackgroundColor = Color::Black;
 
    TitleMenuBackgroundColor = Color::Black;
-   TitleMenuFont = "Resources/Fonts/Rubber-Duck.ttf";
-   TitleMenuCharSize = 128;
+   TitleMenuFont = "Resources/Fonts/Goudy Mediaeval Regular.ttf";
+   TitleMenuCharSize = 96;
    TitleMenuTextColor = Color( 200, 200, 255 );
-   TitleMenuCaratOffset = 40;
+   TitleMenuCaratOffset = 30;
    TitleMenuCaratBlinkRate = 0.25f;
 
-   MainMenuBackgroundColor = Color( 48, 48, 48, 128 );
-   MainMenuFont = "Resources/Fonts/Rubber-Duck.ttf";
+   MainMenuBackgroundColor = Color::Black;
+   MainMenuFont = "Resources/Fonts/Goudy Mediaeval Regular.ttf";
    MainMenuCharSize = 96;
    MainMenuTextColor = Color( 200, 200, 255 );
    MainMenuCaratOffset = 30;
