@@ -19,7 +19,7 @@ EntitySprite::EntitySprite( shared_ptr<RenderConfig> renderConfig,
    _gameClock( gameClock ),
    _size( size ),
    _movementFrames( movementFrames ),
-   _currentMovementFrame( 0 ),
+   _currentMovementFrame( 1 ),
    _elapsedMovementTime( 0 )
 {
    _textureRect = { 0, 0, size.x, size.y };
@@ -56,16 +56,19 @@ const Sprite& EntitySprite::GetSprite()
          _elapsedMovementTime = 0;
          _currentMovementFrame++;
 
-         if ( _currentMovementFrame >= _movementFrames )
+         if ( _currentMovementFrame > _movementFrames )
          {
-            _currentMovementFrame = 0;
+            _currentMovementFrame = 1;
          }
       }
 
+      // all frames after frame 0 are "walking" frames
       _textureRect.left = _currentMovementFrame * _size.x;
    }
    else
    {
+      // frame 0 is the "standing" frame
+      _elapsedMovementTime = 0;
       _textureRect.left = 0;
    }
 

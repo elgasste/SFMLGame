@@ -46,6 +46,6 @@ RenderConfig::RenderConfig()
 
    PlayerSpriteSize = { 64, 64 };
    PlayerSpriteOrigin = { 32, 37 };
-   PlayerSpriteMovementFrames = 9;
+   PlayerSpriteMovementFrames = 8;
    PlayerSpriteFrameIncrement = 0.05f;
 }
