@@ -24,5 +24,5 @@ GameConfig::GameConfig()
    MaximumPlayerVelocity = 5000;
    PlayerHitBoxWidth = 75;    // should match SpriteScalar
    PlayerHitBoxHeight = 115;  // should match SpriteScalar
-   PlayerVelocityIncrement = 250;
+   PlayerVelocityIncrement = 300;
 }
