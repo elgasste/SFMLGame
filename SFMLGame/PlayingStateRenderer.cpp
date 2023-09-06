@@ -22,14 +22,32 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
 {
    _backgroundRect = RectangleShape( { (float)renderConfig->ScreenWidth, (float)renderConfig->ScreenHeight } );
    _backgroundRect.setFillColor( renderConfig->ArenaBackgroundColor );
+
+   _spriteLayerOrder =
+   {
+      EntitySpriteLayer::Body,
+      EntitySpriteLayer::Legs,
+      EntitySpriteLayer::Torso,
+      EntitySpriteLayer::Belt,
+      EntitySpriteLayer::Feet,
+      EntitySpriteLayer::Head,
+      EntitySpriteLayer::Hands,
+   };
 }
 
 void PlayingStateRenderer::Render()
 {
-   _window->Draw( _backgroundRect );
-
    auto playerSprite = _renderData->GetPlayerSprite();
+   playerSprite->Tick();
    playerSprite->SetPosition( _gameData->GetPlayer()->GetPosition() );
 
-   _window->Draw( playerSprite->GetSprite() );
+   _window->Draw( _backgroundRect );
+
+   for ( auto layer : _spriteLayerOrder )
+   {
+      if ( playerSprite->HasLayer( layer ) )
+      {
+         _window->Draw( playerSprite->GetSpriteForLayer( layer ) );
+      }
+   }
 }

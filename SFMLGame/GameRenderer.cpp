@@ -3,16 +3,15 @@
 #include "SFMLWindow.h"
 #include "DiagnosticsRenderer.h"
 #include "IGameStateRenderer.h"
+#include "EntitySprite.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-GameRenderer::GameRenderer( shared_ptr<RenderData> renderData,
-                            shared_ptr<GameConfig> gameConfig,
+GameRenderer::GameRenderer( shared_ptr<GameConfig> gameConfig,
                             shared_ptr<SFMLWindow> window,
                             shared_ptr<DiagnosticsRenderer> diagnosticsRenderer,
                             shared_ptr<GameStateTracker> gameStateTracker ) :
-   _renderData( renderData ),
    _gameConfig( gameConfig ),
    _window( window ),
    _diagnosticsRenderer( diagnosticsRenderer ),

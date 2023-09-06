@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "IGameStateRenderer.h"
+#include "EntitySpriteLayer.h"
 
 NAMESPACE_BEGIN
 
@@ -29,6 +30,7 @@ private:
    std::shared_ptr<SFMLWindow> _window;
 
    sf::RectangleShape _backgroundRect;
+   std::vector<EntitySpriteLayer> _spriteLayerOrder;
 };
 
 NAMESPACE_END

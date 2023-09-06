@@ -57,7 +57,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );
    auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( renderConfig, window, gameClock, mainMenu ) );
    auto closingStateRenderer = make_shared<ClosingStateRenderer>();
-   auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( renderData, gameConfig, window, diagnosticRenderer, gameStateTracker ) );
+   auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( gameConfig, window, diagnosticRenderer, gameStateTracker ) );
    gameRenderer->AddStateRenderer( GameState::TitleMenu, titleMenuStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
    gameRenderer->AddStateRenderer( GameState::MainMenu, mainMenuStateRenderer );
@@ -81,19 +81,30 @@ shared_ptr<RenderData> GameLoader::LoadRenderData( shared_ptr<RenderConfig> rend
                                                    shared_ptr<GameData> gameData,
                                                    shared_ptr<GameClock> gameClock ) const
 {
-   auto playerSpriteTexture = shared_ptr<Texture>( new Texture() );
-   playerSpriteTexture->loadFromFile( "Resources/Textures/BODY_male.png" );
+   auto playerSpriteTextureLayerMap = make_shared<map<EntitySpriteLayer, shared_ptr<Texture>>>();
+   ( *playerSpriteTextureLayerMap )[EntitySpriteLayer::Body] = shared_ptr<Texture>( new Texture() );
+   playerSpriteTextureLayerMap->at( EntitySpriteLayer::Body )->loadFromFile( "Resources/Textures/BODY_male.png" );
+   ( *playerSpriteTextureLayerMap )[EntitySpriteLayer::Legs] = shared_ptr<Texture>( new Texture() );
+   playerSpriteTextureLayerMap->at( EntitySpriteLayer::Legs )->loadFromFile( "Resources/Textures/LEGS_pants_greenish.png" );
+   ( *playerSpriteTextureLayerMap )[EntitySpriteLayer::Torso] = shared_ptr<Texture>( new Texture() );
+   playerSpriteTextureLayerMap->at( EntitySpriteLayer::Torso )->loadFromFile( "Resources/Textures/TORSO_leather_armor.png" );
+   ( *playerSpriteTextureLayerMap )[EntitySpriteLayer::Belt] = shared_ptr<Texture>( new Texture() );
+   playerSpriteTextureLayerMap->at( EntitySpriteLayer::Belt )->loadFromFile( "Resources/Textures/BELT_leather.png" );
+   ( *playerSpriteTextureLayerMap )[EntitySpriteLayer::Feet] = shared_ptr<Texture>( new Texture() );
+   playerSpriteTextureLayerMap->at( EntitySpriteLayer::Feet )->loadFromFile( "Resources/Textures/FEET_shoes_brown.png" );
+   ( *playerSpriteTextureLayerMap )[EntitySpriteLayer::Head] = shared_ptr<Texture>( new Texture() );
+   playerSpriteTextureLayerMap->at( EntitySpriteLayer::Head )->loadFromFile( "Resources/Textures/HEAD_leather_armor_hat.png" );
 
    auto playerSprite = shared_ptr<EntitySprite>( new EntitySprite( renderConfig,
                                                                    gameClock,
                                                                    gameData->GetPlayer(),
-                                                                   playerSpriteTexture,
+                                                                   playerSpriteTextureLayerMap,
                                                                    renderConfig->PlayerSpriteSize,
                                                                    renderConfig->PlayerSpriteOrigin,
                                                                    renderConfig->PlayerSpriteMovementFrames ) );
 
    auto renderData = make_shared<RenderData>();
-   renderData->SetPlayerSpriteTexture( playerSpriteTexture );
+   renderData->SetPlayerSpriteTextureLayerMap( playerSpriteTextureLayerMap );
    renderData->SetPlayerSprite( playerSprite );
 
    return renderData;
