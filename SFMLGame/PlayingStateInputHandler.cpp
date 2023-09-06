@@ -4,6 +4,7 @@
 #include "EventQueue.h"
 #include "Entity.h"
 #include "Geometry.h"
+#include "TurnPlayerArgs.h"
 #include "MovePlayerArgs.h"
 
 using namespace NAMESPACE;
@@ -14,7 +15,13 @@ PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputReader> inpu
                                                     shared_ptr<EventQueue> eventQueue ) :
    _inputReader( inputReader ),
    _gameConfig( gameConfig ),
-   _eventQueue( eventQueue )
+   _eventQueue( eventQueue ),
+   _isLeftDown( false ),
+   _isUpDown( false ),
+   _isRightDown( false ),
+   _isDownDown( false ),
+   _directionWasPressedLastFrame( false ),
+   _directionCache( (Direction)0 )
 {
 }
 
@@ -26,27 +33,140 @@ void PlayingStateInputHandler::HandleInput()
       return;
    }
 
-   bool isLeftDown = _inputReader->IsButtonDown( Button::Left );
-   bool isRightDown = _inputReader->IsButtonDown( Button::Right );
+   CacheDirectionInput();
 
-   if ( isLeftDown && !isRightDown )
+   if ( _isLeftDown && !_isRightDown )
    {
       _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Left ) ) );
    }
-   else if ( isRightDown && !isLeftDown )
+   else if ( _isRightDown && !_isLeftDown )
    {
       _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Right ) ) );
    }
 
-   bool isUpDown = _inputReader->IsButtonDown( Button::Up );
-   bool isDownDown = _inputReader->IsButtonDown( Button::Down );
-
-   if ( isUpDown && !isDownDown )
+   if ( _isUpDown && !_isDownDown )
    {
       _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Up ) ) );
    }
-   else if ( isDownDown && !isUpDown )
+   else if ( _isDownDown && !_isUpDown )
    {
       _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Down ) ) );
+   }
+}
+
+void PlayingStateInputHandler::CacheDirectionInput()
+{
+   _isLeftDown = _inputReader->IsButtonDown( Button::Left );
+   _isUpDown = _inputReader->IsButtonDown( Button::Up );
+   _isRightDown = _inputReader->IsButtonDown( Button::Right );
+   _isDownDown = _inputReader->IsButtonDown( Button::Down );
+
+   bool directionWasPressed = _isLeftDown || _isUpDown || _isRightDown || _isDownDown;
+
+   if ( !directionWasPressed )
+   {
+      _directionWasPressedLastFrame = false;
+      return;
+   }
+
+   if ( !_directionWasPressedLastFrame )
+   {
+      _directionWasPressedLastFrame = true;
+
+      if ( _isLeftDown )
+      {
+         _directionCache = Direction::Left;
+         _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Left ) ) );
+      }
+      else if ( _isUpDown )
+      {
+         _directionCache = Direction::Up;
+         _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Up ) ) );
+      }
+      else if ( _isRightDown )
+      {
+         _directionCache = Direction::Right;
+         _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Right ) ) );
+      }
+      else if ( _isDownDown )
+      {
+         _directionCache = Direction::Down;
+         _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Down ) ) );
+      }
+   }
+   else
+   {
+      if ( _directionCache == Direction::Left && !_isLeftDown )
+      {
+         if ( _isUpDown && !_isDownDown )
+         {
+            _directionCache = Direction::Up;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Up ) ) );
+         }
+         else if ( _isRightDown )
+         {
+            _directionCache = Direction::Right;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Right ) ) );
+         }
+         else if ( _isDownDown && !_isUpDown )
+         {
+            _directionCache = Direction::Down;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Down ) ) );
+         }
+      }
+      else if ( _directionCache == Direction::Up && !_isUpDown )
+      {
+         if ( _isRightDown && !_isLeftDown )
+         {
+            _directionCache = Direction::Right;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Right ) ) );
+         }
+         else if ( _isDownDown )
+         {
+            _directionCache = Direction::Down;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Down ) ) );
+         }
+         else if ( _isLeftDown && !_isRightDown )
+         {
+            _directionCache = Direction::Left;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Left ) ) );
+         }
+      }
+      else if ( _directionCache == Direction::Right && !_isRightDown )
+      {
+         if ( _isDownDown && !_isUpDown )
+         {
+            _directionCache = Direction::Down;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Down ) ) );
+         }
+         else if ( _isLeftDown )
+         {
+            _directionCache = Direction::Left;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Left ) ) );
+         }
+         else if ( _isUpDown && !_isDownDown )
+         {
+            _directionCache = Direction::Up;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Up ) ) );
+         }
+      }
+      else if ( _directionCache == Direction::Down && !_isDownDown )
+      {
+         if ( _isLeftDown && !_isRightDown )
+         {
+            _directionCache = Direction::Left;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Left ) ) );
+         }
+         else if ( _isUpDown )
+         {
+            _directionCache = Direction::Up;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Up ) ) );
+         }
+         else if ( _isRightDown && !_isLeftDown )
+         {
+            _directionCache = Direction::Right;
+            _eventQueue->Push( GameEventType::TurnPlayer, shared_ptr<TurnPlayerArgs>( new TurnPlayerArgs( Direction::Right ) ) );
+         }
+      }
    }
 }

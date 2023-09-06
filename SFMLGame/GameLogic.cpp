@@ -8,6 +8,7 @@
 #include "GameRunningTracker.h"
 #include "Entity.h"
 #include "Geometry.h"
+#include "TurnPlayerArgs.h"
 #include "MovePlayerArgs.h"
 
 using namespace NAMESPACE;
@@ -62,6 +63,7 @@ void GameLogic::HandleEvents()
          case GameEventType::OpenMenu:    OnOpenMenu();                break;
          case GameEventType::CloseMenu:   OnCloseMenu();               break;
          case GameEventType::StartGame:   OnStartGame();               break;
+         case GameEventType::TurnPlayer:  OnTurnPlayer( event.args );  break;
          case GameEventType::MovePlayer:  OnMovePlayer( event.args );  break;
       }
    }
@@ -111,6 +113,12 @@ void GameLogic::OnStartGame()
    _eventQueue->Flush();
 }
 
+void GameLogic::OnTurnPlayer( shared_ptr<IGameEventArgs> args ) const
+{
+   auto turnArgs = (TurnPlayerArgs*)( args.get() );
+   _gameData->GetPlayer()->SetDirection( turnArgs->GetDirection() );
+}
+
 void GameLogic::OnMovePlayer( shared_ptr<IGameEventArgs> args ) const
 {
    auto player = _gameData->GetPlayer();
@@ -118,13 +126,8 @@ void GameLogic::OnMovePlayer( shared_ptr<IGameEventArgs> args ) const
 
    auto direction = moveArgs->GetDirection();
    auto& currentPosition = player->GetPosition();
-   player->SetDirection( direction );
    player->SetIsMoving( true );
 
-   // MUFFINS: this will "favor" the direction of the last move command, need to figure that out somehow,
-   // maybe based on the last keypress or something? maybe the command should be split up into two:
-   // - "face at direction"
-   // - "move in direction"
    switch ( direction )
    {
       case Direction::Left:

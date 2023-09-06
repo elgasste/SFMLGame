@@ -37,6 +37,7 @@ private:
    void OnOpenMenu() const;
    void OnCloseMenu() const;
    void OnStartGame();
+   void OnTurnPlayer( std::shared_ptr<IGameEventArgs> args ) const;
    void OnMovePlayer( std::shared_ptr<IGameEventArgs> args ) const;
 
    void ClipPlayer() const;

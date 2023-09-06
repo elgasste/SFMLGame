@@ -11,6 +11,7 @@ enum class GameEventType
    OpenMenu,
    CloseMenu,
    StartGame,
+   TurnPlayer,
    MovePlayer
 };
 
