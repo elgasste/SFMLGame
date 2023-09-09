@@ -31,7 +31,7 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
       EntitySpriteLayer::Belt,
       EntitySpriteLayer::Feet,
       EntitySpriteLayer::Head,
-      EntitySpriteLayer::Hands,
+      EntitySpriteLayer::Hands
    };
 }
 
