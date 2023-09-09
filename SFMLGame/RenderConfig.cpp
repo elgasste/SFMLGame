@@ -10,7 +10,7 @@ RenderConfig::RenderConfig()
    MaximumFrameRate = 120;
 
    ScreenWidth = 1920;
-   ScreenHeight = 1080;
+   ScreenHeight = 1280;
 
    WindowTitle = IDS_WindowTitle;
    WindowStyle = Style::Titlebar | Style::Close;
@@ -42,7 +42,7 @@ RenderConfig::RenderConfig()
    MainMenuCaratBlinkRate = 0.25f;
    MainMenuBackdropDimmer = Color( 128, 128, 128 );
 
-   SpriteScalar = 2.5f;
+   SpriteScalar = 2.0f;
 
    PlayerSpriteSize = { 64, 64 };
    PlayerSpriteOrigin = { 32, 37 };

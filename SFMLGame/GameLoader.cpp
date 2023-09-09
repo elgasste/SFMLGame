@@ -81,6 +81,9 @@ shared_ptr<RenderData> GameLoader::LoadRenderData( shared_ptr<RenderConfig> rend
                                                    shared_ptr<GameData> gameData,
                                                    shared_ptr<GameClock> gameClock ) const
 {
+   auto backgroundTexture = shared_ptr<Texture>( new Texture() );
+   backgroundTexture->loadFromFile( "Resources/Textures/overworld_test.png" );
+
    auto playerSpriteTextureLayerMap = make_shared<map<EntitySpriteLayer, shared_ptr<Texture>>>();
    ( *playerSpriteTextureLayerMap )[EntitySpriteLayer::Body] = shared_ptr<Texture>( new Texture() );
    playerSpriteTextureLayerMap->at( EntitySpriteLayer::Body )->loadFromFile( "Resources/Textures/BODY_male.png" );
@@ -104,6 +107,7 @@ shared_ptr<RenderData> GameLoader::LoadRenderData( shared_ptr<RenderConfig> rend
                                                                    renderConfig->PlayerSpriteMovementFrames ) );
 
    auto renderData = make_shared<RenderData>();
+   renderData->SetBackgroundTexture( backgroundTexture );
    renderData->SetPlayerSpriteTextureLayerMap( playerSpriteTextureLayerMap );
    renderData->SetPlayerSprite( playerSprite );
 

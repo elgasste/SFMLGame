@@ -20,10 +20,10 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
    _gameData( gameData ),
    _window( window )
 {
-   _backgroundRect = RectangleShape( { (float)renderConfig->ScreenWidth, (float)renderConfig->ScreenHeight } );
-   _backgroundRect.setFillColor( renderConfig->ArenaBackgroundColor );
+   _backgroundSprite = Sprite( *( renderData->GetBackgroundTexture() ) );
+   _backgroundSprite.setScale( { renderConfig->SpriteScalar, renderConfig->SpriteScalar } );
 
-   _spriteLayerOrder =
+   _entitySpriteLayerOrder =
    {
       EntitySpriteLayer::Body,
       EntitySpriteLayer::Legs,
@@ -41,9 +41,9 @@ void PlayingStateRenderer::Render()
    playerSprite->Tick();
    playerSprite->SetPosition( _gameData->GetPlayer()->GetPosition() );
 
-   _window->Draw( _backgroundRect );
+   _window->Draw( _backgroundSprite );
 
-   for ( auto layer : _spriteLayerOrder )
+   for ( auto layer : _entitySpriteLayerOrder )
    {
       if ( playerSprite->HasLayer( layer ) )
       {
