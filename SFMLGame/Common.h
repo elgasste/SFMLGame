@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <queue>
+#include <math.h>
 
 #include <SFML/Graphics.hpp>
 

@@ -127,7 +127,10 @@
       <Filter>Source Files\Menu</Filter>
     </ClCompile>
     <ClCompile Include="EntitySprite.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -254,20 +257,20 @@
     <ClInclude Include="Menu.h">
       <Filter>Header Files\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Direction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EntitySprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MovePlayerArgs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TurnPlayerArgs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EntitySpriteLayer.h">
       <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="EntitySprite.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Direction.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="MovePlayerArgs.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnPlayerArgs.h">
+      <Filter>Header Files\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

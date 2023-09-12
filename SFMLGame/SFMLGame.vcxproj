@@ -173,6 +173,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
     <ClCompile Include="GameInputHandler.cpp" />
+    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="InputReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
