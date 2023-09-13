@@ -150,27 +150,28 @@ void GameLogic::OnMovePlayer( shared_ptr<IGameEventArgs> args ) const
 void GameLogic::ClipPlayer() const
 {
    auto player = _gameData->GetPlayer();
-   auto& hitBox = player->GetHitBox();
+   auto& position = player->GetPosition();
+   auto& hitBoxOffset = player->GetHitBoxOffset();
 
-   if ( hitBox.top < 0 )
+   if ( ( position.y + hitBoxOffset.y ) < 0 )
    {
       // hit the top edge of the arena
-      player->SetPosition( player->GetPosition().x, ( hitBox.height / 2.0f ) );
+      player->SetPosition( position.x, -hitBoxOffset.y );
    }
-   else if ( ( hitBox.top + hitBox.height ) >= ( _renderConfig->ScreenHeight - 1 ) )
+   else if ( ( position.y - hitBoxOffset.y ) >= ( _renderConfig->ScreenHeight - 1 ) )
    {
       // hit the bottom edge of the arena
-      player->SetPosition( player->GetPosition().x, ( _renderConfig->ScreenHeight - 1 ) - ( hitBox.height / 2.0f ) );
+      player->SetPosition( position.x, ( _renderConfig->ScreenHeight - 1 ) + hitBoxOffset.y );
    }
 
-   if ( hitBox.left < 0 )
+   if ( ( position.x + hitBoxOffset.x ) < 0 )
    {
       // hit the left edge of the arena
-      player->SetPosition( ( hitBox.width / 2.0f ), player->GetPosition().y );
+      player->SetPosition( -hitBoxOffset.x, position.y );
    }
-   else if ( ( hitBox.left + hitBox.width ) >= ( _renderConfig->ScreenWidth - 1 ) )
+   else if ( ( position.x - hitBoxOffset.x ) >= ( _renderConfig->ScreenWidth - 1 ) )
    {
       // hit the right edge of the arena
-      player->SetPosition( ( _renderConfig->ScreenWidth - 1 ) - ( hitBox.width / 2.0f ), player->GetPosition().y );
+      player->SetPosition( ( _renderConfig->ScreenWidth - 1 ) + hitBoxOffset.x, position.y );
    }
 }

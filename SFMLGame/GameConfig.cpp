@@ -19,10 +19,12 @@ GameConfig::GameConfig()
 
    ShowDiagnostics = false;
 
-   DefaultPlayerPosition = { 960, 540 };
-   DefaultPlayerDirection = Direction::Down;
-   MaximumPlayerVelocity = 5000;
-   PlayerHitBoxWidth = 75;    // should match SpriteScalar
-   PlayerHitBoxHeight = 115;  // should match SpriteScalar
-   PlayerVelocityIncrement = 300;
+   HitBoxBlockSize = 4;
+
+   DefaultPlayerPosition = { 480, 320 };     // this will depend on the map data, eventually
+   DefaultPlayerDirection = Direction::Down; // this will depend on the map data, eventually
+   MaximumPlayerVelocity = 2500;
+   PlayerHitBoxWidth = 32;  // should be divisible by HitBoxBlockSize
+   PlayerHitBoxHeight = 48; // should be divisible by HitBoxBlockSize
+   PlayerVelocityIncrement = 150;
 }

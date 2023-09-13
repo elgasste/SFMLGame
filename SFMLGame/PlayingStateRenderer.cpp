@@ -21,7 +21,6 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
    _window( window )
 {
    _backgroundSprite = Sprite( *( renderData->GetBackgroundTexture() ) );
-   _backgroundSprite.setScale( { renderConfig->SpriteScalar, renderConfig->SpriteScalar } );
 
    _entitySpriteLayerOrder =
    {

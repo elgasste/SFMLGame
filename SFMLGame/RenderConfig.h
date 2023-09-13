@@ -50,8 +50,6 @@ public:
    float MainMenuCaratBlinkRate;
    sf::Color MainMenuBackdropDimmer;
 
-   float SpriteScalar;
-
    sf::Vector2i PlayerSpriteSize;
    sf::Vector2f PlayerSpriteOrigin;
    int PlayerSpriteMovementFrames;

@@ -29,7 +29,6 @@ EntitySprite::EntitySprite( shared_ptr<RenderConfig> renderConfig,
       _spriteLayerMap[it->first] = Sprite( *( it->second ) );
 
       _spriteLayerMap.at( it->first ).setTextureRect( _textureRect );
-      _spriteLayerMap.at( it->first ).setScale( renderConfig->SpriteScalar, renderConfig->SpriteScalar );
       _spriteLayerMap.at( it->first ).setOrigin( origin );
    }
 

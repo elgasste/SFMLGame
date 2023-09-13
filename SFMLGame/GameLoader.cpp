@@ -70,7 +70,8 @@ shared_ptr<Game> GameLoader::Load() const
 shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig ) const
 {
    auto player = make_shared<Entity>();
-   player->SetHitBoxDimensions( gameConfig->PlayerHitBoxWidth, gameConfig->PlayerHitBoxHeight );
+   player->SetHitBoxSize( gameConfig->PlayerHitBoxWidth, gameConfig->PlayerHitBoxHeight );
+   player->SetHitBoxOffset( -( gameConfig->PlayerHitBoxWidth / 2.0f ), -( gameConfig->PlayerHitBoxHeight / 2.0f ) );
 
    auto gameData = shared_ptr<GameData>( new GameData( player ) );
 

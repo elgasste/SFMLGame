@@ -9,19 +9,19 @@ RenderConfig::RenderConfig()
    MinimumFrameRate = 30;
    MaximumFrameRate = 120;
 
-   ScreenWidth = 1920;
-   ScreenHeight = 1280;
+   ScreenWidth = 960;
+   ScreenHeight = 640;
 
    WindowTitle = IDS_WindowTitle;
    WindowStyle = Style::Titlebar | Style::Close;
 
-   DiagnosticsWidth = 450;
-   DiagnosticsHeight = 186;
+   DiagnosticsWidth = 225;
+   DiagnosticsHeight = 93;
    DiagnosticsXPosition = ScreenWidth - DiagnosticsWidth;
    DiagnosticsYPosition = 0;
-   DiagnosticsTextMargin = 20;
+   DiagnosticsTextMargin = 10;
    DiagnosticsFont = "Resources/Fonts/Consolas.ttf";
-   DiagnosticsCharSize = 24;
+   DiagnosticsCharSize = 12;
    DiagnosticsTextColor = Color::White;
    DiagnosticsBackgroundColor = Color::Blue;
 
@@ -29,23 +29,21 @@ RenderConfig::RenderConfig()
 
    TitleMenuBackgroundColor = Color::Black;
    TitleMenuFont = "Resources/Fonts/Goudy Mediaeval Regular.ttf";
-   TitleMenuCharSize = 96;
+   TitleMenuCharSize = 48;
    TitleMenuTextColor = Color( 200, 200, 255 );
-   TitleMenuCaratOffset = 30;
+   TitleMenuCaratOffset = 15;
    TitleMenuCaratBlinkRate = 0.25f;
 
    MainMenuBackgroundColor = Color::Black;
    MainMenuFont = "Resources/Fonts/Goudy Mediaeval Regular.ttf";
-   MainMenuCharSize = 96;
+   MainMenuCharSize = 48;
    MainMenuTextColor = Color( 200, 200, 255 );
-   MainMenuCaratOffset = 30;
+   MainMenuCaratOffset = 15;
    MainMenuCaratBlinkRate = 0.25f;
    MainMenuBackdropDimmer = Color( 128, 128, 128 );
 
-   SpriteScalar = 2.0f;
-
    PlayerSpriteSize = { 64, 64 };
-   PlayerSpriteOrigin = { 32, 37 };
+   PlayerSpriteOrigin = { 32, 38 };
    PlayerSpriteMovementFrames = 8;
    PlayerSpriteFrameIncrement = 0.05f;
 }

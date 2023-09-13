@@ -17,11 +17,13 @@ public:
 
    bool ShowDiagnostics;
 
+   int HitBoxBlockSize;
+
    sf::Vector2f DefaultPlayerPosition;
    Direction DefaultPlayerDirection;
    float MaximumPlayerVelocity;
-   float PlayerHitBoxWidth;
-   float PlayerHitBoxHeight;
+   int PlayerHitBoxWidth;
+   int PlayerHitBoxHeight;
    float PlayerVelocityIncrement;
 };
 
