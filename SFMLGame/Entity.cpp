@@ -17,7 +17,7 @@ void Entity::SetPosition( float x, float y )
    _position.y = y;
 }
 
-void Entity::SetHitBoxSize( int width, int height )
+void Entity::SetHitBoxSize( float width, float height )
 {
    _hitBoxSize.x = width;
    _hitBoxSize.y = height;

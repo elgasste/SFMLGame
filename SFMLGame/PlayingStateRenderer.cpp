@@ -34,20 +34,22 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
    _linesegVertexArray = VertexArray( LineStrip, 2 );
    _linesegVertexArray[0].color = Color::White;
    _linesegVertexArray[1].color = Color::White;
+
+   _playerHitBoxRect.setFillColor( Color::Red );
 }
 
 void PlayingStateRenderer::Render()
 {
-   // MUFFINS
    RenderLinesegsRecursive( _gameData->GetRootBspNode() );
 
-   // MUFFINS
-   /*for ( auto& linedef : _gameData->GetLineDefs() )
-   {
-      _linesegVertexArray[0].position = linedef.start;
-      _linesegVertexArray[1].position = linedef.end;
-      _window->Draw( _linesegVertexArray );
-   }*/
+   auto player = _gameData->GetPlayer();
+   auto& playerPosition = player->GetPosition();
+   auto& playerHitBoxOffset = player->GetHitBoxOffset();
+
+   _playerHitBoxRect.setPosition( playerPosition.x + playerHitBoxOffset.x, playerPosition.y + playerHitBoxOffset.y );
+   _playerHitBoxRect.setSize( player->GetHitBoxSize() );
+
+   _window->Draw( _playerHitBoxRect );
 
    auto playerSprite = _renderData->GetPlayerSprite();
    playerSprite->Tick();
