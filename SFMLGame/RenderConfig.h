@@ -15,6 +15,8 @@ public:
 
    int ScreenWidth;
    int ScreenHeight;
+   float ViewWidth;
+   float ViewHeight;
 
    std::string WindowTitle;
    unsigned int WindowStyle;

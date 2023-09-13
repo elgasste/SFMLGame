@@ -158,10 +158,10 @@ void GameLogic::ClipPlayer() const
       // hit the top edge of the arena
       player->SetPosition( position.x, -hitBoxOffset.y );
    }
-   else if ( ( position.y - hitBoxOffset.y ) >= ( _renderConfig->ScreenHeight - 1 ) )
+   else if ( ( position.y - hitBoxOffset.y ) >= ( _renderConfig->ViewHeight - 1 ) )
    {
       // hit the bottom edge of the arena
-      player->SetPosition( position.x, ( _renderConfig->ScreenHeight - 1 ) + hitBoxOffset.y );
+      player->SetPosition( position.x, ( _renderConfig->ViewHeight - 1 ) + hitBoxOffset.y );
    }
 
    if ( ( position.x + hitBoxOffset.x ) < 0 )
@@ -169,9 +169,9 @@ void GameLogic::ClipPlayer() const
       // hit the left edge of the arena
       player->SetPosition( -hitBoxOffset.x, position.y );
    }
-   else if ( ( position.x - hitBoxOffset.x ) >= ( _renderConfig->ScreenWidth - 1 ) )
+   else if ( ( position.x - hitBoxOffset.x ) >= ( _renderConfig->ViewWidth - 1 ) )
    {
       // hit the right edge of the arena
-      player->SetPosition( ( _renderConfig->ScreenWidth - 1 ) + hitBoxOffset.x, position.y );
+      player->SetPosition( ( _renderConfig->ViewWidth - 1 ) + hitBoxOffset.x, position.y );
    }
 }

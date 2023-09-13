@@ -17,7 +17,9 @@ SFMLWindow::SFMLWindow( shared_ptr<RenderConfig> renderConfig,
 void SFMLWindow::Initialize()
 {
    auto videoMode = VideoMode( _renderConfig->ScreenWidth, _renderConfig->ScreenHeight );
+   auto view = View( { 0, 0, _renderConfig->ViewWidth, _renderConfig->ViewHeight } );
    _window = shared_ptr<RenderWindow>( new RenderWindow( videoMode, _renderConfig->WindowTitle, _renderConfig->WindowStyle ) );
+   _window->setView( view );
 }
 
 void SFMLWindow::Show() const

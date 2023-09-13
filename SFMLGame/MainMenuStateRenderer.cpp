@@ -19,7 +19,7 @@ MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<RenderConfig> renderCon
    _elapsedSeconds( 0 ),
    _showCarat( true )
 {
-   _backgroundRect = RectangleShape( { (float)renderConfig->ScreenWidth, (float)renderConfig->ScreenHeight } );
+   _backgroundRect = RectangleShape( { renderConfig->ViewWidth, renderConfig->ViewHeight } );
    _backgroundRect.setFillColor( renderConfig->MainMenuBackgroundColor );
 
    _font = make_shared<Font>();
@@ -57,8 +57,8 @@ MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<RenderConfig> renderCon
    auto menuWidth = textWidth + caratWidth + renderConfig->MainMenuCaratOffset;
    auto menuHeight = menu->GetOptionCount() * _lineSpacing;
 
-   _menuX = ( (float)renderConfig->ScreenWidth / 2 ) - ( menuWidth / 2 );
-   _menuY = ( (float)renderConfig->ScreenHeight / 2 ) - ( menuHeight / 2 );
+   _menuX = ( renderConfig->ViewWidth / 2 ) - ( menuWidth / 2 );
+   _menuY = ( renderConfig->ViewHeight / 2 ) - ( menuHeight / 2 );
 
    _text->setPosition( _menuX + caratWidth + renderConfig->MainMenuCaratOffset, _menuY );
 }

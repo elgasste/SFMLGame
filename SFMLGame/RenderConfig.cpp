@@ -9,15 +9,17 @@ RenderConfig::RenderConfig()
    MinimumFrameRate = 30;
    MaximumFrameRate = 120;
 
-   ScreenWidth = 960;
-   ScreenHeight = 640;
+   ScreenWidth = 1920;
+   ScreenHeight = 1280;
+   ViewWidth = 960;
+   ViewHeight = 640;
 
    WindowTitle = IDS_WindowTitle;
    WindowStyle = Style::Titlebar | Style::Close;
 
    DiagnosticsWidth = 225;
    DiagnosticsHeight = 93;
-   DiagnosticsXPosition = ScreenWidth - DiagnosticsWidth;
+   DiagnosticsXPosition = ViewWidth - DiagnosticsWidth;
    DiagnosticsYPosition = 0;
    DiagnosticsTextMargin = 10;
    DiagnosticsFont = "Resources/Fonts/Consolas.ttf";
