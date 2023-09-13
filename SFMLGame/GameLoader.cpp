@@ -73,7 +73,7 @@ shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig
    player->SetHitBoxSize( gameConfig->PlayerHitBoxWidth, gameConfig->PlayerHitBoxHeight );
    player->SetHitBoxOffset( -( gameConfig->PlayerHitBoxWidth / 2.0f ), -( gameConfig->PlayerHitBoxHeight / 2.0f ) );
 
-   auto gameData = shared_ptr<GameData>( new GameData( player ) );
+   auto gameData = shared_ptr<GameData>( new GameData( LoadLinedefs(), LoadBspTree(), player ) );
 
    return gameData;
 }
@@ -82,9 +82,6 @@ shared_ptr<RenderData> GameLoader::LoadRenderData( shared_ptr<RenderConfig> rend
                                                    shared_ptr<GameData> gameData,
                                                    shared_ptr<GameClock> gameClock ) const
 {
-   auto backgroundTexture = shared_ptr<Texture>( new Texture() );
-   backgroundTexture->loadFromFile( "Resources/Textures/overworld_test.png" );
-
    auto playerSpriteTextureLayerMap = make_shared<map<EntitySpriteLayer, shared_ptr<Texture>>>();
    ( *playerSpriteTextureLayerMap )[EntitySpriteLayer::Body] = shared_ptr<Texture>( new Texture() );
    playerSpriteTextureLayerMap->at( EntitySpriteLayer::Body )->loadFromFile( "Resources/Textures/BODY_male.png" );
@@ -108,9 +105,53 @@ shared_ptr<RenderData> GameLoader::LoadRenderData( shared_ptr<RenderConfig> rend
                                                                    renderConfig->PlayerSpriteMovementFrames ) );
 
    auto renderData = make_shared<RenderData>();
-   renderData->SetBackgroundTexture( backgroundTexture );
    renderData->SetPlayerSpriteTextureLayerMap( playerSpriteTextureLayerMap );
    renderData->SetPlayerSprite( playerSprite );
 
    return renderData;
+}
+
+shared_ptr<vector<Linedef>> GameLoader::LoadLinedefs() const
+{
+   auto linedefs = make_shared<vector<Linedef>>();
+
+   // outer walls
+   linedefs->push_back( { { 0, 0 }, { 960, 0 } } );
+   linedefs->push_back( { { 960, 0 }, { 960, 640 } } );
+   linedefs->push_back( { { 960, 640 }, { 0, 640 } } );
+   linedefs->push_back( { { 0, 640 }, { 0, 0 } } );
+
+   // upper-left "column"
+   linedefs->push_back( { { 352, 96 }, { 160, 96 } } );
+   linedefs->push_back( { { 160, 96 }, { 96, 160 } } );
+   linedefs->push_back( { { 96, 160 }, { 96, 192 } } );
+   linedefs->push_back( { { 96, 192 }, { 160, 256 } } );
+   linedefs->push_back( { { 160, 256 }, { 384, 256 } } );
+   linedefs->push_back( { { 384, 256 }, { 416, 224 } } );
+   linedefs->push_back( { { 416, 224 }, { 416, 160 } } );
+   linedefs->push_back( { { 416, 160 }, { 352, 96 } } );
+
+   // upper-right "column"
+   linedefs->push_back( { { 832, 64 }, { 800, 64 } } );
+   linedefs->push_back( { { 800, 64 }, { 672, 192 } } );
+   linedefs->push_back( { { 672, 192 }, { 672, 224 } } );
+   linedefs->push_back( { { 672, 224 }, { 704, 256 } } );
+   linedefs->push_back( { { 704, 256 }, { 736, 256 } } );
+   linedefs->push_back( { { 736, 256 }, { 864, 128 } } );
+   linedefs->push_back( { { 864, 128 }, { 864, 96 } } );
+   linedefs->push_back( { { 864, 96 }, { 832, 64 } } );
+
+   // bottom "column"
+   linedefs->push_back( { { 672, 384 }, { 448, 384 } } );
+   linedefs->push_back( { { 448, 384 }, { 448, 576 } } );
+   linedefs->push_back( { { 448, 576 }, { 672, 576 } } );
+   linedefs->push_back( { { 672, 576 }, { 672, 384 } } );
+
+   return linedefs;
+}
+
+BspNode* GameLoader::LoadBspTree() const
+{
+   // MUFFINS
+   return nullptr;
 }

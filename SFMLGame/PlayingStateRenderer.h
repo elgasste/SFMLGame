@@ -29,8 +29,9 @@ private:
    std::shared_ptr<GameData> _gameData;
    std::shared_ptr<SFMLWindow> _window;
 
-   sf::Sprite _backgroundSprite;
    std::vector<EntitySpriteLayer> _entitySpriteLayerOrder;
+
+   sf::VertexArray _linesegVertexArray;
 };
 
 NAMESPACE_END

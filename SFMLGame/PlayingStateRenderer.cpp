@@ -20,8 +20,6 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
    _gameData( gameData ),
    _window( window )
 {
-   _backgroundSprite = Sprite( *( renderData->GetBackgroundTexture() ) );
-
    _entitySpriteLayerOrder =
    {
       EntitySpriteLayer::Body,
@@ -32,15 +30,24 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
       EntitySpriteLayer::Head,
       EntitySpriteLayer::Hands
    };
+
+   _linesegVertexArray = VertexArray( LineStrip, 2 );
+   _linesegVertexArray[0].color = Color::White;
+   _linesegVertexArray[1].color = Color::White;
 }
 
 void PlayingStateRenderer::Render()
 {
+   for ( auto& linedef : _gameData->GetLinedefs() )
+   {
+      _linesegVertexArray[0].position = linedef.start;
+      _linesegVertexArray[1].position = linedef.end;
+      _window->Draw( _linesegVertexArray );
+   }
+
    auto playerSprite = _renderData->GetPlayerSprite();
    playerSprite->Tick();
    playerSprite->SetPosition( _gameData->GetPlayer()->GetPosition() );
-
-   _window->Draw( _backgroundSprite );
 
    for ( auto layer : _entitySpriteLayerOrder )
    {
