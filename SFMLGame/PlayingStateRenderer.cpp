@@ -38,12 +38,16 @@ PlayingStateRenderer::PlayingStateRenderer( shared_ptr<RenderConfig> renderConfi
 
 void PlayingStateRenderer::Render()
 {
-   for ( auto& linedef : _gameData->GetLinedefs() )
+   // MUFFINS
+   RenderLinesegsRecursive( _gameData->GetRootBspNode() );
+
+   // MUFFINS
+   /*for ( auto& linedef : _gameData->GetLineDefs() )
    {
       _linesegVertexArray[0].position = linedef.start;
       _linesegVertexArray[1].position = linedef.end;
       _window->Draw( _linesegVertexArray );
-   }
+   }*/
 
    auto playerSprite = _renderData->GetPlayerSprite();
    playerSprite->Tick();
@@ -55,5 +59,27 @@ void PlayingStateRenderer::Render()
       {
          _window->Draw( playerSprite->GetSpriteForLayer( layer ) );
       }
+   }
+}
+
+void PlayingStateRenderer::RenderLinesegsRecursive( BspNode* node )
+{
+   if ( !node )
+   {
+      return;
+   }
+   else if ( node->isLeaf )
+   {
+      for ( auto& lineseg : node->subSector->lineSegs )
+      {
+         _linesegVertexArray[0].position = lineseg.start;
+         _linesegVertexArray[1].position = lineseg.end;
+         _window->Draw( _linesegVertexArray );
+      }
+   }
+   else
+   {
+      RenderLinesegsRecursive( node->leftChild );
+      RenderLinesegsRecursive( node->rightChild );
    }
 }

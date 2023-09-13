@@ -3,6 +3,7 @@
 #include "Common.h"
 #include "IGameStateRenderer.h"
 #include "EntitySpriteLayer.h"
+#include "BspNode.h"
 
 NAMESPACE_BEGIN
 
@@ -23,6 +24,9 @@ public:
 
    // IGameStateRenderer
    void Render() override;
+
+private:
+   void RenderLinesegsRecursive( BspNode* node );
 
 private:
    std::shared_ptr<RenderData> _renderData;

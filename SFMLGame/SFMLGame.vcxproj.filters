@@ -275,13 +275,13 @@
     <ClInclude Include="TurnPlayerArgs.h">
       <Filter>Header Files\Events</Filter>
     </ClInclude>
-    <ClInclude Include="Linedef.h">
+    <ClInclude Include="LineDef.h">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
-    <ClInclude Include="Lineseg.h">
+    <ClInclude Include="LineSeg.h">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
-    <ClInclude Include="Subsector.h">
+    <ClInclude Include="SubSector.h">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
     <ClInclude Include="BspNode.h">

@@ -4,7 +4,7 @@
 
 NAMESPACE_BEGIN
 
-struct Linedef
+struct LineDef
 {
    sf::Vector2f start;
    sf::Vector2f end;

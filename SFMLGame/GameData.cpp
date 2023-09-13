@@ -3,10 +3,12 @@
 using namespace NAMESPACE;
 using namespace std;
 
-GameData::GameData( shared_ptr<vector<Linedef>> linedefs,
+GameData::GameData( shared_ptr<vector<LineDef>> lineDefs,
+                    shared_ptr<vector<SubSector>> subSectors,
                     BspNode* rootBspNode,
                     shared_ptr<Entity> player ) :
-   _linedefs( linedefs ),
+   _lineDefs( lineDefs ),
+   _subSectors( subSectors ),
    _rootBspNode( rootBspNode ),
    _player( player )
 {

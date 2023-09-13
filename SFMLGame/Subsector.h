@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Common.h"
-#include "Lineseg.h"
+#include "LineSeg.h"
 
 NAMESPACE_BEGIN
 
 struct SubSector
 {
-   std::vector<Lineseg> linesegs;
+   std::vector<LineSeg> lineSegs;
 };
 
 NAMESPACE_END

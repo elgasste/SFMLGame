@@ -1,15 +1,15 @@
 #pragma once
 
 #include "Common.h"
-#include "Subsector.h"
+#include "SubSector.h"
 
 NAMESPACE_BEGIN
 
 struct BspNode
 {
    bool isLeaf;
-   Linedef* linedef;
-   SubSector* subsector;
+   LineDef* lineDef;
+   SubSector* subSector;
    BspNode* leftChild;
    BspNode* rightChild;
 };

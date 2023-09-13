@@ -73,7 +73,11 @@ shared_ptr<GameData> GameLoader::LoadGameData( shared_ptr<GameConfig> gameConfig
    player->SetHitBoxSize( gameConfig->PlayerHitBoxWidth, gameConfig->PlayerHitBoxHeight );
    player->SetHitBoxOffset( -( gameConfig->PlayerHitBoxWidth / 2.0f ), -( gameConfig->PlayerHitBoxHeight / 2.0f ) );
 
-   auto gameData = shared_ptr<GameData>( new GameData( LoadLinedefs(), LoadBspTree(), player ) );
+   auto lineDefs = LoadLinedefs();
+   auto subSectors = LoadSubSectors( lineDefs );
+   auto rootBspNode = LoadBspTree( lineDefs, subSectors );
+
+   auto gameData = shared_ptr<GameData>( new GameData( lineDefs, subSectors, rootBspNode, player ) );
 
    return gameData;
 }
@@ -111,47 +115,437 @@ shared_ptr<RenderData> GameLoader::LoadRenderData( shared_ptr<RenderConfig> rend
    return renderData;
 }
 
-shared_ptr<vector<Linedef>> GameLoader::LoadLinedefs() const
+shared_ptr<vector<LineDef>> GameLoader::LoadLinedefs() const
 {
-   auto linedefs = make_shared<vector<Linedef>>();
+   auto linedefs = make_shared<vector<LineDef>>();
 
    // outer walls
-   linedefs->push_back( { { 0, 0 }, { 960, 0 } } );
-   linedefs->push_back( { { 960, 0 }, { 960, 640 } } );
-   linedefs->push_back( { { 960, 640 }, { 0, 640 } } );
-   linedefs->push_back( { { 0, 640 }, { 0, 0 } } );
+   linedefs->push_back( { { 0, 0 }, { 959, 0 } } );         // A0 : 0
+   linedefs->push_back( { { 959, 0 }, { 959, 639 } } );     // B0 : 1
+   linedefs->push_back( { { 959, 639 }, { 0, 639 } } );     // C0 : 2
+   linedefs->push_back( { { 0, 639 }, { 0, 0 } } );         // D0 : 3
 
-   // upper-left "column"
-   linedefs->push_back( { { 352, 96 }, { 160, 96 } } );
-   linedefs->push_back( { { 160, 96 }, { 96, 160 } } );
-   linedefs->push_back( { { 96, 160 }, { 96, 192 } } );
-   linedefs->push_back( { { 96, 192 }, { 160, 256 } } );
-   linedefs->push_back( { { 160, 256 }, { 384, 256 } } );
-   linedefs->push_back( { { 384, 256 }, { 416, 224 } } );
-   linedefs->push_back( { { 416, 224 }, { 416, 160 } } );
-   linedefs->push_back( { { 416, 160 }, { 352, 96 } } );
+   // upper-left impassable area
+   linedefs->push_back( { { 352, 96 }, { 160, 96 } } );     // A1 : 4
+   linedefs->push_back( { { 160, 96 }, { 96, 160 } } );     // B1 : 5
+   linedefs->push_back( { { 96, 160 }, { 96, 192 } } );     // C1 : 6
+   linedefs->push_back( { { 96, 192 }, { 160, 256 } } );    // D1 : 7
+   linedefs->push_back( { { 160, 256 }, { 384, 256 } } );   // E1 : 8
+   linedefs->push_back( { { 384, 256 }, { 416, 224 } } );   // F1 : 9
+   linedefs->push_back( { { 416, 224 }, { 416, 160 } } );   // G1 : 10
+   linedefs->push_back( { { 416, 160 }, { 352, 96 } } );    // H1 : 11
 
-   // upper-right "column"
-   linedefs->push_back( { { 832, 64 }, { 800, 64 } } );
-   linedefs->push_back( { { 800, 64 }, { 672, 192 } } );
-   linedefs->push_back( { { 672, 192 }, { 672, 224 } } );
-   linedefs->push_back( { { 672, 224 }, { 704, 256 } } );
-   linedefs->push_back( { { 704, 256 }, { 736, 256 } } );
-   linedefs->push_back( { { 736, 256 }, { 864, 128 } } );
-   linedefs->push_back( { { 864, 128 }, { 864, 96 } } );
-   linedefs->push_back( { { 864, 96 }, { 832, 64 } } );
+   // upper-right impassable area
+   linedefs->push_back( { { 832, 64 }, { 800, 64 } } );     // A2 : 12
+   linedefs->push_back( { { 800, 64 }, { 672, 192 } } );    // B2 : 13
+   linedefs->push_back( { { 672, 192 }, { 672, 224 } } );   // C2 : 14
+   linedefs->push_back( { { 672, 224 }, { 704, 256 } } );   // D2 : 15
+   linedefs->push_back( { { 704, 256 }, { 736, 256 } } );   // E2 : 16
+   linedefs->push_back( { { 736, 256 }, { 864, 128 } } );   // F2 : 17
+   linedefs->push_back( { { 864, 128 }, { 864, 96 } } );    // G2 : 18
+   linedefs->push_back( { { 864, 96 }, { 832, 64 } } );     // H2 : 19
 
-   // bottom "column"
-   linedefs->push_back( { { 672, 384 }, { 448, 384 } } );
-   linedefs->push_back( { { 448, 384 }, { 448, 576 } } );
-   linedefs->push_back( { { 448, 576 }, { 672, 576 } } );
-   linedefs->push_back( { { 672, 576 }, { 672, 384 } } );
+   // bottom-center impassable area
+   linedefs->push_back( { { 672, 384 }, { 448, 384 } } );   // A3 : 20
+   linedefs->push_back( { { 448, 384 }, { 448, 576 } } );   // B3 : 21
+   linedefs->push_back( { { 448, 576 }, { 672, 576 } } );   // C3 : 22
+   linedefs->push_back( { { 672, 576 }, { 672, 384 } } );   // D3 : 23
 
    return linedefs;
 }
 
-BspNode* GameLoader::LoadBspTree() const
+shared_ptr<vector<SubSector>> GameLoader::LoadSubSectors( shared_ptr<vector<LineDef>> linedefs ) const
 {
-   // MUFFINS
-   return nullptr;
+   auto subSectors = make_shared<vector<SubSector>>();
+
+   // subsector 0
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[16] ), { 704, 256 }, { 736, 256 } },
+      { &( ( *linedefs )[1] ), { 959, 256 }, { 959, 639 } },
+      { &( ( *linedefs )[2] ), { 959, 639 }, { 672, 639 } },
+      { &( ( *linedefs )[23] ), { 672, 576 }, { 672, 384 } }
+   } ) );
+
+   // subsector 1
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[20] ), { 672, 384 }, { 448, 384 } }
+   } ) );
+
+   // subsector 2
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[22] ), { 448, 576 }, { 672, 576 } },
+      { &( ( *linedefs )[2] ), { 672, 639 }, { 416, 639 } }
+   } ) );
+
+   // subsector 3
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[21] ), { 448, 384 }, { 448, 576 } }
+   } ) );
+
+   // subsector 4
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[0] ), { 416, 0 }, { 864, 0 } },
+      { &( ( *linedefs )[13] ), { 800, 64 }, { 672, 192 } },
+      { &( ( *linedefs )[10] ), { 416, 224 }, { 416, 160 } }
+   } ) );
+
+   // subsector 5
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[0] ), { 864, 0 }, { 959, 0 } },
+      { &( ( *linedefs )[1] ), { 959, 0 }, { 959, 256 } },
+      { &( ( *linedefs )[18] ), { 864, 128 }, { 864, 96 } }
+   } ) );
+
+   // subsector 6
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[19] ), { 864, 96 }, { 832, 64 } }
+   } ) );
+
+   // subsector 7
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[15] ), { 672, 224 }, { 704, 256 } }
+   } ) );
+
+   // subsector 8
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[12] ), { 832, 64 }, { 800, 64 } }
+   } ) );
+
+   // subsector 9
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[17] ), { 736, 256 }, { 864, 128 } }
+   } ) );
+
+   // subsector 10
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[14] ), { 672, 192 }, { 672, 224 } }
+   } ) );
+
+   // subsector 11
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[8] ), { 160, 256 }, { 384, 256 } },
+      { &( ( *linedefs )[2] ), { 416, 639 }, { 0, 639 } },
+      { &( ( *linedefs )[3] ), { 0, 639 }, { 0, 256 } }
+   } ) );
+
+   // subsector 12
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[0] ), { 0, 0 }, { 416, 0 } },
+      { &( ( *linedefs )[4] ), { 352, 96 }, { 160, 96 } },
+      { &( ( *linedefs )[3] ), { 0, 96 }, { 0, 0 } }
+   } ) );
+
+   // subsector 13
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[5] ), { 160, 96 }, { 96, 160 } },
+      { &( ( *linedefs )[3] ), { 0, 256 }, { 0, 96 } }
+   } ) );
+
+   // subsector 14
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[6] ), { 96, 160 }, { 96, 192 } }
+   } ) );
+
+   // subsector 15
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[7] ), { 96, 192 }, { 160, 256 } }
+   } ) );
+
+   // subsector 16
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[11] ), { 416, 160 }, { 352, 96 } }
+   } ) );
+
+   // subsector 17
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[9] ), { 384, 256 }, { 416, 224 } }
+   } ) );
+
+   return subSectors;
+}
+
+BspNode* GameLoader::LoadBspTree( shared_ptr<vector<LineDef>> linedefs,
+                                  shared_ptr<vector<SubSector>> subSectors ) const
+{
+   auto nodeG1 = new BspNode; // root node
+
+   nodeG1->isLeaf = false;
+   nodeG1->lineDef = &( ( *linedefs )[10] );
+   nodeG1->subSector = nullptr;
+   nodeG1->leftChild = nullptr;
+   nodeG1->rightChild = nullptr;
+
+   auto nodeE2 = new BspNode;
+   nodeE2->isLeaf = false;
+   nodeE2->lineDef = &( ( *linedefs )[16] );
+   nodeE2->subSector = nullptr;
+   nodeE2->leftChild = nullptr;
+   nodeE2->rightChild = nullptr;
+   nodeG1->rightChild = nodeE2;
+
+   auto nodeD3 = new BspNode;
+   nodeD3->isLeaf = false;
+   nodeD3->lineDef = &( ( *linedefs )[23] );
+   nodeD3->subSector = nullptr;
+   nodeD3->leftChild = nullptr;
+   nodeD3->rightChild = nullptr;
+   nodeE2->rightChild = nodeD3;
+
+   auto leaf0 = new BspNode;
+   leaf0->isLeaf = true;
+   leaf0->lineDef = nullptr;
+   leaf0->subSector = &( ( *subSectors )[0] );
+   leaf0->leftChild = nullptr;
+   leaf0->rightChild = nullptr;
+   nodeD3->rightChild = leaf0;
+
+   auto nodeA3 = new BspNode;
+   nodeA3->isLeaf = false;
+   nodeA3->lineDef = &( ( *linedefs )[20] );
+   nodeA3->subSector = nullptr;
+   nodeA3->leftChild = nullptr;
+   nodeA3->rightChild = nullptr;
+   nodeD3->leftChild = nodeA3;
+
+   auto leaf1 = new BspNode;
+   leaf1->isLeaf = true;
+   leaf1->lineDef = nullptr;
+   leaf1->subSector = &( ( *subSectors )[1] );
+   leaf1->leftChild = nullptr;
+   leaf1->rightChild = nullptr;
+   nodeA3->rightChild = leaf1;
+
+   auto nodeC3 = new BspNode;
+   nodeC3->isLeaf = false;
+   nodeC3->lineDef = &( ( *linedefs )[22] );
+   nodeC3->subSector = nullptr;
+   nodeC3->leftChild = nullptr;
+   nodeC3->rightChild = nullptr;
+   nodeA3->leftChild = nodeC3;
+
+   auto leaf2 = new BspNode;
+   leaf2->isLeaf = true;
+   leaf2->lineDef = nullptr;
+   leaf2->subSector = &( ( *subSectors )[2] );
+   leaf2->leftChild = nullptr;
+   leaf2->rightChild = nullptr;
+   nodeC3->rightChild = leaf2;
+
+   auto leaf3 = new BspNode;
+   leaf3->isLeaf = true;
+   leaf3->lineDef = nullptr;
+   leaf3->subSector = &( ( *subSectors )[3] );
+   leaf3->leftChild = nullptr;
+   leaf3->rightChild = nullptr;
+   nodeC3->leftChild = leaf3;
+
+   auto nodeB2 = new BspNode;
+   nodeB2->isLeaf = false;
+   nodeB2->lineDef = &( ( *linedefs )[13] );
+   nodeB2->subSector = nullptr;
+   nodeB2->leftChild = nullptr;
+   nodeB2->rightChild = nullptr;
+   nodeE2->leftChild = nodeB2;
+
+   auto leaf4 = new BspNode;
+   leaf4->isLeaf = true;
+   leaf4->lineDef = nullptr;
+   leaf4->subSector = &( ( *subSectors )[4] );
+   leaf4->leftChild = nullptr;
+   leaf4->rightChild = nullptr;
+   nodeB2->rightChild = leaf4;
+
+   auto nodeG2 = new BspNode;
+   nodeG2->isLeaf = false;
+   nodeG2->lineDef = &( ( *linedefs )[18] );
+   nodeG2->subSector = nullptr;
+   nodeG2->leftChild = nullptr;
+   nodeG2->rightChild = nullptr;
+   nodeB2->leftChild = nodeG2;
+
+   auto leaf5 = new BspNode;
+   leaf5->isLeaf = true;
+   leaf5->lineDef = nullptr;
+   leaf5->subSector = &( ( *subSectors )[5] );
+   leaf5->leftChild = nullptr;
+   leaf5->rightChild = nullptr;
+   nodeG2->rightChild = leaf5;
+
+   auto nodeH2 = new BspNode;
+   nodeH2->isLeaf = false;
+   nodeH2->lineDef = &( ( *linedefs )[19] );
+   nodeH2->subSector = nullptr;
+   nodeH2->leftChild = nullptr;
+   nodeH2->rightChild = nullptr;
+   nodeG2->leftChild = nodeH2;
+
+   auto leaf6 = new BspNode;
+   leaf6->isLeaf = true;
+   leaf6->lineDef = nullptr;
+   leaf6->subSector = &( ( *subSectors )[6] );
+   leaf6->leftChild = nullptr;
+   leaf6->rightChild = nullptr;
+   nodeH2->rightChild = leaf6;
+
+   auto nodeD2 = new BspNode;
+   nodeD2->isLeaf = false;
+   nodeD2->lineDef = &( ( *linedefs )[15] );
+   nodeD2->subSector = nullptr;
+   nodeD2->leftChild = nullptr;
+   nodeD2->rightChild = nullptr;
+   nodeH2->leftChild = nodeD2;
+
+   auto leaf7 = new BspNode;
+   leaf7->isLeaf = true;
+   leaf7->lineDef = nullptr;
+   leaf7->subSector = &( ( *subSectors )[7] );
+   leaf7->leftChild = nullptr;
+   leaf7->rightChild = nullptr;
+   nodeD2->rightChild = leaf7;
+
+   auto nodeA2 = new BspNode;
+   nodeA2->isLeaf = false;
+   nodeA2->lineDef = &( ( *linedefs )[12] );
+   nodeA2->subSector = nullptr;
+   nodeA2->leftChild = nullptr;
+   nodeA2->rightChild = nullptr;
+   nodeD2->leftChild = nodeA2;
+
+   auto leaf8 = new BspNode;
+   leaf8->isLeaf = true;
+   leaf8->lineDef = nullptr;
+   leaf8->subSector = &( ( *subSectors )[8] );
+   leaf8->leftChild = nullptr;
+   leaf8->rightChild = nullptr;
+   nodeA2->rightChild = leaf8;
+
+   auto nodeF2 = new BspNode;
+   nodeF2->isLeaf = false;
+   nodeF2->lineDef = &( ( *linedefs )[17] );
+   nodeF2->subSector = nullptr;
+   nodeF2->leftChild = nullptr;
+   nodeF2->rightChild = nullptr;
+   nodeA2->leftChild = nodeF2;
+
+   auto leaf9 = new BspNode;
+   leaf9->isLeaf = true;
+   leaf9->lineDef = nullptr;
+   leaf9->subSector = &( ( *subSectors )[9] );
+   leaf9->leftChild = nullptr;
+   leaf9->rightChild = nullptr;
+   nodeF2->rightChild = leaf9;
+
+   auto leaf10 = new BspNode;
+   leaf10->isLeaf = true;
+   leaf10->lineDef = nullptr;
+   leaf10->subSector = &( ( *subSectors )[10] );
+   leaf10->leftChild = nullptr;
+   leaf10->rightChild = nullptr;
+   nodeF2->leftChild = leaf10;
+
+   auto nodeE1 = new BspNode;
+   nodeE1->isLeaf = false;
+   nodeE1->lineDef = &( ( *linedefs )[8] );
+   nodeE1->subSector = nullptr;
+   nodeE1->leftChild = nullptr;
+   nodeE1->rightChild = nullptr;
+   nodeG1->leftChild = nodeE1;
+
+   auto leaf11 = new BspNode;
+   leaf11->isLeaf = true;
+   leaf11->lineDef = nullptr;
+   leaf11->subSector = &( ( *subSectors )[11] );
+   leaf11->leftChild = nullptr;
+   leaf11->rightChild = nullptr;
+   nodeE1->rightChild = leaf11;
+
+   auto nodeA1 = new BspNode;
+   nodeA1->isLeaf = false;
+   nodeA1->lineDef = &( ( *linedefs )[4] );
+   nodeA1->subSector = nullptr;
+   nodeA1->leftChild = nullptr;
+   nodeA1->rightChild = nullptr;
+   nodeE1->leftChild = nodeA1;
+
+   auto leaf12 = new BspNode;
+   leaf12->isLeaf = true;
+   leaf12->lineDef = nullptr;
+   leaf12->subSector = &( ( *subSectors )[12] );
+   leaf12->leftChild = nullptr;
+   leaf12->rightChild = nullptr;
+   nodeA1->rightChild = leaf12;
+
+   auto nodeB1 = new BspNode;
+   nodeB1->isLeaf = false;
+   nodeB1->lineDef = &( ( *linedefs )[5] );
+   nodeB1->subSector = nullptr;
+   nodeB1->leftChild = nullptr;
+   nodeB1->rightChild = nullptr;
+   nodeA1->leftChild = nodeB1;
+
+   auto leaf13 = new BspNode;
+   leaf13->isLeaf = true;
+   leaf13->lineDef = nullptr;
+   leaf13->subSector = &( ( *subSectors )[13] );
+   leaf13->leftChild = nullptr;
+   leaf13->rightChild = nullptr;
+   nodeB1->rightChild = leaf13;
+
+   auto nodeC1 = new BspNode;
+   nodeC1->isLeaf = false;
+   nodeC1->lineDef = &( ( *linedefs )[6] );
+   nodeC1->subSector = nullptr;
+   nodeC1->leftChild = nullptr;
+   nodeC1->rightChild = nullptr;
+   nodeB1->leftChild = nodeC1;
+
+   auto leaf14 = new BspNode;
+   leaf14->isLeaf = true;
+   leaf14->lineDef = nullptr;
+   leaf14->subSector = &( ( *subSectors )[14] );
+   leaf14->leftChild = nullptr;
+   leaf14->rightChild = nullptr;
+   nodeC1->rightChild = leaf14;
+
+   auto nodeD1 = new BspNode;
+   nodeD1->isLeaf = false;
+   nodeD1->lineDef = &( ( *linedefs )[7] );
+   nodeD1->subSector = nullptr;
+   nodeD1->leftChild = nullptr;
+   nodeD1->rightChild = nullptr;
+   nodeC1->leftChild = nodeD1;
+
+   auto leaf15 = new BspNode;
+   leaf15->isLeaf = true;
+   leaf15->lineDef = nullptr;
+   leaf15->subSector = &( ( *subSectors )[15] );
+   leaf15->leftChild = nullptr;
+   leaf15->rightChild = nullptr;
+   nodeD1->rightChild = leaf15;
+
+   auto nodeH1 = new BspNode;
+   nodeH1->isLeaf = false;
+   nodeH1->lineDef = &( ( *linedefs )[11] );
+   nodeH1->subSector = nullptr;
+   nodeH1->leftChild = nullptr;
+   nodeH1->rightChild = nullptr;
+   nodeD1->leftChild = nodeH1;
+
+   auto leaf16 = new BspNode;
+   leaf16->isLeaf = true;
+   leaf16->lineDef = nullptr;
+   leaf16->subSector = &( ( *subSectors )[16] );
+   leaf16->leftChild = nullptr;
+   leaf16->rightChild = nullptr;
+   nodeH1->rightChild = leaf16;
+
+   auto leaf17 = new BspNode;
+   leaf17->isLeaf = true;
+   leaf17->lineDef = nullptr;
+   leaf17->subSector = &( ( *subSectors )[17] );
+   leaf17->leftChild = nullptr;
+   leaf17->rightChild = nullptr;
+   nodeH1->leftChild = leaf17;
+
+   return nodeG1;
 }

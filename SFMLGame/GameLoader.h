@@ -23,8 +23,10 @@ private:
                                                std::shared_ptr<GameData> gameData,
                                                std::shared_ptr<GameClock> gameClock ) const;
 
-   std::shared_ptr<std::vector<Linedef>> LoadLinedefs() const;
-   BspNode* LoadBspTree() const;
+   std::shared_ptr<std::vector<LineDef>> LoadLinedefs() const;
+   std::shared_ptr<std::vector<SubSector>> LoadSubSectors( std::shared_ptr<std::vector<LineDef>> linedefs) const;
+   BspNode* LoadBspTree( std::shared_ptr<std::vector<LineDef>> linedefs,
+                         std::shared_ptr<std::vector<SubSector>> subSectors ) const;
 };
 
 NAMESPACE_END

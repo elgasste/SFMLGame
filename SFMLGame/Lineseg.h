@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Common.h"
-#include "Linedef.h"
+#include "LineDef.h"
 
 NAMESPACE_BEGIN
 
-struct Lineseg
+struct LineSeg
 {
-   Linedef* linedef;
+   LineDef* lineDef;
    sf::Vector2f start;
    sf::Vector2f end;
 };

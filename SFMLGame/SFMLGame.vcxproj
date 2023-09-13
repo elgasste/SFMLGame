@@ -218,8 +218,8 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="InputReader.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="Linedef.h" />
-    <ClInclude Include="Lineseg.h" />
+    <ClInclude Include="LineDef.h" />
+    <ClInclude Include="LineSeg.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuOption.h" />
@@ -233,7 +233,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="RenderData.h" />
     <ClInclude Include="SFMLWindow.h" />
     <ClInclude Include="StringTable.h" />
-    <ClInclude Include="Subsector.h" />
+    <ClInclude Include="SubSector.h" />
     <ClInclude Include="TitleMenu.h" />
     <ClInclude Include="TitleMenuStateRenderer.h" />
     <ClInclude Include="TurnPlayerArgs.h" />
