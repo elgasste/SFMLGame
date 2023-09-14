@@ -12,6 +12,7 @@ class RenderConfig;
 class GameInputHandler;
 class EventQueue;
 class GameClock;
+class Collider;
 class IGameEventArgs;
 
 class GameLogic
@@ -23,6 +24,7 @@ public:
               std::shared_ptr<GameInputHandler> inputHandler,
               std::shared_ptr<EventQueue> eventQueue,
               std::shared_ptr<GameClock> clock,
+              std::shared_ptr<Collider> collider,
               std::shared_ptr<GameRunningTracker> gameRunningTracker,
               std::shared_ptr<GameStateTracker> gameStateTracker );
 
@@ -40,8 +42,6 @@ private:
    void OnTurnPlayer( std::shared_ptr<IGameEventArgs> args ) const;
    void OnMovePlayer( std::shared_ptr<IGameEventArgs> args ) const;
 
-   void ClipPlayer() const;
-
 private:
    std::shared_ptr<GameConfig> _gameConfig;
    std::shared_ptr<GameData> _gameData;
@@ -49,6 +49,7 @@ private:
    std::shared_ptr<GameInputHandler> _inputHandler;
    std::shared_ptr<EventQueue> _eventQueue;
    std::shared_ptr<GameClock> _clock;
+   std::shared_ptr<Collider> _collider;
    std::shared_ptr<GameRunningTracker> _gameRunningTracker;
    std::shared_ptr<GameStateTracker> _gameStateTracker;
 };

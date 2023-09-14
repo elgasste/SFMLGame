@@ -5,7 +5,7 @@
 #include "GameInputHandler.h"
 #include "EventQueue.h"
 #include "GameClock.h"
-#include "GameRunningTracker.h"
+#include "Collider.h"
 #include "Entity.h"
 #include "Geometry.h"
 #include "TurnPlayerArgs.h"
@@ -20,6 +20,7 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
                       shared_ptr<GameInputHandler> inputHandler,
                       shared_ptr<EventQueue> eventQueue,
                       shared_ptr<GameClock> clock,
+                      shared_ptr<Collider> collider,
                       shared_ptr<GameRunningTracker> gameRunningTracker,
                       shared_ptr<GameStateTracker> gameStateTracker ) :
    _gameConfig( gameConfig ),
@@ -28,6 +29,7 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
    _inputHandler( inputHandler ),
    _eventQueue( eventQueue ),
    _clock( clock ),
+   _collider( collider ),
    _gameRunningTracker( gameRunningTracker ),
    _gameStateTracker( gameStateTracker )
 {
@@ -121,57 +123,8 @@ void GameLogic::OnTurnPlayer( shared_ptr<IGameEventArgs> args ) const
 
 void GameLogic::OnMovePlayer( shared_ptr<IGameEventArgs> args ) const
 {
-   auto player = _gameData->GetPlayer();
    auto moveArgs = (MovePlayerArgs*)( args.get() );
-
-   auto direction = moveArgs->GetDirection();
-   auto& currentPosition = player->GetPosition();
-   player->SetIsMoving( true );
-
-   switch ( direction )
-   {
-      case Direction::Left:
-         player->SetPosition( currentPosition.x - ( _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() ), currentPosition.y );
-         break;
-      case Direction::Up:
-         player->SetPosition( currentPosition.x, currentPosition.y - ( _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() ) );
-         break;
-      case Direction::Right:
-         player->SetPosition( currentPosition.x + ( _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() ), currentPosition.y );
-         break;
-      case Direction::Down:
-         player->SetPosition( currentPosition.x, currentPosition.y + ( _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() ) );
-         break;
-   }
-
-   ClipPlayer();
-}
-
-void GameLogic::ClipPlayer() const
-{
-   auto player = _gameData->GetPlayer();
-   auto& position = player->GetPosition();
-   auto& hitBoxOffset = player->GetHitBoxOffset();
-
-   if ( ( position.y + hitBoxOffset.y ) < 0 )
-   {
-      // hit the top edge of the arena
-      player->SetPosition( position.x, -hitBoxOffset.y );
-   }
-   else if ( ( position.y - hitBoxOffset.y ) >= ( _renderConfig->ViewHeight - 1 ) )
-   {
-      // hit the bottom edge of the arena
-      player->SetPosition( position.x, ( _renderConfig->ViewHeight - 1 ) + hitBoxOffset.y );
-   }
-
-   if ( ( position.x + hitBoxOffset.x ) < 0 )
-   {
-      // hit the left edge of the arena
-      player->SetPosition( -hitBoxOffset.x, position.y );
-   }
-   else if ( ( position.x - hitBoxOffset.x ) >= ( _renderConfig->ViewWidth - 1 ) )
-   {
-      // hit the right edge of the arena
-      player->SetPosition( ( _renderConfig->ViewWidth - 1 ) + hitBoxOffset.x, position.y );
-   }
+   _collider->MoveEntity( _gameData->GetPlayer(),
+                          moveArgs->GetDirection(),
+                          _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() );
 }

@@ -19,7 +19,8 @@ class Geometry
 {
 public:
    static void NormalizeAngle( float& angle );
-   static float AngleToPoint( const sf::Vector2f& origin, const sf::Vector2f& point );
+   static float DistanceToPoint( float p1x, float p1y, float p2x, float p2y );
+   static float AngleToPoint( float p1x, float p1y, float p2x, float p2y );
    static bool IsPointOnRightSide( float pointX, float pointY, float p1x, float p1y, float p2x, float p2y );
    static bool LinesIntersect( float l1StartX, float l1StartY, float l1EndX, float l1EndY,
                                float l2StartX, float l2StartY, float l2EndX, float l2EndY,

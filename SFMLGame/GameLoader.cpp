@@ -14,6 +14,7 @@
 #include "PlayingStateInputHandler.h"
 #include "ClosingStateInputHandler.h"
 #include "GameInputHandler.h"
+#include "Collider.h"
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
 #include "TitleMenuStateRenderer.h"
@@ -50,7 +51,8 @@ shared_ptr<Game> GameLoader::Load() const
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::MainMenu, mainMenuStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Closing, closingStateInputHandler );
-   auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, gameInputHandler, eventQueue, gameClock, gameRunningTracker, gameStateTracker ) );
+   auto collider = shared_ptr<Collider>( new Collider( gameConfig, gameData ) );
+   auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, gameInputHandler, eventQueue, gameClock, collider, gameRunningTracker, gameStateTracker ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, gameClock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameClock, window ) );
    auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, gameClock, titleMenu ) );

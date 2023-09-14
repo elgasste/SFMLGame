@@ -3,11 +3,6 @@
 using namespace NAMESPACE;
 using namespace sf;
 
-float Geometry::AngleToPoint( const sf::Vector2f& origin, const sf::Vector2f& point )
-{
-   return atan2f( origin.y - point.y, point.x - origin.x );
-}
-
 void Geometry::NormalizeAngle( float& angle )
 {
    while ( angle >= RAD_360 )
@@ -18,6 +13,16 @@ void Geometry::NormalizeAngle( float& angle )
    {
       angle += RAD_360;
    }
+}
+
+float Geometry::DistanceToPoint( float p1x, float p1y, float p2x, float p2y )
+{
+   return sqrtf( powf( p2x - p1x, 2 ) + powf( p1y - p2y, 2 ) );
+}
+
+float Geometry::AngleToPoint( float p1x, float p1y, float p2x, float p2y )
+{
+   return atan2f( p1y - p2y, p2x - p1x );
 }
 
 bool Geometry::IsPointOnRightSide( float pointX, float pointY, float p1x, float p1y, float p2x, float p2y )

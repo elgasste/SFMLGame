@@ -161,6 +161,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntitySprite.cpp" />
@@ -192,6 +193,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonState.h" />
     <ClInclude Include="ClosingStateInputHandler.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Entity.h" />

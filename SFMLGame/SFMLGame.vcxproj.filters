@@ -135,6 +135,9 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -286,6 +289,9 @@
     </ClInclude>
     <ClInclude Include="BspNode.h">
       <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
