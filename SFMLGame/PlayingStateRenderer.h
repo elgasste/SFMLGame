@@ -36,7 +36,6 @@ private:
    std::vector<EntitySpriteLayer> _entitySpriteLayerOrder;
 
    sf::VertexArray _linesegVertexArray;
-   sf::RectangleShape _playerHitBoxRect;
 };
 
 NAMESPACE_END

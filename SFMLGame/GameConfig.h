@@ -18,6 +18,7 @@ public:
    bool ShowDiagnostics;
 
    int HitBoxBlockSize;
+   float LinesegClipDistance;
 
    sf::Vector2f DefaultPlayerPosition;
    Direction DefaultPlayerDirection;

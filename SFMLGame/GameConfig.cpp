@@ -20,6 +20,7 @@ GameConfig::GameConfig()
    ShowDiagnostics = false;
 
    HitBoxBlockSize = 4;
+   LinesegClipDistance = 1;
 
    DefaultPlayerPosition = { 480, 320 };     // this will depend on the map data, eventually
    DefaultPlayerDirection = Direction::Down; // this will depend on the map data, eventually
