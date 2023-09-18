@@ -110,25 +110,120 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
 
    if ( collided )
    {
-      // MUFFINS: this current only works when moving to the right, and colliding with surfaces that pointing down and to the left (or straight down).
-      // I'm not sure if there's a "generic" way to handle this, other than to put a bunch of switch statements all over to
-      // handle different directions. maybe there's an efficient way to do it?
       auto clippedDistance = Geometry::DistanceToPoint( nearestCollisionPoint.x, nearestCollisionPoint.y, nearestCollisionEndX, nearestCollisionEndY );
 
-      nearestCollisionLinesegAngle += RAD_180;
-      Geometry::NormalizeAngle( nearestCollisionLinesegAngle );
+      // MUFFINS: I don't think I have the values quite right for lineseg clip distance scalars, it's tough to
+      // calculate because every angle is either perfectly vertical/horizontal or perfectly diagonal.
 
-      // from 0 to 45 degrees, dy should go from zero to the full value of clippedDistance,
-      // then from 45 to 90 degrees, it should go back down to zero.
-      auto anglePercentage = 1.0f - ( nearestCollisionLinesegAngle / RAD_90 );
-      auto dyFactor = sinf( anglePercentage * RAD_180 );
-      auto dy = ( sinf( nearestCollisionLinesegAngle ) * clippedDistance ) * dyFactor;
-      auto dx = dy / tanf( nearestCollisionLinesegAngle );
+      auto originOffsetX = nearestCollisionStartX - position.x;
+      auto originOffsetY = nearestCollisionStartY - position.y;
 
-      auto destinationX = ( nearestCollisionPoint.x + dx ) - ( nearestCollisionStartX - position.x ) - ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
-      auto destinationY = ( nearestCollisionPoint.y - dy ) - ( nearestCollisionStartY - position.y ) - ( _gameConfig->LinesegClipDistance * anglePercentage );
+      if ( nearestCollisionLinesegAngle <= RAD_90 ) // 0 to 90 degrees
+      {
+         auto linesegAngle = nearestCollisionLinesegAngle - 0.0f;
+         Geometry::NormalizeAngle( linesegAngle );
 
-      entity->SetPosition( destinationX, destinationY );
+         // from 0 to 45 degrees, dy should go from zero to the full value of clippedDistance,
+         // then from 45 to 90 degrees, it should go back down to zero.
+         auto anglePercentage = 1.0f - ( linesegAngle / RAD_90 );
+         auto dyFactor = sinf( anglePercentage * RAD_180 );
+         auto dy = ( sinf( linesegAngle ) * clippedDistance ) * dyFactor;
+         auto dx = dy / tanf( linesegAngle );
+
+         // this happens when linesegAngle is exactly zero
+         if ( isnan( dx ) )
+         {
+            dx = 0.0f;
+         }
+
+         if ( direction == Direction::Left )
+         {
+            auto destinationX = ( nearestCollisionPoint.x - dx ) - originOffsetX + ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+            auto destinationY = ( nearestCollisionPoint.y + dy ) - originOffsetY + ( _gameConfig->LinesegClipDistance * anglePercentage );
+            entity->SetPosition( destinationX, destinationY );
+         }
+         else // Direction::Up
+         {
+            auto destinationX = ( nearestCollisionPoint.x + dx ) - originOffsetX + ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+            auto destinationY = ( nearestCollisionPoint.y - dy ) - originOffsetY + ( _gameConfig->LinesegClipDistance * anglePercentage );
+            entity->SetPosition( destinationX, destinationY );
+         }
+      }
+      else if ( nearestCollisionLinesegAngle <= RAD_180 ) // 90 to 180 degrees
+      {
+         auto linesegAngle = nearestCollisionLinesegAngle - RAD_90;
+         Geometry::NormalizeAngle( linesegAngle );
+
+         // from 0 to 45 degrees, dy should go from zero to the full value of clippedDistance,
+         // then from 45 to 90 degrees, it should go back down to zero.
+         auto anglePercentage = 1.0f - ( linesegAngle / RAD_90 );
+         auto dyFactor = sinf( anglePercentage * RAD_180 );
+         auto dy = ( sinf( linesegAngle ) * clippedDistance ) * dyFactor;
+         auto dx = dy / tanf( linesegAngle );
+
+         if ( direction == Direction::Left )
+         {
+            auto destinationX = ( nearestCollisionPoint.x - dx ) - originOffsetX + ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+            auto destinationY = ( nearestCollisionPoint.y - dy ) - originOffsetY - ( _gameConfig->LinesegClipDistance * anglePercentage );
+            entity->SetPosition( destinationX, destinationY );
+         }
+         else // Direction::Down
+         {
+            auto destinationX = ( nearestCollisionPoint.x + dx ) - originOffsetX + ( _gameConfig->LinesegClipDistance * anglePercentage );
+            auto destinationY = ( nearestCollisionPoint.y + dy ) - originOffsetY - ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+            entity->SetPosition( destinationX, destinationY );
+         }
+      }
+      else if ( nearestCollisionLinesegAngle <= RAD_270 ) // 180 to 270 degrees
+      {
+         auto linesegAngle = nearestCollisionLinesegAngle - RAD_180;
+         Geometry::NormalizeAngle( linesegAngle );
+
+         // from 0 to 45 degrees, dy should go from zero to the full value of clippedDistance,
+         // then from 45 to 90 degrees, it should go back down to zero.
+         auto anglePercentage = 1.0f - ( linesegAngle / RAD_90 );
+         auto dyFactor = sinf( anglePercentage * RAD_180 );
+         auto dy = ( sinf( linesegAngle ) * clippedDistance ) * dyFactor;
+         auto dx = dy / tanf( linesegAngle );
+
+         if ( direction == Direction::Right )
+         {
+            auto destinationX = ( nearestCollisionPoint.x + dx ) - originOffsetX - ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+            auto destinationY = ( nearestCollisionPoint.y - dy ) - originOffsetY - ( _gameConfig->LinesegClipDistance * anglePercentage );
+            entity->SetPosition( destinationX, destinationY );
+         }
+         else // Direction::Down
+         {
+            auto destinationX = ( nearestCollisionPoint.x - dx ) - originOffsetX - ( _gameConfig->LinesegClipDistance * anglePercentage );
+            auto destinationY = ( nearestCollisionPoint.y + dy ) - originOffsetY - ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+            entity->SetPosition( destinationX, destinationY );
+         }
+      }
+      else if ( nearestCollisionLinesegAngle <= RAD_360 ) // 270 to 360 degrees
+      {
+         auto linesegAngle = nearestCollisionLinesegAngle - RAD_270;
+         Geometry::NormalizeAngle( linesegAngle );
+
+         // from 0 to 45 degrees, dy should go from zero to the full value of clippedDistance,
+         // then from 45 to 90 degrees, it should go back down to zero.
+         auto anglePercentage = 1.0f - ( linesegAngle / RAD_90 );
+         auto dyFactor = sinf( anglePercentage * RAD_180 );
+         auto dy = ( sinf( linesegAngle ) * clippedDistance ) * dyFactor;
+         auto dx = dy / tanf( linesegAngle );
+
+         if ( direction == Direction::Right )
+         {
+            auto destinationX = ( nearestCollisionPoint.x + dx ) - originOffsetX - ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+            auto destinationY = ( nearestCollisionPoint.y + dy ) - originOffsetY + ( _gameConfig->LinesegClipDistance * anglePercentage );
+            entity->SetPosition( destinationX, destinationY );
+         }
+         else // Direction::Up
+         {
+            auto destinationX = ( nearestCollisionPoint.x - dx ) - originOffsetX - ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+            auto destinationY = ( nearestCollisionPoint.y - dy ) - originOffsetY + ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+            entity->SetPosition( destinationX, destinationY );
+         }
+      }
    }
    else
    {
