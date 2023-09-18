@@ -72,8 +72,8 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
    float endY = startY;
    static Vector2f collisionPoint;
    static Vector2f nearestCollisionPoint;
-   float collisionAngle;
-   float nearestCollisionAngle = 0.0f;
+   float collisionLinesegAngle;
+   float nearestCollisionLinesegAngle = 0.0f;
    float nearestCollisionStartX = 0.0f;
    float nearestCollisionStartY = 0.0f;
    float nearestCollisionEndX = 0.0f;
@@ -86,7 +86,7 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
       endX = startX + deltaX;
       endY = startY + deltaY;
 
-      if ( HitLinesegRecursive( _gameData->GetRootBspNode(), startX, startY, endX, endY, collisionPoint, collisionAngle ) )
+      if ( HitLinesegRecursive( _gameData->GetRootBspNode(), startX, startY, endX, endY, collisionPoint, collisionLinesegAngle ) )
       {
          collided = true;
          auto collisionDistance = Geometry::DistanceToPoint( startX, startY, collisionPoint.x, collisionPoint.y );
@@ -95,7 +95,7 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
          {
             nearestCollisionPoint.x = collisionPoint.x;
             nearestCollisionPoint.y = collisionPoint.y;
-            nearestCollisionAngle = collisionAngle;
+            nearestCollisionLinesegAngle = collisionLinesegAngle;
             nearestCollisionStartX = startX;
             nearestCollisionStartY = startY;
             nearestCollisionEndX = endX;
@@ -110,38 +110,25 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
 
    if ( collided )
    {
-      // MUFFINS: this seems to be a good method, but it only works like this when moving to the right,
-      // and only when the lineseg goes from top to bottom. that'll be the next thing to figure out.
-      auto clippedDistance = Geometry::DistanceToPoint( collisionPoint.x, collisionPoint.y, nearestCollisionEndX, nearestCollisionEndY );
+      // MUFFINS: this current only works when moving to the right, and colliding with surfaces that pointing down and to the left (or straight down).
+      // I'm not sure if there's a "generic" way to handle this, other than to put a bunch of switch statements all over to
+      // handle different directions. maybe there's an efficient way to do it?
+      auto clippedDistance = Geometry::DistanceToPoint( nearestCollisionPoint.x, nearestCollisionPoint.y, nearestCollisionEndX, nearestCollisionEndY );
 
-      auto linesegAngle = nearestCollisionAngle + RAD_180;
-      Geometry::NormalizeAngle( linesegAngle );
+      nearestCollisionLinesegAngle += RAD_180;
+      Geometry::NormalizeAngle( nearestCollisionLinesegAngle );
 
-      // as the lineseg angle gets more/less extreme, adjust dy accordingly, then re-calculate dx
-      auto dx = ( cosf( linesegAngle ) * clippedDistance );
-      auto dy = sinf( ( dx / clippedDistance ) * RAD_180 );
-      dx = dy / tanf( linesegAngle );
+      // from 0 to 45 degrees, dy should go from zero to the full value of clippedDistance,
+      // then from 45 to 90 degrees, it should go back down to zero.
+      auto anglePercentage = 1.0f - ( nearestCollisionLinesegAngle / RAD_90 );
+      auto dyFactor = sinf( anglePercentage * RAD_180 );
+      auto dy = ( sinf( nearestCollisionLinesegAngle ) * clippedDistance ) * dyFactor;
+      auto dx = dy / tanf( nearestCollisionLinesegAngle );
 
-      auto linsegClipDistance = _gameConfig->LinesegClipDistance * _clock->GetFrameSeconds();
-
-      auto destinationX = ( nearestCollisionPoint.x + dx ) - ( nearestCollisionStartX - position.x ) - linsegClipDistance;
-      auto destinationY = ( nearestCollisionPoint.y - dy ) - ( nearestCollisionStartY - position.y ) - linsegClipDistance;
+      auto destinationX = ( nearestCollisionPoint.x + dx ) - ( nearestCollisionStartX - position.x ) - ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
+      auto destinationY = ( nearestCollisionPoint.y - dy ) - ( nearestCollisionStartY - position.y ) - ( _gameConfig->LinesegClipDistance * anglePercentage );
 
       entity->SetPosition( destinationX, destinationY );
-
-      // MUFFINS: meanwhile, this isn't too bad, but the movement on angled linesegs is really slow
-
-      // clip the entity parallel to the lineseg
-      /*auto parallelAngle = nearestCollisionAngle - RAD_90;
-      Geometry::NormalizeAngle( parallelAngle );
-
-      auto dx = cosf( parallelAngle ) * _gameConfig->LinesegClipDistance;
-      auto dy = sinf( parallelAngle ) * _gameConfig->LinesegClipDistance;
-
-      auto destinationX = ( nearestCollisionPoint.x + dx ) - ( nearestCollisionStartX - position.x );
-      auto destinationY = ( nearestCollisionPoint.y - dy ) - ( nearestCollisionStartY - position.y );
-
-      entity->SetPosition( destinationX, destinationY );*/
    }
    else
    {
@@ -149,7 +136,7 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
    }
 }
 
-bool Collider::HitLinesegRecursive( BspNode* node, float startX, float startY, float endX, float endY, Vector2f& collisionPoint, float& collisionAngle )
+bool Collider::HitLinesegRecursive( BspNode* node, float startX, float startY, float endX, float endY, Vector2f& collisionPoint, float& collisionLinesegAngle )
 {
    if ( node == nullptr )
    {
@@ -162,8 +149,8 @@ bool Collider::HitLinesegRecursive( BspNode* node, float startX, float startY, f
       {
          if ( Geometry::LinesIntersect( startX, startY, endX, endY, lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y, &collisionPoint ) )
          {
-            collisionAngle = Geometry::AngleToPoint( lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y );
-            Geometry::NormalizeAngle( collisionAngle );
+            collisionLinesegAngle = Geometry::AngleToPoint( lineseg.start.x, lineseg.start.y, lineseg.end.x, lineseg.end.y );
+            Geometry::NormalizeAngle( collisionLinesegAngle );
             return true;
          }
       }
@@ -177,8 +164,8 @@ bool Collider::HitLinesegRecursive( BspNode* node, float startX, float startY, f
       auto isEndOnRight = Geometry::IsPointOnRightSide( endX, endY, linedef->start.x, linedef->start.y, linedef->end.x, linedef->end.y );
 
       auto hit = isStartOnRight
-         ? HitLinesegRecursive( node->rightChild, startX, startY, endX, endY, collisionPoint, collisionAngle )
-         : HitLinesegRecursive( node->leftChild, startX, startY, endX, endY, collisionPoint, collisionAngle );
+         ? HitLinesegRecursive( node->rightChild, startX, startY, endX, endY, collisionPoint, collisionLinesegAngle )
+         : HitLinesegRecursive( node->leftChild, startX, startY, endX, endY, collisionPoint, collisionLinesegAngle );
 
       if ( hit || ( isStartOnRight == isEndOnRight ) )
       {
@@ -186,7 +173,7 @@ bool Collider::HitLinesegRecursive( BspNode* node, float startX, float startY, f
       }
 
       return isEndOnRight
-         ? HitLinesegRecursive( node->rightChild, startX, startY, endX, endY, collisionPoint, collisionAngle )
-         : HitLinesegRecursive( node->leftChild, startX, startY, endX, endY, collisionPoint, collisionAngle );
+         ? HitLinesegRecursive( node->rightChild, startX, startY, endX, endY, collisionPoint, collisionLinesegAngle )
+         : HitLinesegRecursive( node->leftChild, startX, startY, endX, endY, collisionPoint, collisionLinesegAngle );
    }
 }

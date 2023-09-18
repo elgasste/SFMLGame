@@ -21,7 +21,7 @@ public:
    void MoveEntity( std::shared_ptr<Entity> entity, Direction direction, float distance );
 
 private:
-   bool HitLinesegRecursive( BspNode* node, float startX, float startY, float endX, float endY, sf::Vector2f& collisionPoint, float& collisionAngle );
+   bool HitLinesegRecursive( BspNode* node, float startX, float startY, float endX, float endY, sf::Vector2f& collisionPoint, float& collisionLinesegAngle );
 
 private:
    std::shared_ptr<GameConfig> _gameConfig;
