@@ -108,6 +108,8 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
       startY += hitBoxIncrementY;
    }
 
+   // TODO: if we're clipping, we might need to do several more checks to make sure we haven't
+   // collided with several more things. For now, let's let that go.
    if ( collided )
    {
       auto clippedDistance = Geometry::DistanceToPoint( nearestCollisionPoint.x, nearestCollisionPoint.y, nearestCollisionEndX, nearestCollisionEndY );

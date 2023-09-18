@@ -26,6 +26,7 @@ public:
    float PlayerHitBoxWidth;
    float PlayerHitBoxHeight;
    float PlayerVelocityIncrement;
+   float PlayerVelocityDiagonalScalar;
 };
 
 NAMESPACE_END

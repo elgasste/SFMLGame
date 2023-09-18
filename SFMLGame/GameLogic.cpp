@@ -126,5 +126,5 @@ void GameLogic::OnMovePlayer( shared_ptr<IGameEventArgs> args ) const
    auto moveArgs = (MovePlayerArgs*)( args.get() );
    _collider->MoveEntity( _gameData->GetPlayer(),
                           moveArgs->GetDirection(),
-                          _gameConfig->PlayerVelocityIncrement * _clock->GetFrameSeconds() );
+                          moveArgs->GetVelocity() * _clock->GetFrameSeconds() );
 }

@@ -37,20 +37,32 @@ void PlayingStateInputHandler::HandleInput()
 
    if ( _isLeftDown && !_isRightDown )
    {
-      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Left ) ) );
+      auto velocity = ( ( _isUpDown && !_isDownDown ) || ( _isDownDown && !_isUpDown ) )
+         ? _gameConfig->PlayerVelocityIncrement * _gameConfig->PlayerVelocityDiagonalScalar
+         : _gameConfig->PlayerVelocityIncrement;
+      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Left, velocity ) ) );
    }
    else if ( _isRightDown && !_isLeftDown )
    {
-      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Right ) ) );
+      auto velocity = ( ( _isUpDown && !_isDownDown ) || ( _isDownDown && !_isUpDown ) )
+         ? _gameConfig->PlayerVelocityIncrement * _gameConfig->PlayerVelocityDiagonalScalar
+         : _gameConfig->PlayerVelocityIncrement;
+      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Right, velocity ) ) );
    }
 
    if ( _isUpDown && !_isDownDown )
    {
-      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Up ) ) );
+      auto velocity = ( ( _isLeftDown && !_isRightDown ) || ( _isRightDown && !_isLeftDown ) )
+         ? _gameConfig->PlayerVelocityIncrement * _gameConfig->PlayerVelocityDiagonalScalar
+         : _gameConfig->PlayerVelocityIncrement;
+      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Up, velocity ) ) );
    }
    else if ( _isDownDown && !_isUpDown )
    {
-      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Down ) ) );
+      auto velocity = ( ( _isLeftDown && !_isRightDown ) || ( _isRightDown && !_isLeftDown ) )
+         ? _gameConfig->PlayerVelocityIncrement * _gameConfig->PlayerVelocityDiagonalScalar
+         : _gameConfig->PlayerVelocityIncrement;
+      _eventQueue->Push( GameEventType::MovePlayer, shared_ptr<MovePlayerArgs>( new MovePlayerArgs( Direction::Down, velocity ) ) );
    }
 }
 
