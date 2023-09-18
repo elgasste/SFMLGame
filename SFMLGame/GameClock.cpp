@@ -68,6 +68,7 @@ void GameClock::EndFrame()
 
 float GameClock::GetFrameSeconds() const
 {
+   // MUFFINS: something HAS to be wrong with this, right??
    return _lastFrameDurationNano / 1'000'000'000.0f;
 }
 

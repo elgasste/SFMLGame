@@ -3,6 +3,7 @@
 #include "Collider.h"
 #include "GameConfig.h"
 #include "GameData.h"
+#include "GameClock.h"
 #include "Entity.h"
 #include "Geometry.h"
 
@@ -11,9 +12,11 @@ using namespace std;
 using namespace sf;
 
 Collider::Collider( shared_ptr<GameConfig> gameConfig,
-                    shared_ptr<GameData> gameData ) :
+                    shared_ptr<GameData> gameData,
+                    shared_ptr<GameClock> clock ) :
    _gameConfig( gameConfig ),
-   _gameData( gameData )
+   _gameData( gameData ),
+   _clock( clock )
 {
 }
 
@@ -73,6 +76,8 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
    float nearestCollisionAngle = 0.0f;
    float nearestCollisionStartX = 0.0f;
    float nearestCollisionStartY = 0.0f;
+   float nearestCollisionEndX = 0.0f;
+   float nearestCollisionEndY = 0.0f;
    float nearestCollisionDistance = numeric_limits<float>::max();
    bool collided = false;
 
@@ -93,6 +98,8 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
             nearestCollisionAngle = collisionAngle;
             nearestCollisionStartX = startX;
             nearestCollisionStartY = startY;
+            nearestCollisionEndX = endX;
+            nearestCollisionEndY = endY;
             nearestCollisionDistance = collisionDistance;
          }
       }
@@ -103,11 +110,29 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
 
    if ( collided )
    {
-      // MUFFINS: do we need to add another test here to make sure we don't go out of bounds?
-      // if the map tiles are bound to a 16-pixel boundary, it's probably not even possible...
+      // MUFFINS: this seems to be a good method, but it only works like this when moving to the right,
+      // and only when the lineseg goes from top to bottom. that'll be the next thing to figure out.
+      auto clippedDistance = Geometry::DistanceToPoint( collisionPoint.x, collisionPoint.y, nearestCollisionEndX, nearestCollisionEndY );
+
+      auto linesegAngle = nearestCollisionAngle + RAD_180;
+      Geometry::NormalizeAngle( linesegAngle );
+
+      // as the lineseg angle gets more/less extreme, adjust dy accordingly, then re-calculate dx
+      auto dx = ( cosf( linesegAngle ) * clippedDistance );
+      auto dy = sinf( ( dx / clippedDistance ) * RAD_180 );
+      dx = dy / tanf( linesegAngle );
+
+      auto linsegClipDistance = _gameConfig->LinesegClipDistance * _clock->GetFrameSeconds();
+
+      auto destinationX = ( nearestCollisionPoint.x + dx ) - ( nearestCollisionStartX - position.x ) - linsegClipDistance;
+      auto destinationY = ( nearestCollisionPoint.y - dy ) - ( nearestCollisionStartY - position.y ) - linsegClipDistance;
+
+      entity->SetPosition( destinationX, destinationY );
+
+      // MUFFINS: meanwhile, this isn't too bad, but the movement on angled linesegs is really slow
 
       // clip the entity parallel to the lineseg
-      auto parallelAngle = nearestCollisionAngle - RAD_90;
+      /*auto parallelAngle = nearestCollisionAngle - RAD_90;
       Geometry::NormalizeAngle( parallelAngle );
 
       auto dx = cosf( parallelAngle ) * _gameConfig->LinesegClipDistance;
@@ -116,7 +141,7 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
       auto destinationX = ( nearestCollisionPoint.x + dx ) - ( nearestCollisionStartX - position.x );
       auto destinationY = ( nearestCollisionPoint.y - dy ) - ( nearestCollisionStartY - position.y );
 
-      entity->SetPosition( destinationX, destinationY );
+      entity->SetPosition( destinationX, destinationY );*/
    }
    else
    {
