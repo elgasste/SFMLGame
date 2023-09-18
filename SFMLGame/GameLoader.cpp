@@ -51,7 +51,7 @@ shared_ptr<Game> GameLoader::Load() const
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::MainMenu, mainMenuStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Closing, closingStateInputHandler );
-   auto collider = shared_ptr<Collider>( new Collider( gameConfig, gameData, gameClock ) );
+   auto collider = shared_ptr<Collider>( new Collider( gameConfig, gameData ) );
    auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, gameInputHandler, eventQueue, gameClock, collider, gameRunningTracker, gameStateTracker ) );
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, gameClock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameClock, window ) );

@@ -3,7 +3,6 @@
 #include "Collider.h"
 #include "GameConfig.h"
 #include "GameData.h"
-#include "GameClock.h"
 #include "Entity.h"
 #include "Geometry.h"
 
@@ -12,11 +11,9 @@ using namespace std;
 using namespace sf;
 
 Collider::Collider( shared_ptr<GameConfig> gameConfig,
-                    shared_ptr<GameData> gameData,
-                    shared_ptr<GameClock> clock ) :
+                    shared_ptr<GameData> gameData ) :
    _gameConfig( gameConfig ),
-   _gameData( gameData ),
-   _clock( clock )
+   _gameData( gameData )
 {
 }
 
