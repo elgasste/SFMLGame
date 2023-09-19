@@ -22,7 +22,6 @@ public:
 
    sf::Vector2f DefaultPlayerPosition;
    Direction DefaultPlayerDirection;
-   float MaximumPlayerVelocity;
    float PlayerHitBoxWidth;
    float PlayerHitBoxHeight;
    float PlayerVelocityIncrement;

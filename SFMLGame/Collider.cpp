@@ -160,6 +160,12 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
          auto dy = ( sinf( linesegAngle ) * clippedDistance ) * dyFactor;
          auto dx = dy / tanf( linesegAngle );
 
+         // this happens when linesegAngle is exactly zero
+         if ( isnan( dx ) )
+         {
+            dx = 0.0f;
+         }
+
          if ( direction == Direction::Left )
          {
             auto destinationX = ( nearestCollisionPoint.x - dx ) - originOffsetX + ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
@@ -185,6 +191,12 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
          auto dy = ( sinf( linesegAngle ) * clippedDistance ) * dyFactor;
          auto dx = dy / tanf( linesegAngle );
 
+         // this happens when linesegAngle is exactly zero
+         if ( isnan( dx ) )
+         {
+            dx = 0.0f;
+         }
+
          if ( direction == Direction::Right )
          {
             auto destinationX = ( nearestCollisionPoint.x + dx ) - originOffsetX - ( _gameConfig->LinesegClipDistance * ( 1.0f - anglePercentage ) );
@@ -209,6 +221,12 @@ void Collider::MoveEntity( shared_ptr<Entity> entity, Direction direction, float
          auto dyFactor = sinf( anglePercentage * RAD_180 );
          auto dy = ( sinf( linesegAngle ) * clippedDistance ) * dyFactor;
          auto dx = dy / tanf( linesegAngle );
+
+         // this happens when linesegAngle is exactly zero
+         if ( isnan( dx ) )
+         {
+            dx = 0.0f;
+         }
 
          if ( direction == Direction::Right )
          {
