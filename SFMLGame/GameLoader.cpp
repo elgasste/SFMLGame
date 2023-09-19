@@ -18,6 +18,8 @@
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
 #include "TitleMenuStateRenderer.h"
+#include "WireframeMapRenderer.h"
+#include "DetailedMapRenderer.h"
 #include "PlayingStateRenderer.h"
 #include "MainMenuStateRenderer.h"
 #include "ClosingStateRenderer.h"
@@ -56,7 +58,9 @@ shared_ptr<Game> GameLoader::Load() const
    auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, gameClock ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameClock, window ) );
    auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, gameClock, titleMenu ) );
-   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );
+   auto wireframeMapRenderer = shared_ptr<WireframeMapRenderer>( new WireframeMapRenderer( renderConfig, gameData, window ) );
+   auto detailedMapRenderer = shared_ptr<DetailedMapRenderer>( new DetailedMapRenderer( renderData, gameData, window ) );
+   auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( gameConfig, wireframeMapRenderer, detailedMapRenderer ) );
    auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( renderConfig, window, gameClock, mainMenu ) );
    auto closingStateRenderer = make_shared<ClosingStateRenderer>();
    auto gameRenderer = shared_ptr<GameRenderer>( new GameRenderer( gameConfig, window, diagnosticRenderer, gameStateTracker ) );

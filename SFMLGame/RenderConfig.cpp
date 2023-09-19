@@ -48,4 +48,7 @@ RenderConfig::RenderConfig()
    PlayerSpriteOrigin = { 32, 38 };
    PlayerSpriteMovementFrames = 8;
    PlayerSpriteFrameIncrement = 0.05f;
+
+   WireframeLinedefColor = Color::White;
+   WireframePlayerHitBoxFillColor = Color::Magenta;
 }

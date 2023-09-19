@@ -162,6 +162,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="DetailedMapRenderer.cpp" />
     <ClCompile Include="DiagnosticsRenderer.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntitySprite.cpp" />
@@ -187,6 +188,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClCompile Include="SFMLWindow.cpp" />
     <ClCompile Include="TitleMenu.cpp" />
     <ClCompile Include="TitleMenuStateRenderer.cpp" />
+    <ClCompile Include="WireframeMapRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BspNode.h" />
@@ -194,6 +196,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="ButtonState.h" />
     <ClInclude Include="ClosingStateInputHandler.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="DetailedMapRenderer.h" />
     <ClInclude Include="DiagnosticsRenderer.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Entity.h" />
@@ -240,6 +243,7 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="TitleMenuStateRenderer.h" />
     <ClInclude Include="TurnPlayerArgs.h" />
     <ClInclude Include="WindowsLibs.h" />
+    <ClInclude Include="WireframeMapRenderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

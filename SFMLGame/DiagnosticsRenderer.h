@@ -2,13 +2,6 @@
 
 #include "Common.h"
 
-namespace sf
-{
-   class Font;
-   class Text;
-   class RectangleShape;
-}
-
 NAMESPACE_BEGIN
 
 class RenderConfig;

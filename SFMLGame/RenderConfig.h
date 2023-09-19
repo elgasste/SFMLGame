@@ -56,6 +56,9 @@ public:
    sf::Vector2f PlayerSpriteOrigin;
    int PlayerSpriteMovementFrames;
    float PlayerSpriteFrameIncrement;
+
+   sf::Color WireframeLinedefColor;
+   sf::Color WireframePlayerHitBoxFillColor;
 };
 
 NAMESPACE_END

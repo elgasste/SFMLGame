@@ -26,6 +26,8 @@ public:
    float PlayerHitBoxHeight;
    float PlayerVelocityIncrement;
    float PlayerVelocityDiagonalScalar;
+
+   bool ShowWireframeMap;
 };
 
 NAMESPACE_END

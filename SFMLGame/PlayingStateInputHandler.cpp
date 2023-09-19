@@ -33,6 +33,11 @@ void PlayingStateInputHandler::HandleInput()
       return;
    }
 
+   if ( _inputReader->WasButtonPressed( Button::Wireframe ) )
+   {
+      _gameConfig->ShowWireframeMap = !_gameConfig->ShowWireframeMap;
+   }
+
    CacheDirectionInput();
 
    if ( _isLeftDown && !_isRightDown )

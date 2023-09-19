@@ -15,6 +15,7 @@ enum class Button
    Down,
 
    Diagnostics,
+   Wireframe,
 
    ButtonCount
 };

@@ -14,7 +14,8 @@ GameConfig::GameConfig()
       { KeyCode::Up, Button::Up },
       { KeyCode::Right, Button::Right },
       { KeyCode::Down, Button::Down },
-      { KeyCode::F12, Button::Diagnostics }
+      { KeyCode::F12, Button::Diagnostics },
+      { KeyCode::Tab, Button::Wireframe }
    };
 
    ShowDiagnostics = false;
@@ -28,4 +29,6 @@ GameConfig::GameConfig()
    PlayerHitBoxHeight = 48; // should be divisible by HitBoxBlockSize
    PlayerVelocityIncrement = 150;
    PlayerVelocityDiagonalScalar = 0.70710678118f; // cos( 45 degrees )
+
+   ShowWireframeMap = false;
 }
