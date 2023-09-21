@@ -144,6 +144,9 @@
     <ClCompile Include="DetailedMapRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="TileRenderMap.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -303,6 +306,9 @@
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="DetailedMapRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TileRenderMap.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>

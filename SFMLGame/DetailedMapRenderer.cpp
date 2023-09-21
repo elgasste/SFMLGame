@@ -1,6 +1,7 @@
 #include "DetailedMapRenderer.h"
 #include "RenderData.h"
 #include "GameData.h"
+#include "TileRenderMap.h"
 #include "SFMLWindow.h"
 #include "Entity.h"
 #include "EntitySprite.h"
@@ -11,9 +12,11 @@ using namespace sf;
 
 DetailedMapRenderer::DetailedMapRenderer( shared_ptr<RenderData> renderData,
                                           shared_ptr<GameData> gameData,
+                                          shared_ptr<TileRenderMap> tileRenderMap,
                                           shared_ptr<SFMLWindow> window ) :
    _renderData( renderData ),
    _gameData( gameData ),
+   _tileRenderMap( tileRenderMap ),
    _window( window )
 {
    _entitySpriteLayerOrder =
@@ -30,6 +33,19 @@ DetailedMapRenderer::DetailedMapRenderer( shared_ptr<RenderData> renderData,
 
 void DetailedMapRenderer::Render()
 {
+   auto tileSize = _tileRenderMap->GetTileSize();
+   auto& mapSize = _tileRenderMap->GetMapSize();
+
+   for ( int i = 0; i < mapSize.x; i++ )
+   {
+      for ( int j = 0; j < mapSize.y; j++ )
+      {
+         auto positionX = (float)( i * tileSize );
+         auto positionY = (float)( j * tileSize );
+         _window->Draw( _tileRenderMap->GetTileSprite( i, j, positionX, positionY ) );
+      }
+   }
+
    auto playerSprite = _renderData->GetPlayerSprite();
    playerSprite->Tick();
    playerSprite->SetPosition( _gameData->GetPlayer()->GetPosition() );

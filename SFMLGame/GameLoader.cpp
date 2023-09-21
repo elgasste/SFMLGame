@@ -19,6 +19,7 @@
 #include "DiagnosticsRenderer.h"
 #include "TitleMenuStateRenderer.h"
 #include "WireframeMapRenderer.h"
+#include "TileRenderMap.h"
 #include "DetailedMapRenderer.h"
 #include "PlayingStateRenderer.h"
 #include "MainMenuStateRenderer.h"
@@ -59,7 +60,8 @@ shared_ptr<Game> GameLoader::Load() const
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameClock, window ) );
    auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, gameClock, titleMenu ) );
    auto wireframeMapRenderer = shared_ptr<WireframeMapRenderer>( new WireframeMapRenderer( renderConfig, gameData, window ) );
-   auto detailedMapRenderer = shared_ptr<DetailedMapRenderer>( new DetailedMapRenderer( renderData, gameData, window ) );
+   auto tileRenderMap = make_shared<TileRenderMap>();
+   auto detailedMapRenderer = shared_ptr<DetailedMapRenderer>( new DetailedMapRenderer( renderData, gameData, tileRenderMap, window ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( gameConfig, wireframeMapRenderer, detailedMapRenderer ) );
    auto mainMenuStateRenderer = shared_ptr<MainMenuStateRenderer>( new MainMenuStateRenderer( renderConfig, window, gameClock, mainMenu ) );
    auto closingStateRenderer = make_shared<ClosingStateRenderer>();
@@ -92,6 +94,8 @@ shared_ptr<RenderData> GameLoader::LoadRenderData( shared_ptr<RenderConfig> rend
                                                    shared_ptr<GameData> gameData,
                                                    shared_ptr<GameClock> gameClock ) const
 {
+   auto renderData = make_shared<RenderData>();
+
    auto playerSpriteTextureLayerMap = make_shared<map<EntitySpriteLayer, shared_ptr<Texture>>>();
    ( *playerSpriteTextureLayerMap )[EntitySpriteLayer::Body] = shared_ptr<Texture>( new Texture() );
    playerSpriteTextureLayerMap->at( EntitySpriteLayer::Body )->loadFromFile( "Resources/Textures/BODY_male.png" );
@@ -114,7 +118,6 @@ shared_ptr<RenderData> GameLoader::LoadRenderData( shared_ptr<RenderConfig> rend
                                                                    renderConfig->PlayerSpriteOrigin,
                                                                    renderConfig->PlayerSpriteMovementFrames ) );
 
-   auto renderData = make_shared<RenderData>();
    renderData->SetPlayerSpriteTextureLayerMap( playerSpriteTextureLayerMap );
    renderData->SetPlayerSprite( playerSprite );
 
