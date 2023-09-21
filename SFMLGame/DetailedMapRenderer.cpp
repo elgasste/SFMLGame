@@ -33,19 +33,10 @@ DetailedMapRenderer::DetailedMapRenderer( shared_ptr<RenderData> renderData,
 
 void DetailedMapRenderer::Render()
 {
-   auto tileSize = _tileRenderMap->GetTileSize();
-   auto& mapSize = _tileRenderMap->GetMapSize();
+   // rear tiles first
+   DrawTiles( true );
 
-   for ( int i = 0; i < mapSize.x; i++ )
-   {
-      for ( int j = 0; j < mapSize.y; j++ )
-      {
-         auto positionX = (float)( i * tileSize );
-         auto positionY = (float)( j * tileSize );
-         _window->Draw( _tileRenderMap->GetTileSprite( i, j, positionX, positionY ) );
-      }
-   }
-
+   // then the player
    auto playerSprite = _renderData->GetPlayerSprite();
    playerSprite->Tick();
    playerSprite->SetPosition( _gameData->GetPlayer()->GetPosition() );
@@ -55,6 +46,30 @@ void DetailedMapRenderer::Render()
       if ( playerSprite->HasLayer( layer ) )
       {
          _window->Draw( playerSprite->GetSpriteForLayer( layer ) );
+      }
+   }
+
+   // then front tiles
+   DrawTiles( false );
+}
+
+void DetailedMapRenderer::DrawTiles( bool rearTiles ) const
+{
+   auto tileSize = _tileRenderMap->GetTileSize();
+   auto& mapSize = _tileRenderMap->GetMapSize();
+
+   for ( int i = 0; i < mapSize.x; i++ )
+   {
+      for ( int j = 0; j < mapSize.y; j++ )
+      {
+         auto tileIndex = _tileRenderMap->GetTileIndex( i, j, rearTiles );
+
+         if ( tileIndex >= 0 )
+         {
+            auto positionX = (float)( i * tileSize );
+            auto positionY = (float)( j * tileSize );
+            _window->Draw( _tileRenderMap->GetTileSprite( tileIndex, positionX, positionY ) );
+         }
       }
    }
 }

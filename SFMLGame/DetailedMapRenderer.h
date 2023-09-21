@@ -21,6 +21,9 @@ public:
    void Render();
 
 private:
+   void DrawTiles( bool rearTiles ) const;
+
+private:
    std::shared_ptr<RenderData> _renderData;
    std::shared_ptr<GameData> _gameData;
    std::shared_ptr<TileRenderMap> _tileRenderMap;

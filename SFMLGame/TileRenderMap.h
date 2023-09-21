@@ -11,7 +11,8 @@ public:
 
    int GetTileSize() { return _tileSize; }
    const sf::Vector2i& GetMapSize() { return _mapSize; }
-   const sf::Sprite& GetTileSprite( int mapX, int mapY, float positionX, float positionY );
+   int GetTileIndex( int mapX, int mapY, bool rearTile ) const;
+   const sf::Sprite& GetTileSprite( int tileIndex, float positionX, float positionY );
 
 private:
    void LoadTestMap();
@@ -22,7 +23,8 @@ private:
    int _tileSize;
 
    sf::Vector2i _mapSize;
-   std::vector<int> _mapTileIndexes;
+   std::vector<int> _rearMapTileIndexes;
+   std::vector<int> _frontMapTileIndexes;
 
    sf::Sprite _tileSprite;
    sf::IntRect _tileSpriteTextureRect;
