@@ -128,23 +128,23 @@ shared_ptr<vector<LineDef>> GameLoader::LoadLinedefs() const
 {
    auto linedefs = make_shared<vector<LineDef>>();
 
-   // outer walls
-   linedefs->push_back( { { 0, 0 }, { 959, 0 } } );         // A0 : 0
-   linedefs->push_back( { { 959, 0 }, { 959, 639 } } );     // B0 : 1
-   linedefs->push_back( { { 959, 639 }, { 0, 639 } } );     // C0 : 2
-   linedefs->push_back( { { 0, 639 }, { 0, 0 } } );         // D0 : 3
+   // outer boundary
+   linedefs->push_back( { { 0, 0 }, { 960, 0 } } );         // A0 : 0
+   linedefs->push_back( { { 960, 0 }, { 960, 640 } } );     // B0 : 1
+   linedefs->push_back( { { 960, 640 }, { 0, 640 } } );     // C0 : 2
+   linedefs->push_back( { { 0, 640 }, { 0, 0 } } );         // D0 : 3
 
-   // upper-left impassable area
-   linedefs->push_back( { { 352, 96 }, { 160, 96 } } );     // A1 : 4
-   linedefs->push_back( { { 160, 96 }, { 96, 160 } } );     // B1 : 5
-   linedefs->push_back( { { 96, 160 }, { 96, 192 } } );     // C1 : 6
+   // upper-left cliffs
+   linedefs->push_back( { { 352, 80 }, { 160, 80 } } );     // A1 : 4
+   linedefs->push_back( { { 160, 80 }, { 96, 144 } } );     // B1 : 5
+   linedefs->push_back( { { 96, 144 }, { 96, 192 } } );     // C1 : 6
    linedefs->push_back( { { 96, 192 }, { 160, 256 } } );    // D1 : 7
    linedefs->push_back( { { 160, 256 }, { 384, 256 } } );   // E1 : 8
    linedefs->push_back( { { 384, 256 }, { 416, 224 } } );   // F1 : 9
-   linedefs->push_back( { { 416, 224 }, { 416, 160 } } );   // G1 : 10
-   linedefs->push_back( { { 416, 160 }, { 352, 96 } } );    // H1 : 11
+   linedefs->push_back( { { 416, 224 }, { 416, 144 } } );   // G1 : 10
+   linedefs->push_back( { { 416, 144 }, { 352, 80 } } );    // H1 : 11
 
-   // upper-right impassable area
+   // upper-right cliffs
    linedefs->push_back( { { 832, 64 }, { 800, 64 } } );     // A2 : 12
    linedefs->push_back( { { 800, 64 }, { 672, 192 } } );    // B2 : 13
    linedefs->push_back( { { 672, 192 }, { 672, 224 } } );   // C2 : 14
@@ -154,11 +154,17 @@ shared_ptr<vector<LineDef>> GameLoader::LoadLinedefs() const
    linedefs->push_back( { { 864, 128 }, { 864, 96 } } );    // G2 : 18
    linedefs->push_back( { { 864, 96 }, { 832, 64 } } );     // H2 : 19
 
-   // bottom-center impassable area
+   // bottom-center soldier statues
    linedefs->push_back( { { 672, 384 }, { 448, 384 } } );   // A3 : 20
    linedefs->push_back( { { 448, 384 }, { 448, 576 } } );   // B3 : 21
    linedefs->push_back( { { 448, 576 }, { 672, 576 } } );   // C3 : 22
    linedefs->push_back( { { 672, 576 }, { 672, 384 } } );   // D3 : 23
+
+   // bottom-left rocks
+   linedefs->push_back( { { 160, 496 }, { 128, 496 } } );   // A4 : 24
+   linedefs->push_back( { { 128, 496 }, { 128, 512 } } );   // B4 : 25
+   linedefs->push_back( { { 128, 512 }, { 160, 512 } } );   // C4 : 26
+   linedefs->push_back( { { 160, 512 }, { 160, 496 } } );   // D4 : 27
 
    return linedefs;
 }
@@ -170,8 +176,8 @@ shared_ptr<vector<SubSector>> GameLoader::LoadSubSectors( shared_ptr<vector<Line
    // subsector 0
    subSectors->push_back( SubSector( {
       { &( ( *linedefs )[16] ), { 704, 256 }, { 736, 256 } },
-      { &( ( *linedefs )[1] ), { 959, 256 }, { 959, 639 } },
-      { &( ( *linedefs )[2] ), { 959, 639 }, { 672, 639 } },
+      { &( ( *linedefs )[1] ), { 960, 256 }, { 960, 640 } },
+      { &( ( *linedefs )[2] ), { 960, 640 }, { 672, 640 } },
       { &( ( *linedefs )[23] ), { 672, 576 }, { 672, 384 } }
    } ) );
 
@@ -183,7 +189,7 @@ shared_ptr<vector<SubSector>> GameLoader::LoadSubSectors( shared_ptr<vector<Line
    // subsector 2
    subSectors->push_back( SubSector( {
       { &( ( *linedefs )[22] ), { 448, 576 }, { 672, 576 } },
-      { &( ( *linedefs )[2] ), { 672, 639 }, { 416, 639 } }
+      { &( ( *linedefs )[2] ), { 672, 640 }, { 416, 640 } }
    } ) );
 
    // subsector 3
@@ -195,13 +201,13 @@ shared_ptr<vector<SubSector>> GameLoader::LoadSubSectors( shared_ptr<vector<Line
    subSectors->push_back( SubSector( {
       { &( ( *linedefs )[0] ), { 416, 0 }, { 864, 0 } },
       { &( ( *linedefs )[13] ), { 800, 64 }, { 672, 192 } },
-      { &( ( *linedefs )[10] ), { 416, 224 }, { 416, 160 } }
+      { &( ( *linedefs )[10] ), { 416, 224 }, { 416, 144 } }
    } ) );
 
    // subsector 5
    subSectors->push_back( SubSector( {
-      { &( ( *linedefs )[0] ), { 864, 0 }, { 959, 0 } },
-      { &( ( *linedefs )[1] ), { 959, 0 }, { 959, 256 } },
+      { &( ( *linedefs )[0] ), { 864, 0 }, { 960, 0 } },
+      { &( ( *linedefs )[1] ), { 960, 0 }, { 960, 256 } },
       { &( ( *linedefs )[18] ), { 864, 128 }, { 864, 96 } }
    } ) );
 
@@ -233,26 +239,27 @@ shared_ptr<vector<SubSector>> GameLoader::LoadSubSectors( shared_ptr<vector<Line
    // subsector 11
    subSectors->push_back( SubSector( {
       { &( ( *linedefs )[8] ), { 160, 256 }, { 384, 256 } },
-      { &( ( *linedefs )[2] ), { 416, 639 }, { 0, 639 } },
-      { &( ( *linedefs )[3] ), { 0, 639 }, { 0, 256 } }
+      { &( ( *linedefs )[2] ), { 416, 640 }, { 160, 640 } },
+      { &( ( *linedefs )[27] ), { 160, 512 }, { 160, 496 } }
    } ) );
 
    // subsector 12
    subSectors->push_back( SubSector( {
       { &( ( *linedefs )[0] ), { 0, 0 }, { 416, 0 } },
-      { &( ( *linedefs )[4] ), { 352, 96 }, { 160, 96 } },
-      { &( ( *linedefs )[3] ), { 0, 96 }, { 0, 0 } }
+      { &( ( *linedefs )[4] ), { 352, 80 }, { 160, 80 } },
+      { &( ( *linedefs )[3] ), { 0, 80 }, { 0, 0 } }
    } ) );
 
    // subsector 13
    subSectors->push_back( SubSector( {
-      { &( ( *linedefs )[5] ), { 160, 96 }, { 96, 160 } },
-      { &( ( *linedefs )[3] ), { 0, 256 }, { 0, 96 } }
+      { &( ( *linedefs )[5] ), { 160, 80 }, { 96, 144 } },
+      { &( ( *linedefs )[3] ), { 0, 240 }, { 0, 80 } }
    } ) );
 
    // subsector 14
    subSectors->push_back( SubSector( {
-      { &( ( *linedefs )[6] ), { 96, 160 }, { 96, 192 } }
+      { &( ( *linedefs )[6] ), { 96, 144 }, { 96, 192 } },
+      { &( ( *linedefs )[3] ), { 0, 256 }, { 0, 240 } }
    } ) );
 
    // subsector 15
@@ -262,12 +269,31 @@ shared_ptr<vector<SubSector>> GameLoader::LoadSubSectors( shared_ptr<vector<Line
 
    // subsector 16
    subSectors->push_back( SubSector( {
-      { &( ( *linedefs )[11] ), { 416, 160 }, { 352, 96 } }
+      { &( ( *linedefs )[11] ), { 416, 144 }, { 352, 80 } }
    } ) );
 
    // subsector 17
    subSectors->push_back( SubSector( {
       { &( ( *linedefs )[9] ), { 384, 256 }, { 416, 224 } }
+   } ) );
+
+   // subsector 18
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[24] ), { 160, 496 }, { 128, 496 } },
+      { &( ( *linedefs )[3] ), { 0, 496 }, { 0, 256 } }
+   } ) );
+
+   // subsector 19
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[25] ), { 128, 496 }, { 128, 512 } },
+      { &( ( *linedefs )[2] ), { 128, 640 }, { 0, 640 } },
+      { &( ( *linedefs )[2] ), { 0, 640 }, { 0, 496 } },
+   } ) );
+
+   // subsector 20
+   subSectors->push_back( SubSector( {
+      { &( ( *linedefs )[26] ), { 128, 512 }, { 160, 512 } },
+      { &( ( *linedefs )[3] ), { 160, 640 }, { 128, 640 } }
    } ) );
 
    return subSectors;
@@ -460,13 +486,61 @@ BspNode* GameLoader::LoadBspTree( shared_ptr<vector<LineDef>> linedefs,
    nodeE1->rightChild = nullptr;
    nodeG1->leftChild = nodeE1;
 
+   auto nodeD4 = new BspNode;
+   nodeD4->isLeaf = false;
+   nodeD4->lineDef = &( ( *linedefs )[27] );
+   nodeD4->subSector = nullptr;
+   nodeD4->leftChild = nullptr;
+   nodeD4->rightChild = nullptr;
+   nodeE1->rightChild = nodeD4;
+
    auto leaf11 = new BspNode;
    leaf11->isLeaf = true;
    leaf11->lineDef = nullptr;
    leaf11->subSector = &( ( *subSectors )[11] );
    leaf11->leftChild = nullptr;
    leaf11->rightChild = nullptr;
-   nodeE1->rightChild = leaf11;
+   nodeD4->rightChild = leaf11;
+
+   auto nodeA4 = new BspNode;
+   nodeA4->isLeaf = false;
+   nodeA4->lineDef = &( ( *linedefs )[24] );
+   nodeA4->subSector = nullptr;
+   nodeA4->leftChild = nullptr;
+   nodeA4->rightChild = nullptr;
+   nodeD4->leftChild = nodeA4;
+
+   auto leaf18 = new BspNode;
+   leaf18->isLeaf = true;
+   leaf18->lineDef = nullptr;
+   leaf18->subSector = &( ( *subSectors )[18] );
+   leaf18->leftChild = nullptr;
+   leaf18->rightChild = nullptr;
+   nodeA4->rightChild = leaf18;
+
+   auto nodeB4 = new BspNode;
+   nodeB4->isLeaf = false;
+   nodeB4->lineDef = &( ( *linedefs )[25] );
+   nodeB4->subSector = nullptr;
+   nodeB4->leftChild = nullptr;
+   nodeB4->rightChild = nullptr;
+   nodeA4->leftChild = nodeB4;
+
+   auto leaf19 = new BspNode;
+   leaf19->isLeaf = true;
+   leaf19->lineDef = nullptr;
+   leaf19->subSector = &( ( *subSectors )[19] );
+   leaf19->leftChild = nullptr;
+   leaf19->rightChild = nullptr;
+   nodeB4->rightChild = leaf19;
+
+   auto leaf20 = new BspNode;
+   leaf20->isLeaf = true;
+   leaf20->lineDef = nullptr;
+   leaf20->subSector = &( ( *subSectors )[20] );
+   leaf20->leftChild = nullptr;
+   leaf20->rightChild = nullptr;
+   nodeB4->leftChild = leaf20;
 
    auto nodeA1 = new BspNode;
    nodeA1->isLeaf = false;
