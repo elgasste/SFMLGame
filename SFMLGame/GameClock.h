@@ -2,6 +2,8 @@
 
 #include "Common.h"
 
+#define ONE_SECOND_NANO 1'000'000'000
+
 NAMESPACE_BEGIN
 
 class RenderConfig;
@@ -16,26 +18,25 @@ public:
    void StartFrame();
    void EndFrame();
 
-   float GetFrameSeconds() const { return _lastFrameSeconds; }
+   float GetFrameSeconds() const { return _lastFrameSeconds.count(); }
    long long GetTotalFrameCount() const { return _totalFrameCount; }
    long long GetLagFrameCount() const { return _lagFrameCount; }
-   long long GetElapsedNanoseconds() const { return _totalDurationNano; }
    long long GetAverageFrameRate() const;
    long long GetCurrentFrameRate() const;
 
 private:
-   long long _minNanoSecondsPerFrame;
-   long long _maxNanoSecondsPerFrame;
+   std::chrono::nanoseconds _minFrameDuration;
+   std::chrono::nanoseconds _maxFrameDuration;
 
-   float _minFrameSeconds;
-   float _maxFrameSeconds;
+   std::chrono::duration<float> _minFrameSeconds;
+   std::chrono::duration<float> _maxFrameSeconds;
 
    long long _totalFrameCount;
    long long _lagFrameCount;
-   long long _absoluteStartTimeNano;
-   long long _frameStartTimeNano;
-   long long _totalDurationNano;
-   float _lastFrameSeconds;
+   std::chrono::steady_clock::time_point _absoluteStartTime;
+   std::chrono::steady_clock::time_point _frameStartTime;
+   std::chrono::nanoseconds _totalDuration;
+   std::chrono::duration<float> _lastFrameSeconds;
 };
 
 NAMESPACE_END

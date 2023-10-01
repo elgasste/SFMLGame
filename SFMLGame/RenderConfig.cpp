@@ -7,7 +7,7 @@ using namespace sf;
 RenderConfig::RenderConfig()
 {
    MinimumFrameRate = 10;
-   MaximumFrameRate = 30'000;
+   MaximumFrameRate = 120;
 
    ScreenWidth = 1920;
    ScreenHeight = 1280;

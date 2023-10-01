@@ -1,5 +1,3 @@
-#include "WindowsLibs.h"
-
 #include "InputReader.h"
 #include "GameConfig.h"
 #include "RenderConfig.h"

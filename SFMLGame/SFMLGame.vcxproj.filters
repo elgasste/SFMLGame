@@ -176,9 +176,6 @@
     <ClInclude Include="GameClock.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsLibs.h">
-      <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="GameConfig.h">
       <Filter>Header Files\Config</Filter>
     </ClInclude>

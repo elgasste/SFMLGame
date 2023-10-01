@@ -1,8 +1,3 @@
-#include "WindowsLibs.h"
-#include <timeapi.h>
-#include <chrono>
-#include <thread>
-
 #include "GameClock.h"
 #include "RenderConfig.h"
 
@@ -12,16 +7,14 @@ using namespace std;
 GameClock::GameClock( shared_ptr<RenderConfig> renderConfig ) :
    _totalFrameCount( 0 ),
    _lagFrameCount( 0 ),
-   _absoluteStartTimeNano( 0 ),
-   _frameStartTimeNano( 0 ),
-   _totalDurationNano( 0 ),
+   _totalDuration( 0 ),
    _lastFrameSeconds( 0 )
 {
-   _minNanoSecondsPerFrame = (long long)( ( 1 / (double)renderConfig->MaximumFrameRate ) * 1'000'000'000 );
-   _maxNanoSecondsPerFrame = (long long)( ( 1 / (double)renderConfig->MinimumFrameRate ) * 1'000'000'000 );
+   _minFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MaximumFrameRate ) * ONE_SECOND_NANO ) );
+   _maxFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MinimumFrameRate ) * ONE_SECOND_NANO ) );
 
-   _minFrameSeconds = _minNanoSecondsPerFrame / 1'000'000'000.0f;
-   _maxFrameSeconds = _maxNanoSecondsPerFrame / 1'000'000'000.0f;
+   _minFrameSeconds = _minFrameDuration;
+   _maxFrameSeconds = _maxFrameDuration;
 
    // According to documentation, this sets the system's minimum clock resolution to
    // 1 millisecond. Without it, higher frame rates have unpredictable results in Windows.
@@ -35,46 +28,47 @@ GameClock::~GameClock()
 
 void GameClock::Initialize()
 {
-   _absoluteStartTimeNano = chrono::steady_clock::now().time_since_epoch().count();
+   _absoluteStartTime = chrono::steady_clock::now();
 }
 
 void GameClock::StartFrame()
 {
-   _frameStartTimeNano = chrono::steady_clock::now().time_since_epoch().count();
+   _frameStartTime = chrono::steady_clock::now();
 }
 
 void GameClock::EndFrame()
 {
-   static auto now = chrono::steady_clock::now().time_since_epoch().count();
-   static auto lastFrameDurationNano = now - _frameStartTimeNano;
+   static auto now = chrono::steady_clock::now();
+   static auto lastFrameDuration = now - _frameStartTime;
    _totalFrameCount++;
-   _totalDurationNano = now - _absoluteStartTimeNano;
+   _totalDuration = now - _absoluteStartTime;
 
-   if ( lastFrameDurationNano > _maxNanoSecondsPerFrame )
+   if ( lastFrameDuration > _maxFrameDuration )
    {
       _lastFrameSeconds = _maxFrameSeconds;
       _lagFrameCount++;
    }
    else
    {
-      static auto nanoSecondsToSleep = _minNanoSecondsPerFrame - lastFrameDurationNano;
+      static auto durationToSleep = _minFrameDuration - lastFrameDuration;
 
-      if ( nanoSecondsToSleep > 0 )
+      if ( durationToSleep > chrono::nanoseconds( 0 ) )
       {
          _lastFrameSeconds = _minFrameSeconds;
-         this_thread::sleep_for( chrono::nanoseconds( nanoSecondsToSleep ) );
+         this_thread::sleep_for( durationToSleep );
       }
       else
       {
-         _lastFrameSeconds = lastFrameDurationNano / 1'000'000'000.0f;
+         _lastFrameSeconds = lastFrameDuration;
       }
    }
 }
 
-// TODO: it still seems like something is wrong with this calculation, not sure why I feel that way
 long long GameClock::GetAverageFrameRate() const
 {
-   return _totalFrameCount == 0 ? 0 : ( 1'000'000'000 / ( _totalDurationNano / _totalFrameCount ) );
+   // MUFFINS: figure this out later
+   //return _totalFrameCount == 0 ? 0 : ( 1'000'000'000 / ( _totalDurationNano / _totalFrameCount ) );
+   return 0ll;
 }
 
 long long GameClock::GetCurrentFrameRate() const
