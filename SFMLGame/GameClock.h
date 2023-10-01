@@ -16,7 +16,7 @@ public:
    void StartFrame();
    void EndFrame();
 
-   float GetFrameSeconds() const;
+   float GetFrameSeconds() const { return _lastFrameSeconds; }
    long long GetTotalFrameCount() const { return _totalFrameCount; }
    long long GetLagFrameCount() const { return _lagFrameCount; }
    long long GetElapsedNanoseconds() const { return _totalDurationNano; }
@@ -26,13 +26,16 @@ public:
 private:
    long long _minNanoSecondsPerFrame;
    long long _maxNanoSecondsPerFrame;
+
+   float _minFrameSeconds;
+   float _maxFrameSeconds;
+
    long long _totalFrameCount;
    long long _lagFrameCount;
    long long _absoluteStartTimeNano;
    long long _frameStartTimeNano;
-   long long _lastFrameDurationNano;
    long long _totalDurationNano;
-   bool _wasLagFrame;
+   float _lastFrameSeconds;
 };
 
 NAMESPACE_END
