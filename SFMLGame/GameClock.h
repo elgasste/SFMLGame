@@ -2,8 +2,6 @@
 
 #include "Common.h"
 
-#define ONE_SECOND_NANO 1'000'000'000
-
 NAMESPACE_BEGIN
 
 class RenderConfig;

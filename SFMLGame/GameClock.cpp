@@ -6,10 +6,12 @@ using namespace std;
 
 GameClock::GameClock( shared_ptr<RenderConfig> renderConfig ) :
    _totalFrameCount( 0 ),
-   _lagFrameCount( 0 )
+   _lagFrameCount( 0 ),
+   _totalDuration( 0 ),
+   _lastFrameDuration( 0 )
 {
-   _minFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MaximumFrameRate ) * ONE_SECOND_NANO ) );
-   _maxFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MinimumFrameRate ) * ONE_SECOND_NANO ) );
+   _minFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MaximumFrameRate ) * 1'000'000'000 ) );
+   _maxFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MinimumFrameRate ) * 1'000'000'000 ) );
 
    _minFrameSeconds = _minFrameDuration;
    _maxFrameSeconds = _maxFrameDuration;
