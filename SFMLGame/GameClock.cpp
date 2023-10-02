@@ -6,9 +6,7 @@ using namespace std;
 
 GameClock::GameClock( shared_ptr<RenderConfig> renderConfig ) :
    _totalFrameCount( 0 ),
-   _lagFrameCount( 0 ),
-   _totalDuration( 0 ),
-   _lastFrameSeconds( 0 )
+   _lagFrameCount( 0 )
 {
    _minFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MaximumFrameRate ) * ONE_SECOND_NANO ) );
    _maxFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MinimumFrameRate ) * ONE_SECOND_NANO ) );
@@ -45,7 +43,7 @@ void GameClock::EndFrame()
 
    if ( lastFrameDuration > _maxFrameDuration )
    {
-      _lastFrameSeconds = _maxFrameSeconds;
+      _lastFrameDuration = _maxFrameSeconds;
       _lagFrameCount++;
    }
    else
@@ -54,21 +52,19 @@ void GameClock::EndFrame()
 
       if ( durationToSleep > chrono::nanoseconds( 0 ) )
       {
-         _lastFrameSeconds = _minFrameSeconds;
+         _lastFrameDuration = _minFrameSeconds;
          this_thread::sleep_for( durationToSleep );
       }
       else
       {
-         _lastFrameSeconds = lastFrameDuration;
+         _lastFrameDuration = lastFrameDuration;
       }
    }
 }
 
 long long GameClock::GetAverageFrameRate() const
 {
-   // MUFFINS: figure this out later
-   //return _totalFrameCount == 0 ? 0 : ( 1'000'000'000 / ( _totalDurationNano / _totalFrameCount ) );
-   return 0ll;
+   return _totalFrameCount == 0 ? 0 : ( _totalDuration / _totalFrameCount ).count();
 }
 
 long long GameClock::GetCurrentFrameRate() const
