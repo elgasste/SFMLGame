@@ -8,7 +8,7 @@ GameClock::GameClock( shared_ptr<RenderConfig> renderConfig ) :
    _totalFrameCount( 0 ),
    _lagFrameCount( 0 ),
    _totalDuration( 0 ),
-   _lastFrameDuration( 0 )
+   _lastFrameSeconds( 0 )
 {
    _minFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MaximumFrameRate ) * 1'000'000'000 ) );
    _maxFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MinimumFrameRate ) * 1'000'000'000 ) );
@@ -42,19 +42,17 @@ void GameClock::EndFrame()
 
    if ( lastFrameDuration > _maxFrameDuration )
    {
-      _lastFrameDuration = _maxFrameDuration;
+      lastFrameDuration = _maxFrameDuration;
       _lagFrameCount++;
    }
    else if ( lastFrameDuration < _minFrameDuration )
    {
-      _lastFrameDuration = _minFrameDuration;
+      lastFrameDuration = _minFrameDuration;
       static auto durationToSleep = _minFrameDuration - lastFrameDuration;
       this_thread::sleep_for( durationToSleep );
    }
-   else
-   {
-      _lastFrameDuration = lastFrameDuration;
-   }
+
+   _lastFrameSeconds = lastFrameDuration.count() / 1'000'000'000.0f;
 }
 
 long long GameClock::GetAverageFrameRate() const
