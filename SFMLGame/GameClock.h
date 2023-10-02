@@ -26,9 +26,6 @@ private:
    std::chrono::nanoseconds _minFrameDuration;
    std::chrono::nanoseconds _maxFrameDuration;
 
-   std::chrono::duration<float> _minFrameSeconds;
-   std::chrono::duration<float> _maxFrameSeconds;
-
    long long _totalFrameCount;
    long long _lagFrameCount;
    std::chrono::steady_clock::time_point _absoluteStartTime;

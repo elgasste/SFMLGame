@@ -13,9 +13,6 @@ GameClock::GameClock( shared_ptr<RenderConfig> renderConfig ) :
    _minFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MaximumFrameRate ) * 1'000'000'000 ) );
    _maxFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MinimumFrameRate ) * 1'000'000'000 ) );
 
-   _minFrameSeconds = _minFrameDuration;
-   _maxFrameSeconds = _maxFrameDuration;
-
    // According to documentation, this sets the system's minimum clock resolution to
    // 1 millisecond. Without it, higher frame rates have unpredictable results in Windows.
    timeBeginPeriod( 1 );
@@ -45,7 +42,7 @@ void GameClock::EndFrame()
 
    if ( lastFrameDuration > _maxFrameDuration )
    {
-      _lastFrameDuration = _maxFrameSeconds;
+      _lastFrameDuration = _maxFrameDuration;
       _lagFrameCount++;
    }
    else
@@ -54,7 +51,7 @@ void GameClock::EndFrame()
 
       if ( durationToSleep > chrono::nanoseconds( 0 ) )
       {
-         _lastFrameDuration = _minFrameSeconds;
+         _lastFrameDuration = _minFrameDuration;
          this_thread::sleep_for( durationToSleep );
       }
       else
