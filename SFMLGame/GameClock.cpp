@@ -47,8 +47,9 @@ void GameClock::EndFrame()
    }
    else if ( lastFrameDuration < _minFrameDuration )
    {
-      lastFrameDuration = _minFrameDuration;
       static auto durationToSleep = _minFrameDuration - lastFrameDuration;
+      lastFrameDuration = _minFrameDuration;
+      _totalDuration += durationToSleep;
       this_thread::sleep_for( durationToSleep );
    }
 
