@@ -25,17 +25,17 @@ GameClock::~GameClock()
 
 void GameClock::Initialize()
 {
-   _absoluteStartTime = chrono::steady_clock::now();
+   _absoluteStartTime = chrono::high_resolution_clock::now();
 }
 
 void GameClock::StartFrame()
 {
-   _frameStartTime = chrono::steady_clock::now();
+   _frameStartTime = chrono::high_resolution_clock::now();
 }
 
 void GameClock::EndFrame()
 {
-   static auto now = chrono::steady_clock::now();
+   static auto now = chrono::high_resolution_clock::now();
    static auto lastFrameDuration = now - _frameStartTime;
    _totalFrameCount++;
    _totalDuration = now - _absoluteStartTime;
