@@ -45,19 +45,15 @@ void GameClock::EndFrame()
       _lastFrameDuration = _maxFrameDuration;
       _lagFrameCount++;
    }
+   else if ( lastFrameDuration < _minFrameDuration )
+   {
+      _lastFrameDuration = _minFrameDuration;
+      static auto durationToSleep = _minFrameDuration - lastFrameDuration;
+      this_thread::sleep_for( durationToSleep );
+   }
    else
    {
-      static auto durationToSleep = _minFrameDuration - lastFrameDuration;
-
-      if ( durationToSleep > chrono::nanoseconds( 0 ) )
-      {
-         _lastFrameDuration = _minFrameDuration;
-         this_thread::sleep_for( durationToSleep );
-      }
-      else
-      {
-         _lastFrameDuration = lastFrameDuration;
-      }
+      _lastFrameDuration = lastFrameDuration;
    }
 }
 
