@@ -1,5 +1,5 @@
 #include "PlayingStateInputHandler.h"
-#include "InputReader.h"
+#include "InputStateController.h"
 #include "GameConfig.h"
 #include "EventQueue.h"
 #include "Entity.h"
@@ -10,10 +10,10 @@
 using namespace NAMESPACE;
 using namespace std;
 
-PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputReader> inputReader,
+PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputStateController> inputStateController,
                                                     shared_ptr<GameConfig> gameConfig,
                                                     shared_ptr<EventQueue> eventQueue ) :
-   _inputReader( inputReader ),
+   _inputStateController( inputStateController ),
    _gameConfig( gameConfig ),
    _eventQueue( eventQueue ),
    _isLeftDown( false ),
@@ -27,13 +27,13 @@ PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputReader> inpu
 
 void PlayingStateInputHandler::HandleInput()
 {
-   if ( _inputReader->WasButtonPressed( Button::Back ) )
+   if ( _inputStateController->WasButtonPressed( Button::Back ) )
    {
       _eventQueue->Push( GameEventType::OpenMenu );
       return;
    }
 
-   if ( _inputReader->WasButtonPressed( Button::Wireframe ) )
+   if ( _inputStateController->WasButtonPressed( Button::Wireframe ) )
    {
       _gameConfig->ShowWireframeMap = !_gameConfig->ShowWireframeMap;
    }
@@ -73,10 +73,10 @@ void PlayingStateInputHandler::HandleInput()
 
 void PlayingStateInputHandler::CacheDirectionInput()
 {
-   _isLeftDown = _inputReader->IsButtonDown( Button::Left );
-   _isUpDown = _inputReader->IsButtonDown( Button::Up );
-   _isRightDown = _inputReader->IsButtonDown( Button::Right );
-   _isDownDown = _inputReader->IsButtonDown( Button::Down );
+   _isLeftDown = _inputStateController->IsButtonDown( Button::Left );
+   _isUpDown = _inputStateController->IsButtonDown( Button::Up );
+   _isRightDown = _inputStateController->IsButtonDown( Button::Right );
+   _isDownDown = _inputStateController->IsButtonDown( Button::Down );
 
    bool directionWasPressed = _isLeftDown || _isUpDown || _isRightDown || _isDownDown;
 

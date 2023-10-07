@@ -1,4 +1,4 @@
-#include "InputReader.h"
+#include "InputStateController.h"
 #include "GameConfig.h"
 #include "RenderConfig.h"
 
@@ -6,9 +6,7 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-// MUFFINS: the name of this class should probably be different, like "InputStateController" or something
-
-InputReader::InputReader( shared_ptr<GameConfig> gameConfig ) :
+InputStateController::InputStateController( shared_ptr<GameConfig> gameConfig ) :
    _gameConfig( gameConfig )
 {
    for ( int i = 0; i < (int)Button::ButtonCount; i++ )
@@ -21,7 +19,7 @@ InputReader::InputReader( shared_ptr<GameConfig> gameConfig ) :
    _mouseDelta = Vector2i( 0, 0 );
 }
 
-void InputReader::KeyPressed( Keyboard::Key key )
+void InputStateController::KeyPressed( Keyboard::Key key )
 {
    auto button = _gameConfig->KeyBindingsMap.at( key );
    auto& buttonState = _buttonStates.at( button );
@@ -30,7 +28,7 @@ void InputReader::KeyPressed( Keyboard::Key key )
    buttonState.IsDown = true;
 }
 
-void InputReader::KeyReleased( Keyboard::Key key )
+void InputStateController::KeyReleased( Keyboard::Key key )
 {
    auto button = _gameConfig->KeyBindingsMap.at( key );
    auto& buttonState = _buttonStates.at( button );
@@ -39,7 +37,7 @@ void InputReader::KeyReleased( Keyboard::Key key )
    buttonState.IsDown = false;
 }
 
-void InputReader::UpdateKeyStates()
+void InputStateController::UpdateKeyStates()
 {
    for ( const auto& [key, button] : _gameConfig->KeyBindingsMap )
    {
@@ -51,7 +49,7 @@ void InputReader::UpdateKeyStates()
    }
 }
 
-void InputReader::ReadMouseInput()
+void InputStateController::ReadMouseInput()
 {
    _mousePreviousPosition.x = _mousePosition.x;
    _mousePreviousPosition.y = _mousePosition.y;
@@ -63,17 +61,17 @@ void InputReader::ReadMouseInput()
    _mouseDelta.y = _mousePosition.y - _mousePreviousPosition.y;
 }
 
-bool InputReader::WasButtonPressed( Button button ) const
+bool InputStateController::WasButtonPressed( Button button ) const
 {
    return _buttonStates.at( button ).WasPressed;
 }
 
-bool InputReader::IsButtonDown( Button button ) const
+bool InputStateController::IsButtonDown( Button button ) const
 {
    return _buttonStates.at( button ).IsDown;
 }
 
-bool InputReader::WasAnyButtonPressed() const
+bool InputStateController::WasAnyButtonPressed() const
 {
    for ( int i = 0; i < (int)Button::ButtonCount; i++ )
    {

@@ -7,7 +7,7 @@
 #include "RenderData.h"
 #include "EventQueue.h"
 #include "GameClock.h"
-#include "InputReader.h"
+#include "InputStateController.h"
 #include "TitleMenu.h"
 #include "MainMenu.h"
 #include "MenuStateInputHandler.h"
@@ -42,21 +42,21 @@ shared_ptr<Game> GameLoader::Load() const
    auto gameRunningTracker = make_shared<GameRunningTracker>();
    auto gameStateTracker = make_shared<GameStateTracker>();
    auto eventQueue = make_shared<EventQueue>();
-   auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
+   auto inputStateController = shared_ptr<InputStateController>( new InputStateController( gameConfig ) );
    auto titleMenu = shared_ptr<TitleMenu>( new TitleMenu( eventQueue ) );
    auto mainMenu = shared_ptr<MainMenu>( new MainMenu( eventQueue ) );
-   auto titleMenuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, titleMenu ) );
-   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, gameConfig, eventQueue ) );
-   auto mainMenuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, mainMenu ) );
+   auto titleMenuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputStateController, eventQueue, titleMenu ) );
+   auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputStateController, gameConfig, eventQueue ) );
+   auto mainMenuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputStateController, eventQueue, mainMenu ) );
    auto closingStateInputHandler = make_shared<ClosingStateInputHandler>();
-   auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( gameConfig, inputReader, gameStateTracker ) );
+   auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( gameConfig, inputStateController, gameStateTracker ) );
    gameInputHandler->AddStateInputHandler( GameState::TitleMenu, titleMenuStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::MainMenu, mainMenuStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Closing, closingStateInputHandler );
    auto collider = shared_ptr<Collider>( new Collider( gameConfig, gameData ) );
    auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, eventQueue, gameClock, collider, gameRunningTracker, gameStateTracker ) );
-   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, gameClock, inputReader ) );
+   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, gameClock, inputStateController ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameClock, window ) );
    auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, gameClock, titleMenu ) );
    auto wireframeMapRenderer = shared_ptr<WireframeMapRenderer>( new WireframeMapRenderer( renderConfig, gameData, window ) );
@@ -70,7 +70,7 @@ shared_ptr<Game> GameLoader::Load() const
    gameRenderer->AddStateRenderer( GameState::Playing, playingStateRenderer );
    gameRenderer->AddStateRenderer( GameState::MainMenu, mainMenuStateRenderer );
    gameRenderer->AddStateRenderer( GameState::Closing, closingStateRenderer );
-   auto game = shared_ptr<Game>( new Game( gameClock, inputReader, gameInputHandler, gameLogic, gameRenderer, window, gameRunningTracker, gameStateTracker ) );
+   auto game = shared_ptr<Game>( new Game( gameClock, inputStateController, gameInputHandler, gameLogic, gameRenderer, window, gameRunningTracker, gameStateTracker ) );
 
    return game;
 }

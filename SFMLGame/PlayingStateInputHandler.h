@@ -6,14 +6,14 @@
 
 NAMESPACE_BEGIN
 
-class InputReader;
+class InputStateController;
 class GameConfig;
 class EventQueue;
 
 class PlayingStateInputHandler : public IGameStateInputHandler
 {
 public:
-   PlayingStateInputHandler( std::shared_ptr<InputReader> inputReader,
+   PlayingStateInputHandler( std::shared_ptr<InputStateController> inputStateController,
                              std::shared_ptr<GameConfig> gameConfig,
                              std::shared_ptr<EventQueue> eventQueue );
 
@@ -24,7 +24,7 @@ private:
    void CacheDirectionInput();
 
 private:
-   std::shared_ptr<InputReader> _inputReader;
+   std::shared_ptr<InputStateController> _inputStateController;
    std::shared_ptr<GameConfig> _gameConfig;
    std::shared_ptr<EventQueue> _eventQueue;
 

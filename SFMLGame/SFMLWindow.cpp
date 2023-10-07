@@ -1,7 +1,7 @@
 #include "SFMLWindow.h"
 #include "RenderConfig.h"
 #include "GameClock.h"
-#include "InputReader.h"
+#include "InputStateController.h"
 #include "GameEventType.h"
 
 using namespace NAMESPACE;
@@ -10,10 +10,10 @@ using namespace sf;
 
 SFMLWindow::SFMLWindow( shared_ptr<RenderConfig> renderConfig,
                         shared_ptr<GameClock> clock,
-                        shared_ptr<InputReader> inputReader ) :
+                        shared_ptr<InputStateController> inputStateController ) :
    _renderConfig( renderConfig ),
    _clock( clock ),
-   _inputReader( inputReader )
+   _inputStateController( inputStateController )
 {
 }
 
@@ -35,8 +35,8 @@ void SFMLWindow::Show() const
 
 void SFMLWindow::HandleEvents() const
 {
-   _inputReader->UpdateKeyStates();
-   _inputReader->ReadMouseInput();
+   _inputStateController->UpdateKeyStates();
+   _inputStateController->ReadMouseInput();
 
    static Event e;
 
@@ -48,10 +48,10 @@ void SFMLWindow::HandleEvents() const
             _window->close();
             break;
          case Event::KeyPressed:
-            _inputReader->KeyPressed( e.key.code );
+            _inputStateController->KeyPressed( e.key.code );
             break;
          case Event::KeyReleased:
-            _inputReader->KeyReleased( e.key.code );
+            _inputStateController->KeyReleased( e.key.code );
             break;
       }
    }
