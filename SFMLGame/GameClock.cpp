@@ -3,41 +3,32 @@
 
 using namespace NAMESPACE;
 using namespace std;
+using namespace sf;
 
 GameClock::GameClock( shared_ptr<RenderConfig> renderConfig ) :
    _totalFrameCount( 0 ),
    _lagFrameCount( 0 ),
-   _totalDuration( 0 ),
    _lastFrameSeconds( 0 )
 {
-   _minFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MaximumFrameRate ) * 1'000'000'000 ) );
-   _maxFrameDuration = chrono::nanoseconds( (long long)( ( 1 / (double)renderConfig->MinimumFrameRate ) * 1'000'000'000 ) );
-
-   // According to documentation, this sets the system's minimum clock resolution to
-   // 1 millisecond. Without it, higher frame rates have unpredictable results in Windows.
-   timeBeginPeriod( 1 );
-}
-
-GameClock::~GameClock()
-{
-   timeEndPeriod( 1 );
+   _minFrameDuration = milliseconds( (Int32)( ( 1 / (double)renderConfig->MaximumFrameRate ) * 1000 ) );
+   _maxFrameDuration = milliseconds( (Int32)( ( 1 / (double)renderConfig->MinimumFrameRate ) * 1000 ) );
 }
 
 void GameClock::Initialize()
 {
-   _absoluteStartTime = chrono::high_resolution_clock::now();
+   _absoluteStartTime = _clock.restart();
 }
 
 void GameClock::StartFrame()
 {
-   _frameStartTime = chrono::high_resolution_clock::now();
+   _frameStartTime = _clock.getElapsedTime();
 }
 
 void GameClock::EndFrame()
 {
-   static auto now = chrono::high_resolution_clock::now();
-   static auto lastFrameDuration = now - _frameStartTime;
    _totalFrameCount++;
+   auto now = _clock.getElapsedTime();
+   auto lastFrameDuration = now - _frameStartTime;
    _totalDuration = now - _absoluteStartTime;
 
    if ( lastFrameDuration > _maxFrameDuration )
@@ -45,23 +36,23 @@ void GameClock::EndFrame()
       lastFrameDuration = _maxFrameDuration;
       _lagFrameCount++;
    }
-   else if ( lastFrameDuration < _minFrameDuration )
+   else if ( lastFrameDuration <= _minFrameDuration )
    {
-      static auto durationToSleep = _minFrameDuration - lastFrameDuration;
+      auto durationToSleep = _minFrameDuration - lastFrameDuration;
       lastFrameDuration = _minFrameDuration;
       _totalDuration += durationToSleep;
-      this_thread::sleep_for( durationToSleep );
+      sleep( durationToSleep );
    }
 
-   _lastFrameSeconds = lastFrameDuration.count() / 1'000'000'000.0f;
+   _lastFrameSeconds = lastFrameDuration.asSeconds();
 }
 
-long long GameClock::GetAverageFrameRate() const
+unsigned int GameClock::GetAverageFrameRate() const
 {
-   return _totalFrameCount == 0 ? 0 : ( _totalDuration / _totalFrameCount ).count();
+   return _totalFrameCount == 0 ? 0 : (unsigned int)( _totalDuration.asSeconds() / _totalFrameCount );
 }
 
-long long GameClock::GetCurrentFrameRate() const
+unsigned int GameClock::GetCurrentFrameRate() const
 {
-   return (long long)( 1 / GetFrameSeconds() );
+   return (unsigned int)( 1 / GetFrameSeconds() );
 }

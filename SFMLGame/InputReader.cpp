@@ -6,26 +6,14 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-InputReader::InputReader( shared_ptr<GameConfig> gameConfig )
+// MUFFINS: the name of this class should probably be different, like "InputStateController" or something
+
+InputReader::InputReader( shared_ptr<GameConfig> gameConfig ) :
+   _gameConfig( gameConfig )
 {
    for ( int i = 0; i < (int)Button::ButtonCount; i++ )
    {
       _buttonStates[(Button)i] = { false, false };
-   }
-
-   // since we allow multiple keys to bind to a single button, creating this inverted
-   // map of button-to-keys makes the input reading logic much easier
-   for ( int i = 0; i < (int)Button::ButtonCount; i++ )
-   {
-      auto button = (Button)i;
-
-      for ( auto const& [keyCode, mappedButton] : gameConfig->KeyBindingsMap )
-      {
-         if ( mappedButton == button )
-         {
-            _buttonKeyBindings[button].push_back( keyCode );
-         }
-      }
    }
 
    _mousePosition = Mouse::getPosition();
@@ -33,36 +21,32 @@ InputReader::InputReader( shared_ptr<GameConfig> gameConfig )
    _mouseDelta = Vector2i( 0, 0 );
 }
 
-void InputReader::ReadInput()
+void InputReader::KeyPressed( Keyboard::Key key )
 {
-   ReadKeyboardInput();
-   ReadMouseInput();
+   auto button = _gameConfig->KeyBindingsMap.at( key );
+   auto& buttonState = _buttonStates.at( button );
+
+   buttonState.WasPressed = true;
+   buttonState.IsDown = true;
 }
 
-void InputReader::ReadKeyboardInput()
+void InputReader::KeyReleased( Keyboard::Key key )
 {
-   for ( auto const& [button, keyCodes] : _buttonKeyBindings )
+   auto button = _gameConfig->KeyBindingsMap.at( key );
+   auto& buttonState = _buttonStates.at( button );
+
+   buttonState.WasPressed = false;
+   buttonState.IsDown = false;
+}
+
+void InputReader::UpdateKeyStates()
+{
+   for ( const auto& [key, button] : _gameConfig->KeyBindingsMap )
    {
-      bool buttonIsDown = false;
-
-      for ( const auto& keyCode : keyCodes )
-      {
-         if ( IsKeyDown( keyCode ) )
-         {
-            buttonIsDown = true;
-            break;
-         }
-      }
-
-      if ( buttonIsDown )
-      {
-         _buttonStates.at( button ).WasPressed = !_buttonStates.at( button ).IsDown;
-         _buttonStates.at( button ).IsDown = true;
-      }
-      else
+      // this means the key is still down after the initial press
+      if ( Keyboard::isKeyPressed( key ) )
       {
          _buttonStates.at( button ).WasPressed = false;
-         _buttonStates.at( button ).IsDown = false;
       }
    }
 }
@@ -102,10 +86,4 @@ bool InputReader::WasAnyButtonPressed() const
    }
 
    return false;
-}
-
-bool InputReader::IsKeyDown( KeyCode keyCode ) const
-{
-   // if the high-order bit is 1, the key is down
-   return GetKeyState( (int)keyCode ) & 0x800;
 }

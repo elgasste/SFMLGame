@@ -3,19 +3,20 @@
 
 using namespace NAMESPACE;
 using namespace std;
+using namespace sf;
 
 GameConfig::GameConfig()
 {
    KeyBindingsMap =
    {
-      { KeyCode::Escape, Button::Back },
-      { KeyCode::Return, Button::Action },
-      { KeyCode::Left, Button::Left },
-      { KeyCode::Up, Button::Up },
-      { KeyCode::Right, Button::Right },
-      { KeyCode::Down, Button::Down },
-      { KeyCode::F12, Button::Diagnostics },
-      { KeyCode::Tab, Button::Wireframe }
+      { Keyboard::Escape, Button::Back },
+      { Keyboard::Enter, Button::Action },
+      { Keyboard::Left, Button::Left },
+      { Keyboard::Up, Button::Up },
+      { Keyboard::Right, Button::Right },
+      { Keyboard::Down, Button::Down },
+      { Keyboard::F12, Button::Diagnostics },
+      { Keyboard::Tab, Button::Wireframe }
    };
 
    ShowDiagnostics = false;

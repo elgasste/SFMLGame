@@ -1,6 +1,7 @@
 #include "SFMLWindow.h"
 #include "RenderConfig.h"
 #include "GameClock.h"
+#include "InputReader.h"
 #include "GameEventType.h"
 
 using namespace NAMESPACE;
@@ -8,9 +9,11 @@ using namespace std;
 using namespace sf;
 
 SFMLWindow::SFMLWindow( shared_ptr<RenderConfig> renderConfig,
-                        shared_ptr<GameClock> clock ) :
+                        shared_ptr<GameClock> clock,
+                        shared_ptr<InputReader> inputReader ) :
    _renderConfig( renderConfig ),
-   _clock( clock )
+   _clock( clock ),
+   _inputReader( inputReader )
 {
 }
 
@@ -20,6 +23,8 @@ void SFMLWindow::Initialize()
    auto view = View( { 0, 0, _renderConfig->ViewWidth, _renderConfig->ViewHeight } );
    _window = shared_ptr<RenderWindow>( new RenderWindow( videoMode, _renderConfig->WindowTitle, _renderConfig->WindowStyle ) );
    _window->setView( view );
+
+   _window->setKeyRepeatEnabled( false );
 }
 
 void SFMLWindow::Show() const
@@ -30,6 +35,9 @@ void SFMLWindow::Show() const
 
 void SFMLWindow::HandleEvents() const
 {
+   _inputReader->UpdateKeyStates();
+   _inputReader->ReadMouseInput();
+
    static Event e;
 
    while ( _window->pollEvent( e ) )
@@ -38,6 +46,12 @@ void SFMLWindow::HandleEvents() const
       {
          case Event::Closed:
             _window->close();
+            break;
+         case Event::KeyPressed:
+            _inputReader->KeyPressed( e.key.code );
+            break;
+         case Event::KeyReleased:
+            _inputReader->KeyReleased( e.key.code );
             break;
       }
    }

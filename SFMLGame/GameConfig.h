@@ -13,7 +13,7 @@ public:
    GameConfig();
 
 public:
-   std::map<KeyCode, Button> KeyBindingsMap;
+   std::map<sf::Keyboard::Key, Button> KeyBindingsMap;
 
    bool ShowDiagnostics;
 

@@ -32,7 +32,6 @@ void GameRenderer::Initialize()
 
 void GameRenderer::Render()
 {
-   _window->HandleEvents();
    _window->Clear();
 
    _stateRendererMap.at( _gameStateTracker->gameState )->Render();

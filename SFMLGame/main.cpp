@@ -8,8 +8,6 @@ using namespace std;
 
 int main()
 {
-   SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL );
-
    printf( IDS_LoadingMessage );
 
    auto loader = make_shared<GameLoader>();
