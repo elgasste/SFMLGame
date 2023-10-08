@@ -7,7 +7,7 @@
 NAMESPACE_BEGIN
 
 class GameClock;
-class GameInputHandler;
+class InputHandler;
 class GameLogic;
 class SFMLWindow;
 class GameRenderer;
@@ -16,7 +16,7 @@ class Game
 {
 public:
    Game( std::shared_ptr<GameClock> clock,
-         std::shared_ptr<GameInputHandler> inputHandler,
+         std::shared_ptr<InputHandler> inputHandler,
          std::shared_ptr<GameLogic> logic,
          std::shared_ptr<SFMLWindow> window,
          std::shared_ptr<GameRenderer> renderer,
@@ -27,7 +27,7 @@ public:
 
 private:
    std::shared_ptr<GameClock> _clock;
-   std::shared_ptr<GameInputHandler> _inputHandler;
+   std::shared_ptr<InputHandler> _inputHandler;
    std::shared_ptr<GameLogic> _logic;
    std::shared_ptr<SFMLWindow> _window;
    std::shared_ptr<GameRenderer> _renderer;

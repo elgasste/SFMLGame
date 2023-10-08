@@ -84,9 +84,6 @@
     <ClCompile Include="GameLogic.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="GameInputHandler.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
     <ClCompile Include="PlayingStateInputHandler.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
@@ -129,15 +126,15 @@
     <ClCompile Include="TitleMenu.cpp">
       <Filter>Source Files\Menu</Filter>
     </ClCompile>
+    <ClCompile Include="InputHandler.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="ButtonState.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyCode.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="GameRenderer.h">
@@ -158,9 +155,6 @@
     <ClInclude Include="GameClock.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsLibs.h">
-      <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="GameConfig.h">
       <Filter>Header Files\Config</Filter>
     </ClInclude>
@@ -172,9 +166,6 @@
     </ClInclude>
     <ClInclude Include="GameLogic.h">
       <Filter>Header Files\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="GameInputHandler.h">
-      <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="GameState.h">
       <Filter>Header Files\Game</Filter>
@@ -259,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="Menu.h">
       <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.h">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

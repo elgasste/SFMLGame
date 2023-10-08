@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "GameClock.h"
-#include "GameInputHandler.h"
+#include "InputHandler.h"
 #include "GameLogic.h"
 #include "SFMLWindow.h"
 #include "GameRenderer.h"
@@ -9,7 +9,7 @@ using namespace NAMESPACE;
 using namespace std;
 
 Game::Game( shared_ptr<GameClock> clock,
-            shared_ptr<GameInputHandler> inputHandler,
+            shared_ptr<InputHandler> inputHandler,
             shared_ptr<GameLogic> logic,
             shared_ptr<SFMLWindow> window,
             shared_ptr<GameRenderer> renderer,

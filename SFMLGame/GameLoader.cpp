@@ -12,7 +12,7 @@
 #include "MenuStateInputHandler.h"
 #include "PlayingStateInputHandler.h"
 #include "ClosingStateInputHandler.h"
-#include "GameInputHandler.h"
+#include "InputHandler.h"
 #include "GameLogic.h"
 #include "DiagnosticsRenderer.h"
 #include "TitleMenuStateRenderer.h"
@@ -44,7 +44,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto playingStateInputHandler = shared_ptr<PlayingStateInputHandler>( new PlayingStateInputHandler( inputReader, gameConfig, eventQueue ) );
    auto mainMenuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, mainMenu ) );
    auto closingStateInputHandler = make_shared<ClosingStateInputHandler>();
-   auto gameInputHandler = shared_ptr<GameInputHandler>( new GameInputHandler( gameConfig, inputReader, gameStateTracker ) );
+   auto gameInputHandler = shared_ptr<InputHandler>( new InputHandler( gameConfig, inputReader, gameStateTracker ) );
    gameInputHandler->AddStateInputHandler( GameState::TitleMenu, titleMenuStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Playing, playingStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::MainMenu, mainMenuStateInputHandler );

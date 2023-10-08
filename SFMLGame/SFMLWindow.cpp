@@ -2,7 +2,7 @@
 #include "RenderConfig.h"
 #include "GameClock.h"
 #include "InputReader.h"
-#include "GameInputHandler.h"
+#include "InputHandler.h"
 #include "GameEventType.h"
 
 using namespace NAMESPACE;
@@ -12,7 +12,7 @@ using namespace sf;
 SFMLWindow::SFMLWindow( shared_ptr<RenderConfig> renderConfig,
                         shared_ptr<GameClock> clock,
                         shared_ptr<InputReader> inputReader,
-                        shared_ptr<GameInputHandler> inputHandler ) :
+                        shared_ptr<InputHandler> inputHandler ) :
    _renderConfig( renderConfig ),
    _clock( clock ),
    _inputReader( inputReader ),

@@ -9,12 +9,12 @@ class GameConfig;
 class InputReader;
 class IGameStateInputHandler;
 
-class GameInputHandler
+class InputHandler
 {
 public:
-   GameInputHandler( std::shared_ptr<GameConfig> gameConfig,
-                     std::shared_ptr<InputReader> inputReader,
-                     std::shared_ptr<GameStateTracker> gameStateTracker );
+   InputHandler( std::shared_ptr<GameConfig> gameConfig,
+                 std::shared_ptr<InputReader> inputReader,
+                 std::shared_ptr<GameStateTracker> gameStateTracker );
 
    void AddStateInputHandler( GameState state, std::shared_ptr<IGameStateInputHandler> handler );
    void HandleInput();
