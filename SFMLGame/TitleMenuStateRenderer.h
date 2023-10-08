@@ -37,6 +37,7 @@ private:
    float _menuY;
    float _lineSpacing;
 
+   int _currentOptionIndexCache;
    float _elapsedSeconds;
    bool _showCarat;
 };
