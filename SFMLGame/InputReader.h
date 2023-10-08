@@ -3,7 +3,6 @@
 #include "Common.h"
 #include "Button.h"
 #include "ButtonState.h"
-#include "KeyCode.h"
 
 NAMESPACE_BEGIN
 
@@ -26,11 +25,11 @@ public:
 private:
    void ReadKeyboardInput();
    void ReadMouseInput();
-   bool IsKeyDown( KeyCode keyCode ) const;
 
 private:
+   std::shared_ptr<GameConfig> _gameConfig;
+
    std::map<Button, ButtonState> _buttonStates;
-   std::map<Button, std::vector<KeyCode>> _buttonKeyBindings;
 
    sf::Vector2i _mousePosition;
    sf::Vector2i _mousePreviousPosition;

@@ -1,5 +1,3 @@
-#include "WindowsLibs.h"
-
 #include "InputReader.h"
 #include "GameConfig.h"
 #include "RenderConfig.h"
@@ -8,26 +6,12 @@ using namespace NAMESPACE;
 using namespace std;
 using namespace sf;
 
-InputReader::InputReader( shared_ptr<GameConfig> gameConfig )
+InputReader::InputReader( shared_ptr<GameConfig> gameConfig ) :
+   _gameConfig( gameConfig )
 {
    for ( int i = 0; i < (int)Button::ButtonCount; i++ )
    {
       _buttonStates[(Button)i] = { false, false };
-   }
-
-   // since we allow multiple keys to bind to a single button, creating this inverted
-   // map of button-to-keys makes the input reading logic much easier
-   for ( int i = 0; i < (int)Button::ButtonCount; i++ )
-   {
-      auto button = (Button)i;
-
-      for ( auto const& [keyCode, mappedButton] : gameConfig->KeyBindingsMap )
-      {
-         if ( mappedButton == button )
-         {
-            _buttonKeyBindings[button].push_back( keyCode );
-         }
-      }
    }
 
    _mousePosition = Mouse::getPosition();
@@ -43,17 +27,13 @@ void InputReader::ReadInput()
 
 void InputReader::ReadKeyboardInput()
 {
-   for ( auto const& [button, keyCodes] : _buttonKeyBindings )
+   for ( auto const& [key, button] : _gameConfig->KeyBindingsMap )
    {
       bool buttonIsDown = false;
 
-      for ( const auto& keyCode : keyCodes )
+      if ( Keyboard::isKeyPressed( key ) )
       {
-         if ( IsKeyDown( keyCode ) )
-         {
-            buttonIsDown = true;
-            break;
-         }
+         buttonIsDown = true;
       }
 
       if ( buttonIsDown )
@@ -104,10 +84,4 @@ bool InputReader::WasAnyButtonPressed() const
    }
 
    return false;
-}
-
-bool InputReader::IsKeyDown( KeyCode keyCode ) const
-{
-   // if the high-order bit is 1, the key is down
-   return GetKeyState( (int)keyCode ) & 0x800;
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Common.h"
-#include "KeyCode.h"
 #include "Button.h"
 
 NAMESPACE_BEGIN
@@ -12,7 +11,7 @@ public:
    GameConfig();
 
 public:
-   std::map<KeyCode, Button> KeyBindingsMap;
+   std::map<sf::Keyboard::Key, Button> KeyBindingsMap;
 
    bool ShowDiagnostics;
 
