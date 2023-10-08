@@ -19,32 +19,32 @@ InputReader::InputReader( shared_ptr<GameConfig> gameConfig ) :
    _mouseDelta = Vector2i( 0, 0 );
 }
 
-void InputReader::ReadInput()
+void InputReader::KeyPressed( Keyboard::Key key )
 {
-   ReadKeyboardInput();
-   ReadMouseInput();
+   auto button = _gameConfig->KeyBindingsMap.at( key );
+   auto& buttonState = _buttonStates.at( button );
+
+   buttonState.WasPressed = true;
+   buttonState.IsDown = true;
 }
 
-void InputReader::ReadKeyboardInput()
+void InputReader::KeyReleased( Keyboard::Key key )
 {
-   for ( auto const& [key, button] : _gameConfig->KeyBindingsMap )
-   {
-      bool buttonIsDown = false;
+   auto button = _gameConfig->KeyBindingsMap.at( key );
+   auto& buttonState = _buttonStates.at( button );
 
+   buttonState.WasPressed = false;
+   buttonState.IsDown = false;
+}
+
+void InputReader::UpdateKeyStates()
+{
+   for ( const auto& [key, button] : _gameConfig->KeyBindingsMap )
+   {
+      // this means the key is still down after the initial press
       if ( Keyboard::isKeyPressed( key ) )
       {
-         buttonIsDown = true;
-      }
-
-      if ( buttonIsDown )
-      {
-         _buttonStates.at( button ).WasPressed = !_buttonStates.at( button ).IsDown;
-         _buttonStates.at( button ).IsDown = true;
-      }
-      else
-      {
          _buttonStates.at( button ).WasPressed = false;
-         _buttonStates.at( button ).IsDown = false;
       }
    }
 }

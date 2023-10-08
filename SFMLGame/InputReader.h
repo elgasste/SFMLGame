@@ -14,17 +14,17 @@ class InputReader
 public:
    InputReader( std::shared_ptr<GameConfig> gameConfig );
 
-   void ReadInput();
+   void KeyPressed( sf::Keyboard::Key key );
+   void KeyReleased( sf::Keyboard::Key key );
+   void UpdateKeyStates();
+   void ReadMouseInput();
+
    bool WasButtonPressed( Button button ) const;
    bool IsButtonDown( Button button ) const;
    bool WasAnyButtonPressed() const;
    const sf::Vector2i& GetMousePosition() const { return _mousePosition; }
    const sf::Vector2i& GetMousePreviousPosition() const { return _mousePreviousPosition; }
    const sf::Vector2i& GetMouseDelta() const { return _mouseDelta; }
-
-private:
-   void ReadKeyboardInput();
-   void ReadMouseInput();
 
 private:
    std::shared_ptr<GameConfig> _gameConfig;
