@@ -42,6 +42,7 @@ void DiagnosticsRenderer::Render()
    static string text;
    text = "";
 
+   text += format( IDS_MinimumFrameRate, _renderConfig->MinimumFrameRate ) + "\n";
    text += format( IDS_MaximumFrameRate, _renderConfig->MaximumFrameRate ) + "\n";
    text += format( IDS_CurrentFrameRate, _clock->GetCurrentFrameRate() ) + "\n";
    text += format( IDS_AverageFrameRate, _clock->GetAverageFrameRate() ) + "\n";

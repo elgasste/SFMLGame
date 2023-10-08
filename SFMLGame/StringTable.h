@@ -10,6 +10,7 @@
 #define IDS_WindowTitle             "SFML Game"
 
 // diagnostics window
+#define IDS_MinimumFrameRate        "Minimum Frame Rate: {}"
 #define IDS_MaximumFrameRate        "Maximum Frame Rate: {}"
 #define IDS_CurrentFrameRate        "Current Frame Rate: {}"
 #define IDS_AverageFrameRate        "Average Frame Rate: {}"
