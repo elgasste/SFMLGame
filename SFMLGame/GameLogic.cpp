@@ -2,7 +2,6 @@
 #include "GameLogic.h"
 #include "GameData.h"
 #include "RenderConfig.h"
-#include "GameInputHandler.h"
 #include "EventQueue.h"
 #include "GameClock.h"
 #include "GameRunningTracker.h"
@@ -17,7 +16,6 @@ using namespace std;
 GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
                       shared_ptr<GameData> gameData,
                       shared_ptr<RenderConfig> renderConfig,
-                      shared_ptr<GameInputHandler> inputHandler,
                       shared_ptr<EventQueue> eventQueue,
                       shared_ptr<GameClock> clock,
                       shared_ptr<GameRunningTracker> gameRunningTracker,
@@ -25,7 +23,6 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
    _gameConfig( gameConfig ),
    _gameData( gameData ),
    _renderConfig( renderConfig ),
-   _inputHandler( inputHandler ),
    _eventQueue( eventQueue ),
    _clock( clock ),
    _gameRunningTracker( gameRunningTracker ),
@@ -36,7 +33,6 @@ GameLogic::GameLogic( shared_ptr<GameConfig> gameConfig,
 
 void GameLogic::Tick()
 {
-   _inputHandler->HandleInput();
    HandleEvents();
 
    if ( _gameStateTracker->gameState == GameState::Playing )

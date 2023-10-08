@@ -171,8 +171,8 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClCompile Include="GameLoader.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
-    <ClCompile Include="GameInputHandler.cpp" />
-    <ClCompile Include="InputReader.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="InputStateController.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MenuStateInputHandler.cpp" />
@@ -209,9 +209,8 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="IGameEventArgs.h" />
     <ClInclude Include="IGameStateInputHandler.h" />
     <ClInclude Include="IGameStateRenderer.h" />
-    <ClInclude Include="GameInputHandler.h" />
-    <ClInclude Include="InputReader.h" />
-    <ClInclude Include="KeyCode.h" />
+    <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="InputStateController.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
@@ -229,7 +228,6 @@ xcopy "$(SolutionDir)SFMLGame\Resources\Textures\*.*" "$(OutDir)\Resources\Textu
     <ClInclude Include="TitleMenu.h" />
     <ClInclude Include="TitleMenuStateRenderer.h" />
     <ClInclude Include="TurnBallArgs.h" />
-    <ClInclude Include="WindowsLibs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
