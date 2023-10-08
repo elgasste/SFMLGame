@@ -24,6 +24,7 @@ MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<GameConfig> gameConfig,
    _window( window ),
    _clock( clock ),
    _menu( menu ),
+   _currentOptionIndexCache( 0 ),
    _elapsedSeconds( 0 ),
    _showCarat( true )
 {
@@ -84,7 +85,16 @@ void MainMenuStateRenderer::Render()
    _ballSprite.setPosition( _gameData->GetBall()->GetPosition() );
    _window->Draw( _ballSprite );
 
-   _elapsedSeconds += _clock->GetFrameSeconds();
+   if ( _menu->GetCurrentOptionIndex() != _currentOptionIndexCache )
+   {
+      _currentOptionIndexCache = _menu->GetCurrentOptionIndex();
+      _showCarat = true;
+      _elapsedSeconds = 0;
+   }
+   else
+   {
+      _elapsedSeconds += _clock->GetFrameSeconds();
+   }
 
    if ( _elapsedSeconds >= _renderConfig->MainMenuCaratBlinkRate )
    {
@@ -96,7 +106,7 @@ void MainMenuStateRenderer::Render()
 
    if ( _showCarat )
    {
-      _carat->setPosition( _menuX, _menuY + ( _menu->GetCurrentOptionIndex() * _lineSpacing ) );
+      _carat->setPosition( _menuX, _menuY + ( _currentOptionIndexCache * _lineSpacing ) );
       _window->Draw( _carat );
    }
 }
