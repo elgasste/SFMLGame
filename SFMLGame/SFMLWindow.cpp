@@ -1,7 +1,7 @@
 #include "SFMLWindow.h"
 #include "RenderConfig.h"
 #include "GameClock.h"
-#include "InputReader.h"
+#include "InputStateController.h"
 #include "InputHandler.h"
 #include "GameEventType.h"
 
@@ -11,7 +11,7 @@ using namespace sf;
 
 SFMLWindow::SFMLWindow( shared_ptr<RenderConfig> renderConfig,
                         shared_ptr<GameClock> clock,
-                        shared_ptr<InputReader> inputReader,
+                        shared_ptr<InputStateController> inputReader,
                         shared_ptr<InputHandler> inputHandler ) :
    _renderConfig( renderConfig ),
    _clock( clock ),

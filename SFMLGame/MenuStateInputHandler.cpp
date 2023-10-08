@@ -1,12 +1,12 @@
 #include "MenuStateInputHandler.h"
-#include "InputReader.h"
+#include "InputStateController.h"
 #include "EventQueue.h"
 #include "Menu.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
-MenuStateInputHandler::MenuStateInputHandler( shared_ptr<InputReader> inputReader,
+MenuStateInputHandler::MenuStateInputHandler( shared_ptr<InputStateController> inputReader,
                                               shared_ptr<EventQueue> eventQueue,
                                               shared_ptr<Menu> menu ) :
    _inputReader( inputReader ),

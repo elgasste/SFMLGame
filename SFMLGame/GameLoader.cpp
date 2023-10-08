@@ -6,7 +6,7 @@
 #include "RenderData.h"
 #include "EventQueue.h"
 #include "GameClock.h"
-#include "InputReader.h"
+#include "InputStateController.h"
 #include "TitleMenu.h"
 #include "MainMenu.h"
 #include "MenuStateInputHandler.h"
@@ -37,7 +37,7 @@ shared_ptr<Game> GameLoader::Load() const
    auto gameStateTracker = make_shared<GameStateTracker>();
    auto eventQueue = make_shared<EventQueue>();
    auto clock = shared_ptr<GameClock>( new GameClock( renderConfig ) );
-   auto inputReader = shared_ptr<InputReader>( new InputReader( gameConfig ) );
+   auto inputReader = shared_ptr<InputStateController>( new InputStateController( gameConfig ) );
    auto titleMenu = shared_ptr<TitleMenu>( new TitleMenu( eventQueue ) );
    auto mainMenu = shared_ptr<MainMenu>( new MainMenu( eventQueue ) );
    auto titleMenuStateInputHandler = shared_ptr<MenuStateInputHandler>( new MenuStateInputHandler( inputReader, eventQueue, titleMenu ) );

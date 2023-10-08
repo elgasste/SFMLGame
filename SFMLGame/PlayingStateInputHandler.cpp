@@ -1,5 +1,5 @@
 #include "PlayingStateInputHandler.h"
-#include "InputReader.h"
+#include "InputStateController.h"
 #include "GameConfig.h"
 #include "EventQueue.h"
 #include "Entity.h"
@@ -10,7 +10,7 @@
 using namespace NAMESPACE;
 using namespace std;
 
-PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputReader> inputReader,
+PlayingStateInputHandler::PlayingStateInputHandler( shared_ptr<InputStateController> inputReader,
                                                     shared_ptr<GameConfig> gameConfig,
                                                     shared_ptr<EventQueue> eventQueue ) :
    _inputReader( inputReader ),

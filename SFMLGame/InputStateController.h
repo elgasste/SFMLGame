@@ -9,10 +9,10 @@ NAMESPACE_BEGIN
 class GameConfig;
 class RenderConfig;
 
-class InputReader
+class InputStateController
 {
 public:
-   InputReader( std::shared_ptr<GameConfig> gameConfig );
+   InputStateController( std::shared_ptr<GameConfig> gameConfig );
 
    void KeyPressed( sf::Keyboard::Key key );
    void KeyReleased( sf::Keyboard::Key key );

@@ -1,13 +1,13 @@
 #include "InputHandler.h"
 #include "GameConfig.h"
-#include "InputReader.h"
+#include "InputStateController.h"
 #include "IGameStateInputHandler.h"
 
 using namespace NAMESPACE;
 using namespace std;
 
 InputHandler::InputHandler( shared_ptr<GameConfig> gameConfig,
-                            shared_ptr<InputReader> inputReader,
+                            shared_ptr<InputStateController> inputReader,
                             shared_ptr<GameStateTracker> gameStateTracker ) :
    _gameConfig( gameConfig ),
    _inputReader( inputReader ),
