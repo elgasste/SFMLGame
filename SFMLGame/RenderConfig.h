@@ -10,8 +10,8 @@ public:
    RenderConfig();
 
 public:
-   long long MinimumFrameRate;
-   long long MaximumFrameRate;
+   unsigned int MinimumFrameRate;
+   unsigned int MaximumFrameRate;
 
    int ScreenWidth;
    int ScreenHeight;
