@@ -32,7 +32,6 @@ void Game::Run()
    _gameRunningTracker->isRunning = true;
 
    _renderer->Initialize();
-   _clock->Initialize();
 
    while ( _gameRunningTracker->isRunning )
    {

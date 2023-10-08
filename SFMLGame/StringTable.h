@@ -10,11 +10,13 @@
 #define IDS_WindowTitle             "SFML Game"
 
 // diagnostics window
+#define IDS_MinimumFrameRate        "Minimum Frame Rate: {}"
 #define IDS_MaximumFrameRate        "Maximum Frame Rate: {}"
 #define IDS_CurrentFrameRate        "Current Frame Rate: {}"
 #define IDS_AverageFrameRate        "Average Frame Rate: {}"
 #define IDS_TotalFrames             "Total Frames:       {}"
 #define IDS_LagFrames               "Lag Frames:         {}"
+#define IDS_TotalElapsedTime        "Total Elapsed Time: {:%T}"
 #define IDS_BallAngle               "Ball Angle:         {}"
 #define IDS_BallVelocity            "Ball Velocity:      {}"
 

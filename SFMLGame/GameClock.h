@@ -10,29 +10,31 @@ class GameClock
 {
 public:
    GameClock( std::shared_ptr<RenderConfig> renderConfig );
-   ~GameClock();
 
-   void Initialize();
    void StartFrame();
    void EndFrame();
 
-   float GetFrameSeconds() const;
-   long long GetTotalFrameCount() const { return _totalFrameCount; }
-   long long GetLagFrameCount() const { return _lagFrameCount; }
-   long long GetElapsedNanoseconds() const { return _totalDurationNano; }
-   long long GetAverageFrameRate() const;
-   long long GetCurrentFrameRate() const;
+   unsigned int GetTotalFrameCount() const { return _totalFrameCount; }
+   unsigned int GetLagFrameCount() const { return _lagFrameCount; }
+   unsigned int GetAverageFrameRate() const;
+   unsigned int GetCurrentFrameRate() const;
+
+   float GetFrameSeconds() const { return _lastFrameSeconds; }
+   float GetTotalElapsedSeconds() const { return _totalElapsedSeconds; }
 
 private:
-   long long _minNanoSecondsPerFrame;
-   long long _maxNanoSecondsPerFrame;
-   long long _totalFrameCount;
-   long long _lagFrameCount;
-   long long _absoluteStartTimeNano;
-   long long _frameStartTimeNano;
-   long long _lastFrameDurationNano;
-   long long _totalDurationNano;
-   bool _wasLagFrame;
+   sf::Clock _clock;
+
+   sf::Time _minFrameDuration;
+   sf::Time _maxFrameDuration;
+
+   unsigned int _totalFrameCount;
+   unsigned int _lagFrameCount;
+
+   sf::Time _frameStartTime;
+
+   float _lastFrameSeconds;
+   float _totalElapsedSeconds;
 };
 
 NAMESPACE_END

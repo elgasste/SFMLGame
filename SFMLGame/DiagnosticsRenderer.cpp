@@ -1,4 +1,5 @@
 #include <format>
+#include <chrono>
 
 #include "DiagnosticsRenderer.h"
 #include "RenderConfig.h"
@@ -41,11 +42,13 @@ void DiagnosticsRenderer::Render()
    static string text;
    text = "";
 
+   text += format( IDS_MinimumFrameRate, _renderConfig->MinimumFrameRate ) + "\n";
    text += format( IDS_MaximumFrameRate, _renderConfig->MaximumFrameRate ) + "\n";
    text += format( IDS_CurrentFrameRate, _clock->GetCurrentFrameRate() ) + "\n";
    text += format( IDS_AverageFrameRate, _clock->GetAverageFrameRate() ) + "\n";
    text += format( IDS_TotalFrames, _clock->GetTotalFrameCount() ) + "\n";
-   text += format( IDS_LagFrames, _clock->GetLagFrameCount() ) + "\n\n";
+   text += format( IDS_LagFrames, _clock->GetLagFrameCount() ) + "\n";
+   text += format( IDS_TotalElapsedTime, chrono::round<chrono::seconds>( chrono::duration<float>{ _clock->GetTotalElapsedSeconds() } ) ) + "\n\n";
 
    auto ball = _gameData->GetBall();
    text += format( IDS_BallAngle, ball->GetAngle() ) + "\n";
