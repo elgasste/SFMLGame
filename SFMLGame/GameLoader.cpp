@@ -50,7 +50,7 @@ shared_ptr<Game> GameLoader::Load() const
    gameInputHandler->AddStateInputHandler( GameState::MainMenu, mainMenuStateInputHandler );
    gameInputHandler->AddStateInputHandler( GameState::Closing, closingStateInputHandler );
    auto gameLogic = shared_ptr<GameLogic>( new GameLogic( gameConfig, gameData, renderConfig, eventQueue, clock, gameRunningTracker, gameStateTracker ) );
-   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, clock, inputReader ) );
+   auto window = shared_ptr<SFMLWindow>( new SFMLWindow( renderConfig, clock, inputReader, gameInputHandler ) );
    auto diagnosticRenderer = shared_ptr<DiagnosticsRenderer>( new DiagnosticsRenderer( renderConfig, gameData, clock, window ) );
    auto titleMenuStateRenderer = shared_ptr<TitleMenuStateRenderer>( new TitleMenuStateRenderer( renderConfig, window, clock, titleMenu ) );
    auto playingStateRenderer = shared_ptr<PlayingStateRenderer>( new PlayingStateRenderer( renderConfig, renderData, gameConfig, gameData, window ) );

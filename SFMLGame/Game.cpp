@@ -41,8 +41,6 @@ void Game::Run()
       _clock->StartFrame();
 
       _window->HandleEvents();
-      // MUFFINS: should we do this in the window event handler?
-      _inputHandler->HandleInput();
       _logic->Tick();
       _renderer->Render();
 

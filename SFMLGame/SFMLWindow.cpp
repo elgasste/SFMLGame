@@ -2,6 +2,7 @@
 #include "RenderConfig.h"
 #include "GameClock.h"
 #include "InputReader.h"
+#include "GameInputHandler.h"
 #include "GameEventType.h"
 
 using namespace NAMESPACE;
@@ -10,10 +11,12 @@ using namespace sf;
 
 SFMLWindow::SFMLWindow( shared_ptr<RenderConfig> renderConfig,
                         shared_ptr<GameClock> clock,
-                        shared_ptr<InputReader> inputReader ) :
+                        shared_ptr<InputReader> inputReader,
+                        shared_ptr<GameInputHandler> inputHandler ) :
    _renderConfig( renderConfig ),
    _clock( clock ),
-   _inputReader( inputReader )
+   _inputReader( inputReader ),
+   _inputHandler( inputHandler )
 {
 }
 
@@ -53,6 +56,8 @@ void SFMLWindow::HandleEvents() const
             break;
       }
    }
+
+   _inputHandler->HandleInput();
 }
 
 void SFMLWindow::Clear() const
