@@ -3,13 +3,6 @@
 #include "Common.h"
 #include "IGameStateRenderer.h"
 
-namespace sf
-{
-   class Font;
-   class Text;
-   class RectangleShape;
-}
-
 NAMESPACE_BEGIN
 
 class GameConfig;

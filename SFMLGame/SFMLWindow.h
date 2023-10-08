@@ -2,12 +2,6 @@
 
 #include "Common.h"
 
-namespace sf
-{
-   class RenderWindow;
-   class Drawable;
-}
-
 NAMESPACE_BEGIN
 
 class RenderConfig;
