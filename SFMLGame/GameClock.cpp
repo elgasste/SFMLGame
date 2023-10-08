@@ -8,15 +8,11 @@ using namespace sf;
 GameClock::GameClock( shared_ptr<RenderConfig> renderConfig ) :
    _totalFrameCount( 0 ),
    _lagFrameCount( 0 ),
-   _lastFrameSeconds( 0 )
+   _lastFrameSeconds( 0 ),
+   _totalElapsedSeconds( 0 )
 {
-   _minFrameDuration = milliseconds( (Int32)( ( 1 / (double)renderConfig->MaximumFrameRate ) * 1000 ) );
-   _maxFrameDuration = milliseconds( (Int32)( ( 1 / (double)renderConfig->MinimumFrameRate ) * 1000 ) );
-}
-
-void GameClock::Initialize()
-{
-   _absoluteStartTime = _clock.restart();
+   _minFrameDuration = seconds( 1 / (float)renderConfig->MaximumFrameRate );
+   _maxFrameDuration = seconds( 1 / (float)renderConfig->MinimumFrameRate );
 }
 
 void GameClock::StartFrame()
@@ -27,29 +23,29 @@ void GameClock::StartFrame()
 void GameClock::EndFrame()
 {
    _totalFrameCount++;
-   auto now = _clock.getElapsedTime();
-   auto lastFrameDuration = now - _frameStartTime;
-   _totalDuration = now - _absoluteStartTime;
+   auto lastFrameDuration = _clock.getElapsedTime() - _frameStartTime;
 
    if ( lastFrameDuration > _maxFrameDuration )
    {
-      lastFrameDuration = _maxFrameDuration;
+      _lastFrameSeconds = _maxFrameDuration.asSeconds();
+      _totalElapsedSeconds += _lastFrameSeconds;
       _lagFrameCount++;
+      return;
    }
-   else if ( lastFrameDuration <= _minFrameDuration )
+   else if ( lastFrameDuration < _minFrameDuration )
    {
-      auto durationToSleep = _minFrameDuration - lastFrameDuration;
-      lastFrameDuration = _minFrameDuration;
-      _totalDuration += durationToSleep;
-      sleep( durationToSleep );
+      // any "sleep" call is notoriously unreliable, so we'll try to do it, but we'll
+      // still use the actual elapsed time below to record the last frame's seconds.
+      sleep( _minFrameDuration - lastFrameDuration );
    }
 
-   _lastFrameSeconds = lastFrameDuration.asSeconds();
+   _lastFrameSeconds = ( _clock.getElapsedTime() - _frameStartTime ).asSeconds();
+   _totalElapsedSeconds += _lastFrameSeconds;
 }
 
 unsigned int GameClock::GetAverageFrameRate() const
 {
-   return _totalFrameCount == 0 ? 0 : (unsigned int)( _totalDuration.asSeconds() / _totalFrameCount );
+   return _totalFrameCount == 0 ? 0 : (unsigned int)( 1 / ( _totalElapsedSeconds / _totalFrameCount ) );
 }
 
 unsigned int GameClock::GetCurrentFrameRate() const

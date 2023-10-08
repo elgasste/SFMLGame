@@ -2,12 +2,6 @@
 
 #include "Common.h"
 
-namespace sf
-{
-   class Clock;
-   class Time;
-}
-
 NAMESPACE_BEGIN
 
 class RenderConfig;
@@ -17,7 +11,6 @@ class GameClock
 public:
    GameClock( std::shared_ptr<RenderConfig> renderConfig );
 
-   void Initialize();
    void StartFrame();
    void EndFrame();
 
@@ -27,6 +20,7 @@ public:
    unsigned int GetCurrentFrameRate() const;
 
    float GetFrameSeconds() const { return _lastFrameSeconds; }
+   float GetTotalElapsedSeconds() const { return _totalElapsedSeconds; }
 
 private:
    sf::Clock _clock;
@@ -37,11 +31,10 @@ private:
    unsigned int _totalFrameCount;
    unsigned int _lagFrameCount;
 
-   sf::Time _absoluteStartTime;
    sf::Time _frameStartTime;
-   sf::Time _totalDuration;
 
    float _lastFrameSeconds;
+   float _totalElapsedSeconds;
 };
 
 NAMESPACE_END
