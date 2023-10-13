@@ -21,20 +21,26 @@ InputStateController::InputStateController( shared_ptr<GameConfig> gameConfig ) 
 
 void InputStateController::KeyPressed( Keyboard::Key key )
 {
-   auto button = _gameConfig->KeyBindingsMap.at( key );
-   auto& buttonState = _buttonStates.at( button );
+   if ( _gameConfig->KeyBindingsMap.contains( key ) )
+   {
+      auto button = _gameConfig->KeyBindingsMap.at( key );
+      auto& buttonState = _buttonStates.at( button );
 
-   buttonState.WasPressed = true;
-   buttonState.IsDown = true;
+      buttonState.WasPressed = true;
+      buttonState.IsDown = true;
+   }
 }
 
 void InputStateController::KeyReleased( Keyboard::Key key )
 {
-   auto button = _gameConfig->KeyBindingsMap.at( key );
-   auto& buttonState = _buttonStates.at( button );
+   if ( _gameConfig->KeyBindingsMap.contains( key ) )
+   {
+      auto button = _gameConfig->KeyBindingsMap.at( key );
+      auto& buttonState = _buttonStates.at( button );
 
-   buttonState.WasPressed = false;
-   buttonState.IsDown = false;
+      buttonState.WasPressed = false;
+      buttonState.IsDown = false;
+   }
 }
 
 void InputStateController::UpdateKeyStates()
