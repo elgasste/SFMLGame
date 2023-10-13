@@ -28,6 +28,9 @@ private:
    std::shared_ptr<sf::Font> _font;
    std::shared_ptr<sf::Text> _text;
    std::shared_ptr<sf::RectangleShape> _background;
+
+   unsigned int _currentFrameRateCache;
+   float _elapsedSeconds;
 };
 
 NAMESPACE_END

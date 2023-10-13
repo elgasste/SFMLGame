@@ -28,6 +28,7 @@ public:
    unsigned int DiagnosticsCharSize;
    sf::Color DiagnosticsTextColor;
    sf::Color DiagnosticsBackgroundColor;
+   float DiagnosticsCurrentFrameRateRefreshSeconds;
 
    sf::Color ArenaBackgroundColor;
 
