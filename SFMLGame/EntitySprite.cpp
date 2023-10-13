@@ -49,9 +49,9 @@ void EntitySprite::Tick()
    {
       _elapsedMovementTime += _gameClock->GetFrameSeconds();
 
-      if ( _elapsedMovementTime > _renderConfig->PlayerSpriteFrameIncrement )
+      while ( _elapsedMovementTime > _renderConfig->PlayerSpriteFrameIncrement )
       {
-         _elapsedMovementTime = 0;
+         _elapsedMovementTime -= _renderConfig->PlayerSpriteFrameIncrement;
          _currentMovementFrame++;
 
          if ( _currentMovementFrame > _movementFrames )
