@@ -19,7 +19,9 @@ DiagnosticsRenderer::DiagnosticsRenderer( shared_ptr<RenderConfig> renderConfig,
    _renderConfig( renderConfig ),
    _gameData( gameData ),
    _clock( clock ),
-   _window( window )
+   _window( window ),
+   _currentFrameRateCache( 0 ),
+   _elapsedSeconds( 0 )
 {
    _font = make_shared<Font>();
    _font->loadFromFile( renderConfig->DiagnosticsFont );
@@ -39,12 +41,20 @@ DiagnosticsRenderer::DiagnosticsRenderer( shared_ptr<RenderConfig> renderConfig,
 
 void DiagnosticsRenderer::Render()
 {
+   _elapsedSeconds += _clock->GetFrameSeconds();
+
+   if ( _elapsedSeconds >= _renderConfig->DiagnosticsCurrentFrameRateRefreshSeconds )
+   {
+      _currentFrameRateCache = _clock->GetCurrentFrameRate();
+      _elapsedSeconds = 0;
+   }
+
    static string text;
    text = "";
 
    text += format( IDS_MinimumFrameRate, _renderConfig->MinimumFrameRate ) + "\n";
    text += format( IDS_MaximumFrameRate, _renderConfig->MaximumFrameRate ) + "\n";
-   text += format( IDS_CurrentFrameRate, _clock->GetCurrentFrameRate() ) + "\n";
+   text += format( IDS_CurrentFrameRate, _currentFrameRateCache ) + "\n";
    text += format( IDS_AverageFrameRate, _clock->GetAverageFrameRate() ) + "\n";
    text += format( IDS_TotalFrames, _clock->GetTotalFrameCount() ) + "\n";
    text += format( IDS_LagFrames, _clock->GetLagFrameCount() ) + "\n";

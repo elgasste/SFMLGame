@@ -24,6 +24,7 @@ RenderConfig::RenderConfig()
    DiagnosticsCharSize = 24;
    DiagnosticsTextColor = Color::White;
    DiagnosticsBackgroundColor = Color::Blue;
+   DiagnosticsCurrentFrameRateRefreshSeconds = 1.0f;
 
    ArenaBackgroundColor = Color( 48, 48, 48 );
 
