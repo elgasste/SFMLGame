@@ -16,6 +16,7 @@ MainMenuStateRenderer::MainMenuStateRenderer( shared_ptr<RenderConfig> renderCon
    _window( window ),
    _clock( clock ),
    _menu( menu ),
+   _currentOptionIndexCache( 0 ),
    _elapsedSeconds( 0 ),
    _showCarat( true )
 {
@@ -67,7 +68,16 @@ void MainMenuStateRenderer::Render()
 {
    _window->Draw( _backgroundRect );
 
-   _elapsedSeconds += _clock->GetFrameSeconds();
+   if ( _menu->GetCurrentOptionIndex() != _currentOptionIndexCache )
+   {
+      _currentOptionIndexCache = _menu->GetCurrentOptionIndex();
+      _showCarat = true;
+      _elapsedSeconds = 0;
+   }
+   else
+   {
+      _elapsedSeconds += _clock->GetFrameSeconds();
+   }
 
    if ( _elapsedSeconds >= _renderConfig->MainMenuCaratBlinkRate )
    {
